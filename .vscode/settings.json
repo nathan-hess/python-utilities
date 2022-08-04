@@ -1,7 +1,8 @@
 {
     // File language associations
     "files.associations": {
-        "pylintrc": "ini"
+        "pylintrc": "ini",
+        "workflow_config": "ini",
     },
 
     // Python linting: general
@@ -13,7 +14,7 @@
         "tests/**",
         "utilities/**",
         "scratch/**/*.py",
-        "scratch.py"
+        "scratch.py",
     ],
 
     // Python linting: Pylint
