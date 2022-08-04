@@ -1,1 +1,4 @@
 bandit
+flake8
+mypy
+pylint
