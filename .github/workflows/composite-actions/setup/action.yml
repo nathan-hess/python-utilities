@@ -13,6 +13,10 @@ runs:
       shell: bash
       run: sudo apt update && sudo apt -y upgrade
 
+    - name: Load Environment Variables
+      shell: bash
+      run: cat $GITHUB_WORKSPACE/.github/workflows/workflow_config >> $GITHUB_ENV
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
