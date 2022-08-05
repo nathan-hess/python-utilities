@@ -25,6 +25,11 @@ if errorlevel 9009 (
 
 if "%1" == "" goto help
 
+if "%1" == "spelling" (
+	%SPHINXBUILD% -b spelling %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+	goto end
+)
+
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
