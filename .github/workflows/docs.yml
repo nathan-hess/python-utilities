@@ -1,0 +1,46 @@
+name: Sphinx Documentation
+
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - '**'
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: '3.8'
+
+      - name: Build Documentation
+        run: |
+          cd $GITHUB_WORKSPACE/docs
+          SPHINXOPTS="-W" make html
+
+  spelling:
+    name: Spell-Checking
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: '3.8'
+
+      - name: Run Spell-Checking
+        run: |
+          cd $GITHUB_WORKSPACE/docs
+          SPHINXOPTS="-W" make spelling
