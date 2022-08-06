@@ -1,18 +1,21 @@
-.. PyXX documentation master file, created by
-   sphinx-quickstart on Fri Aug  5 07:00:06 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+PyXX Documentation
+==================
 
-Welcome to PyXX's documentation!
-================================
+**Collection of Useful Python Utilities**
+
+PyXX is a Python package that bundles a collection of Python utilities useful
+for a variety of projects.  It is intended to accelerate development of Python
+code by providing ready-to-use, tested objects and functions for tasks commonly
+encountered in code development projects, reducing the need to duplicate code
+between projects.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Contents:
 
 
-
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`
