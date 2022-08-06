@@ -26,6 +26,7 @@ url = 'https://github.com/nathan-hess/python-utilities'
 
 # Add any Sphinx extension module names here, as strings
 extensions = [
+    'sphinxcontrib.spelling',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -72,3 +73,16 @@ html_sidebars = {
         'sbt-sidebar-nav.html',
     ]
 }
+
+
+# -- Spell-checking options --------------------------------------------------
+# https://sphinxcontrib-spelling.readthedocs.io/en/latest/
+
+# Spelling language
+spelling_lang = 'en_US'
+tokenizer_lang = 'en_US'
+
+# Whitelisted words
+spelling_word_list_filename = [
+    'spelling_wordlist.txt',
+]
