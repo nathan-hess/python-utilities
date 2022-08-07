@@ -11,13 +11,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    uses: ./.github/workflows/reusable-get-python-version-matrix.yml
+
   bandit:
     name: Bandit Scan (Python ${{ matrix.python-version }})
+    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ['3.8', '3.9', '3.10']
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
     steps:
       - name: Check Out Repository Files
         uses: actions/checkout@v3

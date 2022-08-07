@@ -15,6 +15,7 @@
         "utilities/**",
         "scratch/**/*.py",
         "scratch.py",
+        "docs/source/conf.py",
     ],
 
     // Python linting: Pylint

@@ -1,5 +1,5 @@
 name: Setup Composite Action
-description:  Update system, set up Python, and install dependencies
+description: Update system, set up Python, and install dependencies
 
 inputs:
   python-version:
@@ -14,8 +14,7 @@ runs:
       run: sudo apt update && sudo apt -y upgrade
 
     - name: Load Environment Variables
-      shell: bash
-      run: cat $GITHUB_WORKSPACE/.github/workflows/workflow_config >> $GITHUB_ENV
+      uses: ./.github/workflows/composite-actions/load-workflow-config
 
     - name: Set up Python
       uses: actions/setup-python@v4
