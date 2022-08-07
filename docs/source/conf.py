@@ -49,6 +49,10 @@ html_theme = 'sphinx_book_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# Site logo and favicon
+html_logo = '_static/logo.svg'
+html_favicon = '_static/favicon.ico'
+
 # General HTML options
 html_title = f'{project} v{release}'
 html_last_updated_fmt = '%b %d, %Y'
