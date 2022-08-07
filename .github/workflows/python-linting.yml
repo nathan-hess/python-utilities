@@ -11,13 +11,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    uses: ./.github/workflows/reusable-get-python-version-matrix.yml
+
   pylint:
     name: Pylint Linting (Python ${{ matrix.python-version }})
+    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ['3.8', '3.9', '3.10']
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
     steps:
       - name: Check Out Repository Files
         uses: actions/checkout@v3
@@ -32,11 +35,11 @@ jobs:
 
   flake8:
     name: Flake8 Linting (Python ${{ matrix.python-version }})
+    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ['3.8', '3.9', '3.10']
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
     steps:
       - name: Check Out Repository Files
         uses: actions/checkout@v3
@@ -51,11 +54,11 @@ jobs:
 
   mypy:
     name: Mypy Type Checks (Python ${{ matrix.python-version }})
+    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ['3.8', '3.9', '3.10']
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
     steps:
       - name: Check Out Repository Files
         uses: actions/checkout@v3
