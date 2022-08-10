@@ -1,0 +1,1 @@
+.. |PackageNameStylized| replace:: PyXX
