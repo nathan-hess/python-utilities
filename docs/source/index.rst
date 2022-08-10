@@ -14,10 +14,10 @@ reducing the need to duplicate code between projects.
 
 
 .. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Contents:
+    :caption: Getting Started
+    :hidden:
 
+    getting_started/installation
 
 Indices and Tables
 ==================

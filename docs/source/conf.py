@@ -27,6 +27,8 @@ url = 'https://github.com/nathan-hess/python-utilities'
 # Add any Sphinx extension module names here, as strings
 extensions = [
     'sphinxcontrib.spelling',
+    'sphinx_copybutton',
+    'sphinx_design',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -63,7 +65,7 @@ html_show_sphinx = False
 # Theme-specific HTML options
 html_theme_options = {
     'extra_navbar': '',
-    'home_page_in_toc': True,
+    'home_page_in_toc': False,
     'navigation_with_keys': False,
     'repository_url': url,
     'search_bar_text': 'Search site...',
