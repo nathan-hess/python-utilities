@@ -1,8 +1,6 @@
 import unittest
 
-from pyxx.strings import (
-    split_at_index,
-)
+from pyxx.strings import split_at_index
 
 
 class Test_SplitAtIndex(unittest.TestCase):
