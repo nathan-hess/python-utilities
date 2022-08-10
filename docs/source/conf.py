@@ -5,6 +5,7 @@
 
 import datetime
 import pathlib
+import shutil
 import sys
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
@@ -99,6 +100,11 @@ spelling_word_list_filename = [
 
 # -- Sphinx `autodoc` extension options --------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+
+# Clean up auto-generated API reference files before building documentation
+shutil.rmtree(
+    pathlib.Path(__file__).resolve().parent / 'api_reference' / 'api',
+    ignore_errors=True)
 
 # Default content when documenting classes
 autoclass_content = 'class'
