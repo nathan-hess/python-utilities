@@ -19,9 +19,10 @@ reducing the need to duplicate code between projects.
 
     getting_started/installation
 
-Indices and Tables
-==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+    :caption: API Reference
+    :hidden:
+
+    Overview <api_reference/index>
+    api_reference/strings

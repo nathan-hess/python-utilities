@@ -26,6 +26,9 @@ url = 'https://github.com/nathan-hess/python-utilities'
 
 # Add any Sphinx extension module names here, as strings
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.napoleon',
     'sphinxcontrib.spelling',
     'sphinx_copybutton',
     'sphinx_design',
@@ -92,3 +95,21 @@ tokenizer_lang = 'en_US'
 spelling_word_list_filename = [
     'spelling_wordlist.txt',
 ]
+
+
+# -- Sphinx `autodoc` extension options --------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+
+# Default content when documenting classes
+autoclass_content = 'class'
+
+# Default `autodoc` options
+autodoc_default_options = {
+    'members': True,
+    'undoc-members': True,
+    'private-members': True,
+    'special-members': '__init__',
+    'inherited-members': False,
+    'member-order': 'bysource',
+    'show-inheritance': True,
+}
