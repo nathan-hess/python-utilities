@@ -16,7 +16,7 @@ submodule.
 
 
 Index
-=====
+-----
 
 * :ref:`General Index <genindex>`
 * :ref:`Module Index <modindex>`
