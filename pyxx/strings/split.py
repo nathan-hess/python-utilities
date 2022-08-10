@@ -6,9 +6,10 @@ This module contains functions for splitting strings.
 def split_at_index(value: str, index: int, return_index: bool = False):
     """Splits a string at a given index
 
-    This function can be used to split a string at a given position, returning
-    the parts of the string before and after the given index, and optionally
-    returning the character located at the index at which the string was split
+    This function can be used to split a string at a given position,
+    returning the parts of the string before and after the given index, and
+    optionally returning the character located at the index at which the
+    string was split.
 
     Parameters
     ----------
@@ -30,7 +31,7 @@ def split_at_index(value: str, index: int, return_index: bool = False):
     Notes
     -----
     Suppose that ``begin``, ``delimiter``, and ``end`` are strings, and
-    that ``value = f'{begin}{delimiter}{end}', where ``index = len(begin)``.
+    that ``value = f'{begin}{delimiter}{end}'``, where ``index = len(begin)``.
 
     - If ``return_index = False``, the following tuple is returned:
       ``(begin, end)``
