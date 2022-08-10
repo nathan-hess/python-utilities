@@ -6,6 +6,19 @@ pyxx.strings
 .. currentmodule:: pyxx.strings
 
 
+Analyzing String Content
+------------------------
+
+The functions in this section can be used to analyze string content, checking
+whether certain characters or patterns are present or whether the string
+content has a particular structure.
+
+.. autosummary::
+    :toctree: ./api
+
+    str_excludes_chars
+
+
 Splitting Strings
 -----------------
 
