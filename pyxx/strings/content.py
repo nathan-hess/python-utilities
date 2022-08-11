@@ -21,4 +21,4 @@ def str_excludes_chars(value: str, prohibited_chars: str):
         Returns ``True`` if none of the characters in ``prohibited_chars`` are
         found in ``value``, and ``False`` otherwise
     """
-    return not(len(set(value).intersection(set(prohibited_chars))) > 0)
+    return len(set(value).intersection(set(prohibited_chars))) <= 0
