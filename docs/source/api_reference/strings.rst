@@ -15,6 +15,7 @@ content has a particular structure.
 
 .. autosummary::
     :toctree: ./api
+    :template: ../_templates/api_reference_strings_content.rst
 
     str_excludes_chars
 
