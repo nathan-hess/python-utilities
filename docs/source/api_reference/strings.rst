@@ -20,6 +20,32 @@ content has a particular structure.
     str_excludes_chars
 
 
+Bracket Parsing
+---------------
+
+The objects in this section are intended to assist in processing strings with
+brackets, loosely defined as pairs of characters that enclose quantities of
+interest (``()``, ``[]``, ``{}``, etc.).  Particularly in scientific contexts,
+it can be useful to parse strings containing brackets and identify pairs of
+*matched* brackets.
+
+.. note::
+
+    For more information on terminology definitions and how the functions in
+    this section operate on a conceptual level, refer to the
+    :ref:`section-bracket_concepts` page.
+
+.. toctree::
+    :hidden:
+
+    concepts/brackets
+
+.. autosummary::
+    :toctree: ./api
+
+    contains_all_matched_brackets
+
+
 Splitting Strings
 -----------------
 
