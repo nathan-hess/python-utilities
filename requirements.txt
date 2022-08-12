@@ -8,4 +8,5 @@ Sphinx
 sphinx_design
 sphinx-book-theme
 sphinx-copybutton
+sphinx-remove-toctrees
 sphinxcontrib-spelling

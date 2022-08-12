@@ -33,6 +33,7 @@ extensions = [
     'sphinxcontrib.spelling',
     'sphinx_copybutton',
     'sphinx_design',
+    'sphinx_remove_toctrees',
     'matplotlib.sphinxext.plot_directive',
 ]
 
@@ -66,6 +67,11 @@ html_last_updated_fmt = '%b %d, %Y'
 html_permalinks = False
 html_show_sourcelink = True
 html_show_sphinx = False
+
+# Pages to exclude from table of contents and navigation bar
+remove_from_toctrees = [
+    'api_reference/concepts/*',
+]
 
 # Theme-specific HTML options
 html_theme_options = {
