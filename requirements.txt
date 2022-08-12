@@ -1,6 +1,8 @@
 bandit
 flake8
+matplotlib
 mypy
+numpy
 pylint
 Sphinx
 sphinx_design
