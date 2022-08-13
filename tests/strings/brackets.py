@@ -5,6 +5,50 @@ from typing import List
 from pyxx.strings import (
     contains_all_matched_brackets,
 )
+from pyxx.strings.brackets import _check_valid_brackets
+
+
+class Test_ValidateBrackets(unittest.TestCase):
+    def test_valid_brackets(self):
+        # Verifies that the `_check_valid_brackets()` function correctly
+        # identifies valid brackets
+        test_brackets = [
+            ('(', ')'),
+            ('[', ']'),
+            ('{', '}'),
+            ('a', 'b'),
+        ]
+
+        for brackets in test_brackets:
+            with self.subTest(brackets=brackets):
+                self.assertTrue(_check_valid_brackets(*brackets))
+
+    def test_brackets_not_str(self):
+        # Verifies that an error is thrown if attempting to call
+        # the `_check_valid_brackets()` function with inputs
+        # that are not strings
+        with self.assertRaises(TypeError):
+            _check_valid_brackets(3, ')')
+
+        with self.assertRaises(TypeError):
+            _check_valid_brackets('(', 5)
+
+    def test_multi_char_brackets(self):
+        # Verifies that an error is thrown if attempting to call
+        # the `_check_valid_brackets()` function opening or closing
+        # brackets that are not a single character
+        with self.assertRaises(ValueError):
+            _check_valid_brackets('((', ')')
+
+        with self.assertRaises(ValueError):
+            _check_valid_brackets('(', '))')
+
+    def test_identical_brackets(self):
+        # Verifies that an error is thrown if attempting to call
+        # the `_check_valid_brackets()` function with the same
+        # opening and closing bracket character
+        with self.assertRaises(ValueError):
+            _check_valid_brackets('#', '#')
 
 
 class Test_CheckContainsMatchedBrackets(unittest.TestCase):
@@ -71,26 +115,3 @@ class Test_CheckContainsMatchedBrackets(unittest.TestCase):
         # that are not strings
         with self.assertRaises(TypeError):
             contains_all_matched_brackets(32.2)
-
-        with self.assertRaises(TypeError):
-            contains_all_matched_brackets('value()', 3, ')')
-
-        with self.assertRaises(TypeError):
-            contains_all_matched_brackets('value()', '(', 5)
-
-    def test_multi_char_brackets(self):
-        # Verifies that an error is thrown if attempting to call
-        # the `contains_all_matched_brackets()` function opening or closing
-        # brackets that are not a single character
-        with self.assertRaises(ValueError):
-            contains_all_matched_brackets('value()', '((', ')')
-
-        with self.assertRaises(ValueError):
-            contains_all_matched_brackets('value()', '(', '))')
-
-    def test_identical_brackets(self):
-        # Verifies that an error is thrown if attempting to call
-        # the `contains_all_matched_brackets()` function with the same
-        # opening and closing bracket character
-        with self.assertRaises(ValueError):
-            contains_all_matched_brackets('value()', '#', '#')

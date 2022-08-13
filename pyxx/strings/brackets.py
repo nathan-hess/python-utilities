@@ -7,6 +7,62 @@ capabilities.
 """
 
 
+def _check_valid_brackets(opening_bracket: str, closing_bracket: str,
+                          opening_bracket_name: str = 'opening_bracket',
+                          closing_bracket_name: str = 'closing_bracket'):
+    """Checks that a given set of opening and closing brackets form a
+    valid pair
+
+    Verifies that a given pair of opening and closing brackets are a
+    valid choice for the PyXX bracket-matching algorithm.  To meet this
+    criterion, brackets must be strings of a single character in length,
+    and the opening and closing bracket must be different
+
+    Parameters
+    ----------
+    opening_bracket : str
+        Character representing opening bracket
+    closing_bracket : str
+        Character representing closing bracket
+    opening_bracket_name : str, optional
+        Name that should be used to refer to the ``opening_bracket`` argument
+        in error messages (default is ``'opening_bracket'``)
+    closing_bracket_name : str, optional
+        Name that should be used to refer to the ``closing_bracket`` argument
+        in error messages (default is ``'closing_bracket'``)
+
+    Returns
+    -------
+    bool
+        Whether ``opening_bracket`` and ``closing_bracket`` form a valid pair
+        of brackets
+
+    Raises
+    ------
+    TypeError
+        If either ``opening_bracket`` or ``closing_bracket`` are not of
+        type "str"
+    ValueError
+        If either ``opening_bracket`` or ``closing_bracket`` don't have length
+        1, or if ``opening_bracket`` and ``closing_bracket`` are identical
+    """
+    if not (isinstance(opening_bracket, str)
+            and isinstance(closing_bracket, str)):
+        raise TypeError(f'Arguments "{opening_bracket_name}" and '
+                        f'"{closing_bracket_name}" must be of type "str"')
+
+    if (len(opening_bracket) != 1) or (len(closing_bracket) != 1):
+        raise ValueError(f'Arguments "{opening_bracket_name}" and '
+                         f'"{closing_bracket_name}" must have length 1')
+
+    if opening_bracket == closing_bracket:
+        raise ValueError(f'Arguments "{opening_bracket_name}" and '
+                         f'"{closing_bracket_name}" must be different '
+                         'characters')
+
+    return True
+
+
 def contains_all_matched_brackets(value: str, opening_bracket: str = '(',
                                   closing_bracket: str = ')'):
     """Checks whether all opening brackets in a string have a
@@ -29,19 +85,10 @@ def contains_all_matched_brackets(value: str, opening_bracket: str = '(',
         the string, and ``False`` otherwise
     """
     # Validate inputs
-    if not (isinstance(value, str)
-            and isinstance(opening_bracket, str)
-            and isinstance(closing_bracket, str)):
-        raise TypeError(
-            'Arguments "opening" and "closing" must be of type "str"')
+    if not (isinstance(value, str)):
+        raise TypeError('Argument "value" must be of type "str"')
 
-    if (len(opening_bracket) != 1) or (len(closing_bracket) != 1):
-        raise ValueError(
-            'Arguments "opening" and "closing" must have length 1')
-
-    if opening_bracket == closing_bracket:
-        raise ValueError(
-            'Arguments "opening" and "closing" must be different characters')
+    _check_valid_brackets(opening_bracket, closing_bracket)
 
     # Parse string, checking for matched brackets
     counter = 0
