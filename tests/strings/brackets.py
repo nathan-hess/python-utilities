@@ -59,11 +59,10 @@ class Test_CheckContainsMatchedBrackets(unittest.TestCase):
             ('{', '}'),
         ]
 
-    def __test_product(self, assert_func,
-                       test_strings: List[str], test_brackets: List[str]):
+    def __test_product(self, assert_func, test_strings: List[str]):
         # Runs and tests `contains_all_matched_brackets()` for every possible
-        # combination of `test_strings` and `test_brackets`
-        for string, brackets in itertools.product(test_strings, test_brackets):
+        # combination of `test_strings` and `self.test_brackets`
+        for string, brackets in itertools.product(test_strings, self.test_brackets):
             with self.subTest(value=string, open=brackets[0], close=brackets[1]):
                 opening_bracket=brackets[0]
                 closing_bracket=brackets[1]
@@ -84,7 +83,7 @@ class Test_CheckContainsMatchedBrackets(unittest.TestCase):
             '(      )',
         ]
 
-        self.__test_product(self.assertTrue, test_strings, self.test_brackets)
+        self.__test_product(self.assertTrue, test_strings)
 
     def test_unmatched_count(self):
         # Verifies that strings with differing numbers of opening and closing
@@ -94,7 +93,7 @@ class Test_CheckContainsMatchedBrackets(unittest.TestCase):
             '((  (()',
         ]
 
-        self.__test_product(self.assertFalse, test_strings, self.test_brackets)
+        self.__test_product(self.assertFalse, test_strings)
 
     def test_unmatched_order(self):
         # Verifies that strings with equal numbers of opening and closing
@@ -107,7 +106,7 @@ class Test_CheckContainsMatchedBrackets(unittest.TestCase):
             ')(',
         ]
 
-        self.__test_product(self.assertFalse, test_strings, self.test_brackets)
+        self.__test_product(self.assertFalse, test_strings)
 
     def test_inputs_not_string(self):
         # Verifies that an error is thrown if attempting to call
