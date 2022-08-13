@@ -1,8 +1,8 @@
 .. include:: ./constants.rst
 
 
-PyXX Documentation
-==================
+|PackageNameStylized| Documentation
+===================================
 
 **Collection of Useful Python Utilities**
 

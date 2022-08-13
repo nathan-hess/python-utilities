@@ -65,7 +65,7 @@ html_favicon = '_static/favicon.ico'
 html_title = f'{project} v{release}'
 html_last_updated_fmt = '%b %d, %Y'
 html_permalinks = False
-html_show_sourcelink = True
+html_show_sourcelink = False
 html_show_sphinx = False
 
 # Pages to exclude from table of contents and navigation bar
