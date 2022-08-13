@@ -44,6 +44,7 @@ it can be useful to parse strings containing brackets and identify pairs of
     :toctree: ./api
 
     contains_all_matched_brackets
+    find_matching_bracket
 
 
 Splitting Strings

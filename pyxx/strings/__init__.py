@@ -10,5 +10,6 @@ checking string content.
 from .content import str_excludes_chars
 from .brackets import (
     contains_all_matched_brackets,
+    find_matching_bracket,
 )
 from .split import split_at_index
