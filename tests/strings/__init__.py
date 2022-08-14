@@ -1,3 +1,3 @@
-from .brackets import *
-from .content import *
-from .split import *
+from .test_brackets import *
+from .test_content import *
+from .test_split import *
