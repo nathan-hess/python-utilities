@@ -5,6 +5,7 @@
 
 import datetime
 import pathlib
+import shutil
 import sys
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
@@ -26,7 +27,14 @@ url = 'https://github.com/nathan-hess/python-utilities'
 
 # Add any Sphinx extension module names here, as strings
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.napoleon',
     'sphinxcontrib.spelling',
+    'sphinx_copybutton',
+    'sphinx_design',
+    'sphinx_remove_toctrees',
+    'matplotlib.sphinxext.plot_directive',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -57,13 +65,18 @@ html_favicon = '_static/favicon.ico'
 html_title = f'{project} v{release}'
 html_last_updated_fmt = '%b %d, %Y'
 html_permalinks = False
-html_show_sourcelink = True
+html_show_sourcelink = False
 html_show_sphinx = False
+
+# Pages to exclude from table of contents and navigation bar
+remove_from_toctrees = [
+    'api_reference/concepts/*',
+]
 
 # Theme-specific HTML options
 html_theme_options = {
     'extra_navbar': '',
-    'home_page_in_toc': True,
+    'home_page_in_toc': False,
     'navigation_with_keys': False,
     'repository_url': url,
     'search_bar_text': 'Search site...',
@@ -90,3 +103,34 @@ tokenizer_lang = 'en_US'
 spelling_word_list_filename = [
     'spelling_wordlist.txt',
 ]
+
+
+# -- Sphinx `autodoc` extension options --------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+
+# Clean up auto-generated API reference files before building documentation
+shutil.rmtree(
+    pathlib.Path(__file__).resolve().parent / 'api_reference' / 'api',
+    ignore_errors=True)
+
+# Default content when documenting classes
+autoclass_content = 'class'
+
+# Default `autodoc` options
+autodoc_default_options = {
+    'members': True,
+    'undoc-members': True,
+    'private-members': True,
+    'special-members': '__init__',
+    'inherited-members': False,
+    'member-order': 'bysource',
+    'show-inheritance': True,
+}
+
+
+# -- Matplotlib plotting extension options -----------------------------------
+# https://matplotlib.org/stable/api/sphinxext_plot_directive_api.html
+
+# Source and download links to show with plots
+plot_html_show_source_link = False
+plot_html_show_formats = False

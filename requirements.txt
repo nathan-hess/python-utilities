@@ -1,7 +1,12 @@
 bandit
 flake8
+matplotlib
 mypy
+numpy
 pylint
 Sphinx
+sphinx_design
 sphinx-book-theme
+sphinx-copybutton
+sphinx-remove-toctrees
 sphinxcontrib-spelling

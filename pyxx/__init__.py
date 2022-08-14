@@ -1,8 +1,10 @@
 """Package providing useful Python utilities and tools"""
 
+from . import strings
+
 
 # PROGRAM VERSION ------------------------------------------------------------
-_VERSION_MAJOR = 0
+_VERSION_MAJOR = 1
 _VERSION_MINOR = 0
 _VERSION_PATCH = 0
 
