@@ -41,3 +41,9 @@ variable:
         .. code-block:: powershell
 
             set PYTHONPATH=%PYTHONPATH%;%CD%\python-utilities
+
+Finally, make sure to install required dependencies through pip:
+
+.. code-block:: shell
+
+    pip install -r python-utilities/requirements.txt
