@@ -5,10 +5,12 @@ from typing import List
 from pyxx.strings import (
     contains_all_matched_brackets,
     find_matching_bracket,
+    find_skip_brackets,
 )
 from pyxx.strings.brackets import _check_valid_brackets
 from pyxx.strings.exceptions import (
     NotABracketError,
+    UnmatchedBracketsError,
 )
 
 
@@ -67,14 +69,17 @@ class Test_CheckContainsMatchedBrackets(unittest.TestCase):
         # Runs and tests `contains_all_matched_brackets()` for every possible
         # combination of `test_strings` and `self.test_brackets`
         for string, brackets in itertools.product(test_strings, self.test_brackets):
-            with self.subTest(value=string, open=brackets[0], close=brackets[1]):
-                opening_bracket = brackets[0]
-                closing_bracket = brackets[1]
+            opening_bracket = brackets[0]
+            closing_bracket = brackets[1]
 
+            with self.subTest(value=string, open=opening_bracket,
+                              close=closing_bracket):
+                # Replace brackets in input string
                 test_string = string \
                     .replace('(', opening_bracket) \
                     .replace(')', closing_bracket)
 
+                # Run check
                 assert_func(contains_all_matched_brackets(
                     test_string, opening_bracket, closing_bracket))
 
@@ -132,11 +137,11 @@ class Test_FindMatchingBracket(unittest.TestCase):
         # Runs and tests `find_matching_bracket()` for every possible
         # combination of `test_cases` and `self.test_brackets`
         for case, brackets in itertools.product(test_cases, self.test_brackets):
-            with self.subTest(value=case['value'], begin=case['begin'],
-                              open=brackets[0], close=brackets[1]):
-                opening_bracket: str = brackets[0]
-                closing_bracket: str = brackets[1]
+            opening_bracket: str = brackets[0]
+            closing_bracket: str = brackets[1]
 
+            with self.subTest(value=case['value'], begin=case['begin'],
+                              open=opening_bracket, close=closing_bracket):
                 # Replace brackets in input string
                 test_string = case['value'] \
                     .replace('(', opening_bracket) \
@@ -202,3 +207,141 @@ class Test_FindMatchingBracket(unittest.TestCase):
 
         with self.assertRaises(NotABracketError):
             find_matching_bracket('( ( ) ', -1)
+
+
+class Test_FindSkipBrackets(unittest.TestCase):
+    def setUp(self):
+        self.test_brackets = [
+            ('(', ')'),
+            ('[', ']'),
+            ('{', '}'),
+        ]
+
+    def __test_product(self, test_cases: List[dict]):
+        # Runs and tests `find_skip_brackets()` for every possible
+        # combination of `test_cases` and `self.test_brackets`
+        for case, brackets in itertools.product(test_cases, self.test_brackets):
+            with self.subTest(value=case['value'], target=case['target_chars'],
+                    direction=case['direction'], begin=case['begin'],
+                    open=brackets[0], close=brackets[1]):
+                opening_bracket: str = brackets[0]
+                closing_bracket: str = brackets[1]
+
+                # Replace brackets in input string
+                test_string = case['value'] \
+                    .replace('(', opening_bracket) \
+                    .replace(')', closing_bracket)
+
+                # Run check
+                self.assertEqual(
+                    find_skip_brackets(test_string, case['target_chars'],
+                        case['begin'], case['direction'],
+                        opening_bracket, closing_bracket),
+                    case['ground_truth'])
+
+    def test_invalid_direction(self):
+        # Verifies that an error is thrown if "direction" argument is not valid
+        with self.assertRaises(ValueError):
+            find_skip_brackets('abcd', 'd', 0, 'invalid_direction')
+
+    def test_invalid_search_string(self):
+        # Verifies that an error is thrown if "value" argument is not a string
+        with self.assertRaises(TypeError):
+            find_skip_brackets(100, 'd', 0, 'invalid_direction')
+
+    def test_invalid_begin_index(self):
+        # Verifies that an error is thrown if "begin" argument is not a valid
+        # index within the length of the string
+        with self.assertRaises(IndexError):
+            find_skip_brackets('abcd', 'd', -5)
+
+        with self.assertRaises(IndexError):
+            find_skip_brackets('abcd', 'd', 4)
+
+    def test_invalid_unmatched_brackets(self):
+        # Verifies that an error is thrown if "value" argument has
+        # unmatched brackets
+        with self.assertRaises(UnmatchedBracketsError):
+            find_skip_brackets('abc(d(ef)ghi', 'i', 2)
+
+        with self.assertRaises(UnmatchedBracketsError):
+            find_skip_brackets('abc(d(ef)ghi', 'i', 4)
+
+    def test_no_brackets(self):
+        # Verifies that correct index is found in strings with no brackets
+        test_cases = [
+            {'value': 'abcdef1a234a5',  'target_chars': 'a',         'begin': 0,  'direction': 'forward',  'ground_truth': 0},
+            {'value': 'abcdef1a234a5',  'target_chars': 'a',         'begin': 1,  'direction': 'forward',  'ground_truth': 7},
+            {'value': 'abcdef1a234a5',  'target_chars': 'acf',       'begin': 1,  'direction': 'forward',  'ground_truth': 2},
+            {'value': 'abcdef1a234a5',  'target_chars': 'g',         'begin': 0,  'direction': 'forward',  'ground_truth': -1},
+            {'value': 'abcdef1a234a5',  'target_chars': 'f',         'begin': 7,  'direction': 'forward',  'ground_truth': -1},
+            {'value': 'abcdef1a234a5',  'target_chars': ('a',),      'begin': 0,  'direction': 'forward',  'ground_truth': 0},
+            {'value': 'abcdef1a234a5',  'target_chars': ('a', 'c'),  'begin': 1,  'direction': 'forward',  'ground_truth': 2},
+            {'value': 'abcdef1a234a5',  'target_chars': ('g', 'h'),  'begin': 1,  'direction': 'forward',  'ground_truth': -1},
+                                                                                                                         
+            {'value': 'abcdef1a234a5',  'target_chars': 'a',         'begin': 4,   'direction': 'reverse',  'ground_truth': 0},
+            {'value': 'abcdef1a234a5',  'target_chars': 'a',         'begin': -2,  'direction': 'reverse',  'ground_truth': 11},
+            {'value': 'abcdef1a234a5',  'target_chars': 'acf',       'begin': 6,   'direction': 'reverse',  'ground_truth': 5},
+            {'value': 'abcdef1a234a5',  'target_chars': 'g',         'begin': -1,  'direction': 'reverse',  'ground_truth': -1},
+            {'value': 'abcdef1a234a5',  'target_chars': 'f',         'begin': 4,   'direction': 'reverse',  'ground_truth': -1},
+            {'value': 'abcdef1a234a5',  'target_chars': ('a',),      'begin': 4,   'direction': 'reverse',  'ground_truth': 0},
+            {'value': 'abcdef1a234a5',  'target_chars': ('a', 'c'),  'begin': 5,   'direction': 'reverse',  'ground_truth': 2},
+            {'value': 'abcdef1a234a5',  'target_chars': ('g', 'h'),  'begin': 5,   'direction': 'reverse',  'ground_truth': -1},
+        ]
+
+        self.__test_product(test_cases)
+
+    def test_begin_outside_brackets(self):
+        # Verifies that correct index is found in strings with brackets, beginning
+        # the search outside the brackets
+        test_cases = [
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': 'a',         'begin': 0,   'direction': 'forward',  'ground_truth': 0},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': 'a',         'begin': 1,   'direction': 'forward',  'ground_truth': 19},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': 'a1',        'begin': 1,   'direction': 'forward',  'ground_truth': 18},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': 'c',         'begin': 16,  'direction': 'forward',  'ground_truth': -1},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': 'a5',        'begin': -3,  'direction': 'forward',  'ground_truth': 21},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': ('a',),      'begin': 1,   'direction': 'forward',  'ground_truth': 19},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': ('a', '1'),  'begin': 1,   'direction': 'forward',  'ground_truth': 18},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': ('c',),      'begin': 16,  'direction': 'forward',  'ground_truth': -1},
+
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': 'b',         'begin': 1,   'direction': 'reverse',  'ground_truth': 1},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': 'b',         'begin': 19,  'direction': 'reverse',  'ground_truth': 1},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': 'bc',        'begin': 19,  'direction': 'reverse',  'ground_truth': 2},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': '5',         'begin': 19,  'direction': 'reverse',  'ground_truth': -1},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': ('b',),      'begin': 19,  'direction': 'reverse',  'ground_truth': 1},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': ('b', 'c'),  'begin': 19,  'direction': 'reverse',  'ground_truth': 2},
+            {'value': 'abc (deabfef(e)f) 1a2a5',  'target_chars': ('5',),      'begin': 19,  'direction': 'reverse',  'ground_truth': -1},
+        ]
+
+        self.__test_product(test_cases)
+
+    def test_begin_inside_brackets(self):
+        # Verifies that correct index is found in strings with brackets, beginning
+        # the search inside the brackets
+        test_cases = [
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'a',         'begin': 5,    'direction': 'forward',  'ground_truth': 7},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'b',         'begin': 9,    'direction': 'forward',  'ground_truth': 17},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'e',         'begin': 11,   'direction': 'forward',  'ground_truth': 18},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'be',        'begin': 11,   'direction': 'forward',  'ground_truth': 17},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'q',         'begin': 6,    'direction': 'forward',  'ground_truth': -1},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'qv',        'begin': 12,   'direction': 'forward',  'ground_truth': -1},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'qv',        'begin': 13,   'direction': 'forward',  'ground_truth': 14},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'bqv',       'begin': -16,  'direction': 'forward',  'ground_truth': 17},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('e',),      'begin': 11,   'direction': 'forward',  'ground_truth': 18},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('b', 'e'),  'begin': 11,   'direction': 'forward',  'ground_truth': 17},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('q',),      'begin': 6,    'direction': 'forward',  'ground_truth': -1},
+        
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'b',         'begin': 18,  'direction': 'reverse',  'ground_truth': 17},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'b',         'begin': 16,  'direction': 'reverse',  'ground_truth': 8},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'e',         'begin': 17,  'direction': 'reverse',  'ground_truth': 10},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'cd',        'begin': 17,  'direction': 'reverse',  'ground_truth': 5},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'q',         'begin': 17,  'direction': 'reverse',  'ground_truth': -1},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'qv',        'begin': 17,  'direction': 'reverse',  'ground_truth': -1},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'ev',        'begin': 14,  'direction': 'reverse',  'ground_truth': 13},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'ade',       'begin': -9,  'direction': 'reverse',  'ground_truth': 10},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('e',),      'begin': 17,  'direction': 'reverse',  'ground_truth': 10},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('c', 'd'),  'begin': 17,  'direction': 'reverse',  'ground_truth': 5},
+            {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('q',),      'begin': 17,  'direction': 'reverse',  'ground_truth': -1},
+        ]
+
+        self.__test_product(test_cases)

@@ -6,8 +6,11 @@ a corresponding closing bracket, in the correct order), among other
 capabilities.
 """
 
+from typing import Union
+
 from .exceptions import (
     NotABracketError,
+    UnmatchedBracketsError,
 )
 
 
@@ -178,5 +181,103 @@ def find_matching_bracket(value: str, begin: int, opening_bracket: str = '(',
         # bracket has been found
         if counter == 0:
             return i
+
+    return -1
+
+
+def find_skip_brackets(value: str, target_chars: Union[str, tuple],
+                       begin: int, direction: str = 'forward',
+                       opening_bracket: str = '(', closing_bracket: str = ')'):
+    """Finds the index of a target character, skipping over matched brackets
+
+    This function is useful for finding the index of a particular character
+    in a string, ignoring content inside of matched brackets.  It begins
+    at a given index in a string and searches until any of a given set of
+    target character(s) are found.  If an opening or closing bracket is
+    reached, the function skips to the corresponding matched bracket before
+    resuming the search (i.e., content inside of matched brackets is not
+    searched).
+
+    Parameters
+    ----------
+    value : str
+        String to search
+    target_chars : str or tuple
+        A string or tuple with one or more characters to search for
+    begin : int
+        Index in ``value`` at which to begin searching
+    direction : str, optional
+        Whether to search ``value`` in order of increasing or decreasing
+        index.  Can be either ``'forward'`` or ``'reverse'`` (default
+        is ``'forward'``)
+    opening_bracket : str, optional
+        Character representing opening bracket (default is ``'('``)
+    closing_bracket : str, optional
+        Character representing closing bracket (default is ``')'``)
+
+    Returns
+    -------
+    int
+        The index of the first occurrence of any characters in ``target_chars``
+        found in ``value``, beginning the search at index ``begin`` and
+        searching in the direction specified by ``direction`` and ignoring
+        content inside of matched brackets.  If none of ``target_chars``
+        are found, ``-1`` is returned
+
+    Notes
+    -----
+    When searching, the function will not "enter" matched brackets; however,
+    if the index specified by ``begin`` is inside a set of brackets, the
+    function will search inside of these brackets and can "leave" these
+    brackets and search in parts of the string outside these brackets
+    """
+    # Verify that "value" argument is a string
+    if not isinstance(value, str):
+        raise TypeError('Argument "value" must be of type "str"')
+
+    # Verify that "begin" is a valid index for the given string
+    if not (-len(value) <= begin <= len(value) - 1):
+        raise IndexError(
+            f'Index {begin} at which to begin search is not valid for '
+            f'string "{value}" (length {len(value)})')
+
+    # Adjust if user provides an index relative to the end of the string
+    i = begin + len(value) if begin < 0 else begin
+
+    # Set increment by which to advance to next character when
+    # searching string
+    if direction not in ('forward', 'reverse'):
+        raise ValueError('Argument "direction" must be one of: '
+                         '"forward" or "reverse"')
+
+    k = 1 if direction == 'forward' else -1
+
+    # Verify that "value" argument doesn't have unmatched brackets
+    if not contains_all_matched_brackets(value, opening_bracket,
+                                         closing_bracket):
+        raise UnmatchedBracketsError(
+            'Argument "value" contains unmatched brackets')
+
+    while 0 <= i < len(value):
+        # Check whether target character has been found
+        if value[i] in target_chars:
+            return i
+
+        # Check whether an opening or closing bracket has been
+        # found; if so, move to the end of the matched pair
+        if any(((direction == 'forward' and value[i] == opening_bracket),
+                (direction == 'reverse' and value[i] == closing_bracket))):
+
+            if (i := find_matching_bracket(
+                    value, i, opening_bracket, closing_bracket)) == -1:
+
+                # This error should never be thrown since the string was
+                # previously check for matching brackets; however, it's
+                # included as an added precaution
+                raise UnmatchedBracketsError(
+                    f'Unmatched brackets found in string "{value}"')
+
+        # Advance to next character in string
+        i += k
 
     return -1

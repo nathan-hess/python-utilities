@@ -45,6 +45,7 @@ it can be useful to parse strings containing brackets and identify pairs of
 
     contains_all_matched_brackets
     find_matching_bracket
+    find_skip_brackets
 
 
 Splitting Strings
