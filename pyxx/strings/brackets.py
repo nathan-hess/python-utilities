@@ -155,7 +155,7 @@ def find_matching_bracket(value: str, begin: int, opening_bracket: str = '(',
         begin += len(value)
 
     # Define search direction and ending index depending on whether the
-    # `begin` index specifies and opening or closing parenthesis
+    # `begin` index specifies an opening or closing bracket
     begin_char = value[begin]
 
     if begin_char == opening_bracket:
@@ -281,3 +281,69 @@ def find_skip_brackets(value: str, target_chars: Union[str, tuple],
         i += k
 
     return -1
+
+
+def strip_matched_brackets(value: str, max_pairs: int = -1, strip: bool = True,
+                           return_num_pairs_removed: bool = False,
+                           opening_bracket: str = '(', closing_bracket: str = ')'):
+    """Remove matched leading/trailing brackets from strings
+
+    Removes matched brackets from a string (i.e., if a string begins with
+    ``opening_bracket`` and the corresponding closing bracket
+    ``closing_bracket`` is the last character in the string, the brackets
+    are removed), as well as (optionally) any leading and/or trailing
+    whitespace.
+
+    Parameters
+    ----------
+    value : str
+        String from which to remove matched brackets and leading/trailing
+        whitespace (if ``strip`` is ``True``)
+    max_pairs : int, optional
+        Maximum pairs of matched brackets to remove.  Set to ``-1`` to
+        remove an unlimited number of matched brackets (default is ``-1``)
+    strip : bool, optional
+        Whether to remove leading and/or trailing whitespace when processing
+        ``value`` (default is ``True``)
+    return_num_pairs_removed : bool, optional
+        Whether to return the number of pairs of brackets that were removed
+        (default is ``False``)
+
+    Returns
+    -------
+    str
+        Input string ``value`` with matched brackets removed
+    int
+        The number of pairs of matched brackets that were removed (returned
+        if and only if ``return_num_pairs_removed`` is ``True``)
+
+    Notes
+    -----
+    If ``strip`` is set to ``False``, then matched brackets are removed if and
+    only if the first character in ``value`` is ``opening_bracket`` and the
+    last character is ``closing_bracket`` and they form a matching pair
+    """
+    value = value.strip() if strip else value
+
+    num_removed = 0
+    while (value.startswith(opening_bracket) and value.endswith(closing_bracket)):
+        # If the maximum number of pairs of brackets have been
+        # removed, exit the loop
+        if num_removed >= max_pairs >= 0:
+            break
+
+        # Only remove leading and trailing brackets if they form
+        # a matching pair
+        if find_matching_bracket(value, -1,
+                                 opening_bracket=opening_bracket,
+                                 closing_bracket=closing_bracket) == 0:
+            value = value[1:-1].strip() if strip else value[1:-1]
+            num_removed += 1
+        else:
+            break
+
+    # Output results
+    if not return_num_pairs_removed:
+        return value
+
+    return value, num_removed

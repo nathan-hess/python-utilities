@@ -6,6 +6,7 @@ from pyxx.strings import (
     contains_all_matched_brackets,
     find_matching_bracket,
     find_skip_brackets,
+    strip_matched_brackets,
 )
 from pyxx.strings.brackets import _check_valid_brackets
 from pyxx.strings.exceptions import (
@@ -72,14 +73,13 @@ class Test_CheckContainsMatchedBrackets(unittest.TestCase):
             opening_bracket = brackets[0]
             closing_bracket = brackets[1]
 
-            with self.subTest(value=string, open=opening_bracket,
-                              close=closing_bracket):
-                # Replace brackets in input string
-                test_string = string \
-                    .replace('(', opening_bracket) \
-                    .replace(')', closing_bracket)
+            # Replace brackets in input string
+            test_string = string \
+                .replace('(', opening_bracket) \
+                .replace(')', closing_bracket)
 
-                # Run check
+            with self.subTest(value=test_string, open=opening_bracket,
+                              close=closing_bracket):
                 assert_func(contains_all_matched_brackets(
                     test_string, opening_bracket, closing_bracket))
 
@@ -140,14 +140,13 @@ class Test_FindMatchingBracket(unittest.TestCase):
             opening_bracket: str = brackets[0]
             closing_bracket: str = brackets[1]
 
-            with self.subTest(value=case['value'], begin=case['begin'],
-                              open=opening_bracket, close=closing_bracket):
-                # Replace brackets in input string
-                test_string = case['value'] \
-                    .replace('(', opening_bracket) \
-                    .replace(')', closing_bracket)
+            # Replace brackets in input string
+            test_string = case['value'] \
+                .replace('(', opening_bracket) \
+                .replace(')', closing_bracket)
 
-                # Run check
+            with self.subTest(value=test_string, begin=case['begin'],
+                              open=opening_bracket, close=closing_bracket):
                 self.assertEqual(
                     find_matching_bracket(test_string, case['begin'],
                                           opening_bracket, closing_bracket),
@@ -221,18 +220,17 @@ class Test_FindSkipBrackets(unittest.TestCase):
         # Runs and tests `find_skip_brackets()` for every possible
         # combination of `test_cases` and `self.test_brackets`
         for case, brackets in itertools.product(test_cases, self.test_brackets):
-            with self.subTest(value=case['value'], target=case['target_chars'],
+            opening_bracket: str = brackets[0]
+            closing_bracket: str = brackets[1]
+
+            # Replace brackets in input string
+            test_string = case['value'] \
+                .replace('(', opening_bracket) \
+                .replace(')', closing_bracket)
+
+            with self.subTest(value=test_string, target=case['target_chars'],
                     direction=case['direction'], begin=case['begin'],
-                    open=brackets[0], close=brackets[1]):
-                opening_bracket: str = brackets[0]
-                closing_bracket: str = brackets[1]
-
-                # Replace brackets in input string
-                test_string = case['value'] \
-                    .replace('(', opening_bracket) \
-                    .replace(')', closing_bracket)
-
-                # Run check
+                    open=opening_bracket, close=closing_bracket):
                 self.assertEqual(
                     find_skip_brackets(test_string, case['target_chars'],
                         case['begin'], case['direction'],
@@ -278,7 +276,7 @@ class Test_FindSkipBrackets(unittest.TestCase):
             {'value': 'abcdef1a234a5',  'target_chars': ('a',),      'begin': 0,  'direction': 'forward',  'ground_truth': 0},
             {'value': 'abcdef1a234a5',  'target_chars': ('a', 'c'),  'begin': 1,  'direction': 'forward',  'ground_truth': 2},
             {'value': 'abcdef1a234a5',  'target_chars': ('g', 'h'),  'begin': 1,  'direction': 'forward',  'ground_truth': -1},
-                                                                                                                         
+
             {'value': 'abcdef1a234a5',  'target_chars': 'a',         'begin': 4,   'direction': 'reverse',  'ground_truth': 0},
             {'value': 'abcdef1a234a5',  'target_chars': 'a',         'begin': -2,  'direction': 'reverse',  'ground_truth': 11},
             {'value': 'abcdef1a234a5',  'target_chars': 'acf',       'begin': 6,   'direction': 'reverse',  'ground_truth': 5},
@@ -330,7 +328,7 @@ class Test_FindSkipBrackets(unittest.TestCase):
             {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('e',),      'begin': 11,   'direction': 'forward',  'ground_truth': 18},
             {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('b', 'e'),  'begin': 11,   'direction': 'forward',  'ground_truth': 17},
             {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': ('q',),      'begin': 6,    'direction': 'forward',  'ground_truth': -1},
-        
+
             {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'b',         'begin': 18,  'direction': 'reverse',  'ground_truth': 17},
             {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'b',         'begin': 16,  'direction': 'reverse',  'ground_truth': 8},
             {'value': 'abc (deabfef(eq)fbe) 1a2a5',  'target_chars': 'e',         'begin': 17,  'direction': 'reverse',  'ground_truth': 10},
@@ -345,3 +343,103 @@ class Test_FindSkipBrackets(unittest.TestCase):
         ]
 
         self.__test_product(test_cases)
+
+
+class Test_StripBrackets(unittest.TestCase):
+    def setUp(self):
+        self.test_brackets = [
+            ('(', ')'),
+            ('[', ']'),
+            ('{', '}'),
+        ]
+
+    def __test_product(self, assert_func, test_cases: List[dict]):
+        # Runs and tests `strip_matched_brackets()` for every possible
+        # combination of `test_cases` and `self.test_brackets`
+        for case, brackets in itertools.product(test_cases, self.test_brackets):
+            opening_bracket: str = brackets[0]
+            closing_bracket: str = brackets[1]
+
+            # Replace brackets in input and ground truth strings
+            test_string = case['value'] \
+                .replace('(', opening_bracket) \
+                .replace(')', closing_bracket)
+
+            if isinstance(case['ground_truth'], str):
+                ground_truth = case['ground_truth'] \
+                    .replace('(', opening_bracket) \
+                    .replace(')', closing_bracket)
+            else:
+                ground_truth = (
+                    case['ground_truth'][0] \
+                        .replace('(', opening_bracket) \
+                        .replace(')', closing_bracket),
+                    case['ground_truth'][1]
+                )
+
+            # Run check
+            with self.subTest(value=test_string,
+                              open=opening_bracket, close=closing_bracket):
+                assert_func(
+                    strip_matched_brackets(
+                        test_string, **case['kwargs'],
+                        opening_bracket=opening_bracket,
+                        closing_bracket=closing_bracket),
+                    ground_truth)
+
+    def test_remove_brackets(self):
+        # Tests general cases of removing brackets
+        test_cases = [
+            {'value': 'text with no parentheses',  'kwargs': {},  'ground_truth': 'text with no parentheses'},
+            {'value': 'text()',                    'kwargs': {},  'ground_truth': 'text()'},
+            {'value': '( text)  )',                'kwargs': {},  'ground_truth': '( text)  )'},
+            {'value': '( (text)  )',               'kwargs': {},  'ground_truth': 'text'},
+            {'value': '( (((() text)  ))))',       'kwargs': {},  'ground_truth': '( (((() text)  ))))'},
+            {'value': '( ((() text)  ))) ( )) ',   'kwargs': {},  'ground_truth': '( ((() text)  ))) ( ))'},
+        ]
+
+        self.__test_product(self.assertEqual, test_cases)
+
+    def test_no_strip(self):
+        # Tests removal of parentheses without stripping
+        # leading/trailing whitespace
+        test_cases = [
+            {'value': 'text with no parentheses',  'kwargs': {'strip': False},  'ground_truth': 'text with no parentheses'},
+            {'value': 'text()',                    'kwargs': {'strip': False},  'ground_truth': 'text()'},
+            {'value': '( text)  )',                'kwargs': {'strip': False},  'ground_truth': '( text)  )'},
+            {'value': '( (text)  )',               'kwargs': {'strip': False},  'ground_truth': ' (text)  '},
+            {'value': '( (((() text)  ))))',       'kwargs': {'strip': False},  'ground_truth': '( (((() text)  ))))'},
+            {'value': '( ((() text)  ))) ( )) ',   'kwargs': {'strip': False},  'ground_truth': '( ((() text)  ))) ( )) '},
+        ]
+
+        self.__test_product(self.assertEqual, test_cases)
+
+    def test_max_pairs(self):
+        # Verifies that a given maximum number of pairs of parentheses
+        # are removed
+        test_cases = [
+            {'value': 'text with no parentheses',  'kwargs': {'max_pairs': 2},  'ground_truth': 'text with no parentheses'},
+            {'value': 'text()',                    'kwargs': {'max_pairs': 5},  'ground_truth': 'text()'},
+            {'value': '( text)  )',                'kwargs': {'max_pairs': 1},  'ground_truth': '( text)  )'},
+            {'value': '( (text)  )',               'kwargs': {'max_pairs': 1},  'ground_truth': '(text)'},
+            {'value': '( (((() text)  ))))',       'kwargs': {'max_pairs': 3},  'ground_truth': '( (((() text)  ))))'},
+            {'value': '( ((() text)  ))) ( )) ',   'kwargs': {'max_pairs': 1},  'ground_truth': '( ((() text)  ))) ( ))'},
+        ]
+
+        self.__test_product(self.assertEqual, test_cases)
+
+    def test_return_pairs(self):
+        # Verifies that the number of parentheses removed is returned correctly
+        test_cases = [
+            {'value': 'text with no parentheses',  'kwargs': {                'return_num_pairs_removed': True},  'ground_truth': ('text with no parentheses', 0)},
+            {'value': 'text()',                    'kwargs': {                'return_num_pairs_removed': True},  'ground_truth': ('text()', 0)},
+            {'value': '( text)  )',                'kwargs': {                'return_num_pairs_removed': True},  'ground_truth': ('( text)  )', 0)},
+            {'value': '( (text)  )',               'kwargs': {                'return_num_pairs_removed': True},  'ground_truth': ('text', 2)},
+            {'value': '( (((() text)  ))))',       'kwargs': {                'return_num_pairs_removed': True},  'ground_truth': ('( (((() text)  ))))', 0)},
+            {'value': '( ((() text)  ))) ( )) ',   'kwargs': {                'return_num_pairs_removed': True},  'ground_truth': ('( ((() text)  ))) ( ))', 0)},
+            {'value': '( (((() text)  ()() )))',   'kwargs': {                'return_num_pairs_removed': True},  'ground_truth': ('(() text)  ()()', 3)},
+            {'value': '( (((() text)  ))))',       'kwargs': {'max_pairs': 3, 'return_num_pairs_removed': True},  'ground_truth': ('( (((() text)  ))))', 0)},
+            {'value': '( (((() text)  ()() )))',   'kwargs': {'max_pairs': 2, 'return_num_pairs_removed': True},  'ground_truth': ('((() text)  ()() )', 2)},
+        ]
+
+        self.__test_product(self.assertTupleEqual, test_cases)
