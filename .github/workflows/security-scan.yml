@@ -12,6 +12,7 @@ on:
 
 jobs:
   setup:
+    name: Workflow Setup
     uses: ./.github/workflows/reusable-get-python-version-matrix.yml
 
   bandit:
@@ -32,3 +33,17 @@ jobs:
 
       - name: Run Security Analysis Scan
         run: bandit -rv "${{ env.PACKAGE_NAME }}"
+
+  bandit-success:
+    name: Determine Bandit Scan Success
+    needs: bandit
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  bandit-status-check:
+    name: Bandit Scan
+    needs: [bandit, bandit-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.bandit-success.outputs.success }}

@@ -33,6 +33,21 @@ jobs:
       - name: Run Linting with Pylint
         run: pylint "${{ env.PACKAGE_NAME }}"
 
+  pylint-success:
+    name: Determine Pylint Linting Success
+    needs: pylint
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  pylint-status-check:
+    name: Pylint Linting
+    needs: [pylint, pylint-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.pylint-success.outputs.success }}
+
+
   flake8:
     name: Flake8 Linting (Python ${{ matrix.python-version }})
     needs: setup
@@ -52,6 +67,21 @@ jobs:
       - name: Run Linting with Flake8
         run: flake8 --count "${{ env.PACKAGE_NAME }}"
 
+  flake8-success:
+    name: Determine Flake8 Linting Success
+    needs: flake8
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  flake8-status-check:
+    name: Flake8 Linting
+    needs: [flake8, flake8-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.flake8-success.outputs.success }}
+
+
   mypy:
     name: Mypy Type Checks (Python ${{ matrix.python-version }})
     needs: setup
@@ -70,3 +100,17 @@ jobs:
 
       - name: Run Static Type Checking with Mypy
         run: mypy "${{ env.PACKAGE_NAME }}"
+
+  mypy-success:
+    name: Determine Mypy Linting Success
+    needs: mypy
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  mypy-status-check:
+    name: Mypy Linting
+    needs: [mypy, mypy-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.mypy-success.outputs.success }}

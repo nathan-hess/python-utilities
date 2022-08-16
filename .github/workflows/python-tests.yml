@@ -12,6 +12,7 @@ on:
 
 jobs:
   setup:
+    name: Workflow Setup
     uses: ./.github/workflows/reusable-get-python-version-matrix.yml
 
   test:
@@ -32,3 +33,17 @@ jobs:
 
       - name: Run Python Tests
         run: python3 run_tests.py
+
+  test-success:
+    name: Determine Python Test Success
+    needs: test
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  test-status-check:
+    name: Python Tests
+    needs: [test, test-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.test-success.outputs.success }}
