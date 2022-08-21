@@ -1,0 +1,229 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - '**'
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+
+env:
+  DOCS_PYTHON_VERSION: '3.8'
+
+jobs:
+
+  # SETUP
+  # This job sets up the workflow and provides data for
+  # subsequent jobs
+  setup:
+    name: Workflow Setup
+    uses: ./.github/workflows/_get_python_version_matrix.yml
+
+
+  # PYTHON TESTS
+  # These jobs run Python unit and integration tests
+  test:
+    name: Python Tests (Python ${{ matrix.python-version }})
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+          pip-requirements-file: requirements.txt
+
+      - name: Run Python Tests
+        run: python3 run_tests.py
+
+  test-success:
+    name: Determine Python Test Success
+    needs: test
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  test-status-check:
+    name: Python Tests
+    needs: [test, test-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.test-success.outputs.success }}
+
+
+  # LINTING
+  # These jobs run several Python code linters to enforce code
+  # style and reduce the risk of bugs
+  pylint:
+    name: Pylint Linting (Python ${{ matrix.python-version }})
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Linting with Pylint
+        run: pylint "${{ env.PACKAGE_NAME }}"
+
+  pylint-success:
+    name: Determine Pylint Linting Success
+    needs: pylint
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  pylint-status-check:
+    name: Pylint Linting
+    needs: [pylint, pylint-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.pylint-success.outputs.success }}
+
+
+  flake8:
+    name: Flake8 Linting (Python ${{ matrix.python-version }})
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Linting with Flake8
+        run: flake8 --count "${{ env.PACKAGE_NAME }}"
+
+  flake8-success:
+    name: Determine Flake8 Linting Success
+    needs: flake8
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  flake8-status-check:
+    name: Flake8 Linting
+    needs: [flake8, flake8-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.flake8-success.outputs.success }}
+
+
+  mypy:
+    name: Mypy Type Checks (Python ${{ matrix.python-version }})
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Static Type Checking with Mypy
+        run: mypy "${{ env.PACKAGE_NAME }}"
+
+  mypy-success:
+    name: Determine Mypy Linting Success
+    needs: mypy
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  mypy-status-check:
+    name: Mypy Linting
+    needs: [mypy, mypy-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.mypy-success.outputs.success }}
+
+
+  # SECURITY ANALYSIS
+  # These jobs run Bandit to check for security vulnerabilities
+  bandit:
+    name: Bandit Scan (Python ${{ matrix.python-version }})
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Security Analysis Scan
+        run: bandit -rv "${{ env.PACKAGE_NAME }}"
+
+  bandit-success:
+    name: Determine Bandit Scan Success
+    needs: bandit
+    if: ${{ success() }}
+    uses: ./.github/workflows/_matrix_output_success.yml
+
+  bandit-status-check:
+    name: Bandit Scan
+    needs: [bandit, bandit-success]
+    if: ${{ always() }}
+    uses: ./.github/workflows/_matrix_status_check.yml
+    with:
+      success: ${{ needs.bandit-success.outputs.success }}
+
+
+  # SPHINX DOCUMENTATION TESTS
+  # This job checks the project documentation for potential issues
+  doc-tests:
+    name: Documentation Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: ${{ env.DOCS_PYTHON_VERSION }}
+          pip-requirements-file: docs/requirements.txt
+
+      - name: Build Documentation
+        if: ${{ always() }}
+        run: |
+          cd $GITHUB_WORKSPACE/docs
+          SPHINXOPTS="-W" make html
+
+      - name: Run Spell-Checking
+        if: ${{ always() }}
+        run: |
+          cd $GITHUB_WORKSPACE/docs
+          SPHINXOPTS="-W" make spelling
