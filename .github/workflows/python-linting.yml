@@ -12,7 +12,7 @@ on:
 
 jobs:
   setup:
-    uses: ./.github/workflows/reusable-get-python-version-matrix.yml
+    uses: ./.github/workflows/_get_python_version_matrix.yml
 
   pylint:
     name: Pylint Linting (Python ${{ matrix.python-version }})

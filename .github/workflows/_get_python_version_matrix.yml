@@ -1,3 +1,10 @@
+# Get Python version matrix from workflow configuration file
+#
+# This reusable workflow extracts the version matrix stored in the
+# `PYTHON_VERSIONS` variable in `.github/workflows/workflow_config`
+# so that the same matrix can be reused in different jobs, reducing
+# duplicate code.
+
 name: Get Python Version Matrix
 
 on:
@@ -9,7 +16,7 @@ on:
 
 jobs:
   build:
-    name: Get Python Version Matrix from Workflow Configuration File
+    name: Get Python Version Matrix
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
