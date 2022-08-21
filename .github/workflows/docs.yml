@@ -22,6 +22,7 @@ jobs:
         uses: ./.github/workflows/composite-actions/setup
         with:
           python-version: '3.8'
+          pip-requirements-file: docs/requirements.txt
 
       - name: Build Documentation
         if: ${{ always() }}

@@ -30,6 +30,7 @@ jobs:
         uses: ./.github/workflows/composite-actions/setup
         with:
           python-version: ${{ matrix.python-version }}
+          pip-requirements-file: requirements.txt
 
       - name: Run Python Tests
         run: python3 run_tests.py

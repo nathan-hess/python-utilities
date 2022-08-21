@@ -5,6 +5,10 @@ inputs:
   python-version:
     description: Version of Python to set up
     required: true
+  pip-requirements-file:
+    description: Requirements file from which to install Python dependencies
+    required: false
+    default: .vscode/requirements.txt
 
 runs:
   using: composite
@@ -31,4 +35,4 @@ runs:
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install wheel
-        python3 -m pip install -r ${GITHUB_WORKSPACE}/.vscode/requirements.txt
+        python3 -m pip install -r "${GITHUB_WORKSPACE}/${{ inputs.pip-requirements-file }}"
