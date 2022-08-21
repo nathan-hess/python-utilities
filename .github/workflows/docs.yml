@@ -11,8 +11,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build Documentation
+  doc-tests:
+    name: Documentation Tests
     runs-on: ubuntu-latest
     steps:
       - name: Check Out Repository Files
@@ -24,23 +24,13 @@ jobs:
           python-version: '3.8'
 
       - name: Build Documentation
+        if: ${{ always() }}
         run: |
           cd $GITHUB_WORKSPACE/docs
           SPHINXOPTS="-W" make html
 
-  spelling:
-    name: Spell-Checking
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check Out Repository Files
-        uses: actions/checkout@v3
-
-      - name: Run Setup Action
-        uses: ./.github/workflows/composite-actions/setup
-        with:
-          python-version: '3.8'
-
       - name: Run Spell-Checking
+        if: ${{ always() }}
         run: |
           cd $GITHUB_WORKSPACE/docs
           SPHINXOPTS="-W" make spelling
