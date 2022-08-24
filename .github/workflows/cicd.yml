@@ -63,8 +63,8 @@ jobs:
   ## LINTING -----------------------------------------------------------------
   # Run several Python code linters to enforce code style and reduce
   # the risk of bugs
-  pylint:
-    name: Pylint Linting (Python ${{ matrix.python-version }})
+  linting:
+    name: Python Code Linting (Python ${{ matrix.python-version }})
     needs: setup
     runs-on: ubuntu-latest
     strategy:
@@ -80,89 +80,30 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run Linting with Pylint
+        if: ${{ always() }}
         run: pylint "${{ env.PACKAGE_NAME }}"
 
-  pylint-success:
-    name: Determine Pylint Linting Success
-    needs: pylint
-    if: ${{ success() }}
-    uses: ./.github/workflows/_matrix_output_success.yml
-
-  pylint-status-check:
-    name: Pylint Linting
-    needs: pylint-success
-    if: ${{ always() }}
-    uses: ./.github/workflows/_matrix_status_check.yml
-    with:
-      success: ${{ needs.pylint-success.outputs.success }}
-
-
-  flake8:
-    name: Flake8 Linting (Python ${{ matrix.python-version }})
-    needs: setup
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
-    steps:
-      - name: Check Out Repository Files
-        uses: actions/checkout@v3
-
-      - name: Run Setup Action
-        uses: ./.github/workflows/composite-actions/setup
-        with:
-          python-version: ${{ matrix.python-version }}
-
       - name: Run Linting with Flake8
+        if: ${{ always() }}
         run: flake8 --count "${{ env.PACKAGE_NAME }}"
 
-  flake8-success:
-    name: Determine Flake8 Linting Success
-    needs: flake8
-    if: ${{ success() }}
-    uses: ./.github/workflows/_matrix_output_success.yml
-
-  flake8-status-check:
-    name: Flake8 Linting
-    needs: flake8-success
-    if: ${{ always() }}
-    uses: ./.github/workflows/_matrix_status_check.yml
-    with:
-      success: ${{ needs.flake8-success.outputs.success }}
-
-
-  mypy:
-    name: Mypy Type Checks (Python ${{ matrix.python-version }})
-    needs: setup
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
-    steps:
-      - name: Check Out Repository Files
-        uses: actions/checkout@v3
-
-      - name: Run Setup Action
-        uses: ./.github/workflows/composite-actions/setup
-        with:
-          python-version: ${{ matrix.python-version }}
-
       - name: Run Static Type Checking with Mypy
+        if: ${{ always() }}
         run: mypy "${{ env.PACKAGE_NAME }}"
 
-  mypy-success:
-    name: Determine Mypy Linting Success
-    needs: mypy
+  linting-success:
+    name: Determine Python Code Linting Success
+    needs: linting
     if: ${{ success() }}
     uses: ./.github/workflows/_matrix_output_success.yml
 
-  mypy-status-check:
-    name: Mypy Linting
-    needs: mypy-success
+  linting-status-check:
+    name: Python Code Linting
+    needs: linting-success
     if: ${{ always() }}
     uses: ./.github/workflows/_matrix_status_check.yml
     with:
-      success: ${{ needs.mypy-success.outputs.success }}
+      success: ${{ needs.linting-success.outputs.success }}
 
 
   ## SECURITY ANALYSIS -------------------------------------------------------
