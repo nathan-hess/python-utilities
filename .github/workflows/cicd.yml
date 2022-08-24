@@ -11,20 +11,20 @@ on:
   workflow_dispatch:
 
 env:
-  DOCS_PYTHON_VERSION: '3.8'
+  PYTHON_RELEASE_VERSION: '3.8'
 
 jobs:
 
-  # SETUP
-  # This job sets up the workflow and provides data for
-  # subsequent jobs
+  ## SETUP -------------------------------------------------------------------
+  # Set up the workflow (load environment variables, install dependencies) and
+  # provide data (Python version matrix) for subsequent jobs
   setup:
     name: Workflow Setup
     uses: ./.github/workflows/_get_python_version_matrix.yml
 
 
-  # PYTHON TESTS
-  # These jobs run Python unit and integration tests
+  ## PYTHON TESTS ------------------------------------------------------------
+  # Run Python unit and integration tests
   test:
     name: Python Tests (Python ${{ matrix.python-version }})
     needs: setup
@@ -60,9 +60,9 @@ jobs:
       success: ${{ needs.test-success.outputs.success }}
 
 
-  # LINTING
-  # These jobs run several Python code linters to enforce code
-  # style and reduce the risk of bugs
+  ## LINTING -----------------------------------------------------------------
+  # Run several Python code linters to enforce code style and reduce
+  # the risk of bugs
   pylint:
     name: Pylint Linting (Python ${{ matrix.python-version }})
     needs: setup
@@ -165,8 +165,8 @@ jobs:
       success: ${{ needs.mypy-success.outputs.success }}
 
 
-  # SECURITY ANALYSIS
-  # These jobs run Bandit to check for security vulnerabilities
+  ## SECURITY ANALYSIS -------------------------------------------------------
+  # Run Bandit to check for security vulnerabilities
   bandit:
     name: Bandit Scan (Python ${{ matrix.python-version }})
     needs: setup
@@ -201,8 +201,8 @@ jobs:
       success: ${{ needs.bandit-success.outputs.success }}
 
 
-  # SPHINX DOCUMENTATION TESTS
-  # This job checks the project documentation for potential issues
+  ## SPHINX DOCUMENTATION TESTS ----------------------------------------------
+  # Checks the project documentation for build and spelling issues
   doc-tests:
     name: Documentation Tests
     runs-on: ubuntu-latest
@@ -213,7 +213,7 @@ jobs:
       - name: Run Setup Action
         uses: ./.github/workflows/composite-actions/setup
         with:
-          python-version: ${{ env.DOCS_PYTHON_VERSION }}
+          python-version: ${{ env.PYTHON_RELEASE_VERSION }}
           pip-requirements-file: docs/requirements.txt
 
       - name: Build Documentation
