@@ -61,8 +61,8 @@ jobs:
 
 
   ## LINTING -----------------------------------------------------------------
-  # Run several Python code linters to enforce code style and reduce
-  # the risk of bugs
+  # Run several Python code linters and scans to enforce code style, reduce
+  # the risk of bugs, and check for security vulnerabilities
   linting:
     name: Python Code Linting (Python ${{ matrix.python-version }})
     needs: setup
@@ -91,6 +91,10 @@ jobs:
         if: ${{ always() }}
         run: mypy "${{ env.PACKAGE_NAME }}"
 
+      - name: Run Security Analysis Scan
+        if: ${{ always() }}
+        run: bandit -rv "${{ env.PACKAGE_NAME }}"
+
   linting-success:
     name: Determine Python Code Linting Success
     needs: linting
@@ -104,42 +108,6 @@ jobs:
     uses: ./.github/workflows/_matrix_status_check.yml
     with:
       success: ${{ needs.linting-success.outputs.success }}
-
-
-  ## SECURITY ANALYSIS -------------------------------------------------------
-  # Run Bandit to check for security vulnerabilities
-  bandit:
-    name: Bandit Scan (Python ${{ matrix.python-version }})
-    needs: setup
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
-    steps:
-      - name: Check Out Repository Files
-        uses: actions/checkout@v3
-
-      - name: Run Setup Action
-        uses: ./.github/workflows/composite-actions/setup
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Run Security Analysis Scan
-        run: bandit -rv "${{ env.PACKAGE_NAME }}"
-
-  bandit-success:
-    name: Determine Bandit Scan Success
-    needs: bandit
-    if: ${{ success() }}
-    uses: ./.github/workflows/_matrix_output_success.yml
-
-  bandit-status-check:
-    name: Bandit Scan
-    needs: bandit-success
-    if: ${{ always() }}
-    uses: ./.github/workflows/_matrix_status_check.yml
-    with:
-      success: ${{ needs.bandit-success.outputs.success }}
 
 
   ## SPHINX DOCUMENTATION TESTS ----------------------------------------------

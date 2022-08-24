@@ -1,4 +1,4 @@
-"""Package providing useful Python utilities and tools"""
+"""Collection of useful Python utilities and tools"""
 
 from . import strings
 
