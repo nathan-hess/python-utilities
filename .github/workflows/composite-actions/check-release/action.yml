@@ -57,7 +57,7 @@ runs:
         old_version="$(git for-each-ref --sort=-creatordate --format='%(refname)' refs/tags | sed -n 2p | rev | cut -d "/" -f1 | rev)"
         new_version="${{ inputs.release-tag }}"
         if [[ "${old_version}" != "" ]]; then
-          python3 "$GITHUB_WORKSPACE/.github/workflows/composite-actions/check-release-number/check_version.py" \
+          python3 "$GITHUB_WORKSPACE/.github/workflows/composite-actions/check-release/check_version.py" \
             --old-version="${old_version}" \
             --new-version="${new_version}"
         else

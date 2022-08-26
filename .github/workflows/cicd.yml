@@ -174,7 +174,7 @@ jobs:
 
       - name: Check Release Number
         if: ${{ github.event_name == 'release' }}
-        uses: ./.github/workflows/composite-actions/check-release-number
+        uses: ./.github/workflows/composite-actions/check-release
         with:
           package-name: ${{ env.PACKAGE_NAME }}
           release-tag: ${{ github.ref_name }}

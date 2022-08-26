@@ -1,4 +1,4 @@
-"""Supporting functions for the GitHub Actions `check-release-number
+"""Supporting functions for the GitHub Actions `check-release`
 composite action
 
 The functions this file can be used to check whether a version increment
