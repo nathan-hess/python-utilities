@@ -18,7 +18,7 @@ jobs:
   # provide data (Python version matrix) for subsequent jobs
   setup:
     name: Workflow Setup
-    uses: ./.github/workflows/_get_python_version_matrix.yml
+    uses: ./.github/workflows/_get_matrix_config.yml
 
 
   ## PYTHON TESTS ------------------------------------------------------------

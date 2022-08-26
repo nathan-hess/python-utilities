@@ -1,22 +1,22 @@
-# Get Python version matrix from workflow configuration file
+# Get GitHub Actions job matrix from workflow configuration file
 #
-# This reusable workflow extracts the version matrix stored in the
-# `PYTHON_VERSIONS` variable in `.github/workflows/workflow_config`
+# This reusable workflow extracts the JSON matrix stored in the variable
+# `WORKFLOW_MATRIX_CONFIG` in `.github/workflows/workflow_config`
 # so that the same matrix can be reused in different jobs, reducing
 # duplicate code.
 
-name: Get Python Version Matrix
+name: Get Workflow Matrix
 
 on:
   workflow_call:
     outputs:
       matrix:
-        description: Matrix of Python version for which to run GitHub Actions tests
+        description: Matrix of inputs for which to run GitHub Actions tests
         value: ${{ jobs.build.outputs.matrix }}
 
 jobs:
   build:
-    name: Get Python Version Matrix
+    name: Get Workflow Matrix
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -27,6 +27,6 @@ jobs:
       - name: Run Setup Action
         uses: ./.github/workflows/composite-actions/load-workflow-config
 
-      - name: Set up Python Version Matrix
+      - name: Set up Workflow Matrix
         id: set-matrix
-        run: echo "::set-output name=matrix::${{ env.PYTHON_VERSIONS }}"
+        run: echo "::set-output name=matrix::${{ env.WORKFLOW_MATRIX_CONFIG }}"
