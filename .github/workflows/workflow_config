@@ -1,2 +1,3 @@
 PACKAGE_NAME=pyxx
 PYTHON_VERSIONS="{\"python-version\": [\"3.8\", \"3.9\", \"3.10\"]}"
+PYTHON_RELEASE_VERSION=3.8

@@ -22,8 +22,15 @@ runs:
 
     - name: Set up Python
       uses: actions/setup-python@v4
+      if: ${{ inputs.python-version != 'release' }}
       with:
         python-version: ${{ inputs.python-version }}
+
+    - name: Set up Python Release Version
+      uses: actions/setup-python@v4
+      if: ${{ inputs.python-version == 'release' }}
+      with:
+        python-version: ${{ env.PYTHON_RELEASE_VERSION }}
 
     - name: Install System Packages
       shell: bash
