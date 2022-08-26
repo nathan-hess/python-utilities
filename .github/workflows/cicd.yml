@@ -142,7 +142,7 @@ jobs:
   # Build a distributable package, upload as a workflow artifact, and possibly
   # publish to PyPI
   deploy:
-    name: Build and Deploy
+    name: Build and Deploy Package
     needs:
       - test-status-check
       - linting-status-check
