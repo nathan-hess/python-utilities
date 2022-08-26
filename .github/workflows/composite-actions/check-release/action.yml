@@ -1,20 +1,5 @@
-# !! IMPORTANT !!
-#
-# Prior to running this composite action, make sure that you have:
-#  - Checked out the repository (@actions/checkout) with `fetch-depth: 0`
-#  - Set up the desired version of Python 3 (@actions/setup-python)
-#
-# If these steps are not performed, the workflow may not function correctly
-#
-#
-# Known limitations
-#  - Workflow may fail if attempting to tag the same commit more than once
-#    (this limitation was left in place intentionally, as there are few cases
-#    where it makes sense to publish a release for the same commit multiple
-#    times, so this provides a useful warning)
-
-name: Check Release Number Composite Action
-description: Verifies that a GitHub release matches Python package version and that the release number increment follows Semantic Versioning
+name: Check Release Composite Action
+description: Verifies that a GitHub release matches expected formatting and tag guidelines
 
 inputs:
   package-name:
@@ -48,20 +33,6 @@ runs:
           exit 1
         else
           echo -e "${GREEN}GitHub release tag ${{ inputs.release-tag }} matches ${{ inputs.package-name }}.__version__ ${package_version}${PLAIN}"
-        fi
-
-    - name: Check Release Number Increment
-      if: ${{ always() }}
-      shell: bash
-      run: |
-        old_version="$(git for-each-ref --sort=-creatordate --format='%(refname)' refs/tags | sed -n 2p | rev | cut -d "/" -f1 | rev)"
-        new_version="${{ inputs.release-tag }}"
-        if [[ "${old_version}" != "" ]]; then
-          python3 "$GITHUB_WORKSPACE/.github/workflows/composite-actions/check-release/check_version.py" \
-            --old-version="${old_version}" \
-            --new-version="${new_version}"
-        else
-          echo "No previous tags found"
         fi
 
     - name: Display Suggested Next Steps in Event of Failure
