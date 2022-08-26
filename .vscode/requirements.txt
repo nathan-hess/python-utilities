@@ -22,3 +22,7 @@ bandit
 flake8
 mypy
 pylint
+
+# Deployment tools
+build
+twine

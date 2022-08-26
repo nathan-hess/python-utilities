@@ -2,6 +2,7 @@
     // File language associations
     "files.associations": {
         "pylintrc": "ini",
+        "pyproject.toml": "ini",
         "workflow_config": "ini",
     },
 
