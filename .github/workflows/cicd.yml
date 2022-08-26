@@ -136,3 +136,54 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docs
           SPHINXOPTS="-W" make spelling
+
+
+  # DEPLOYMENT ---------------------------------------------------------------
+  # Build a distributable package, upload as a workflow artifact, and possibly
+  # publish to PyPI
+  deploy:
+    name: Build and Deploy
+    needs:
+      - test-status-check
+      - linting-status-check
+      - doc-tests
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository Files
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Run Setup Action
+        uses: ./.github/workflows/composite-actions/setup
+        with:
+          python-version: ${{ env.PYTHON_RELEASE_VERSION }}
+
+      - name: Build Package
+        run: python3 -m build --sdist --wheel --outdir dist/ .
+
+      - name: Run Twine Check
+        run: twine check --strict dist/*
+
+      - name: Upload Package as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-upload
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Check Release Number
+        if: ${{ github.event_name == 'release' }}
+        uses: ./.github/workflows/composite-actions/check-release-number
+        with:
+          package-name: ${{ env.PACKAGE_NAME }}
+          release-tag: ${{ github.ref_name }}
+
+      - name: Publish to PyPI
+        if: ${{ success() && github.event_name == 'release' }}
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload --verbose dist/*
