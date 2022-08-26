@@ -9,11 +9,16 @@ inputs:
     description: Requirements file from which to install Python dependencies
     required: false
     default: .vscode/requirements.txt
+  update-system:
+    description: Whether to run APT system updates
+    required: false
+    default: 'false'
 
 runs:
   using: composite
   steps:
     - name: Update System
+      if: ${{ inputs.update-system == 'true' }}
       shell: bash
       run: sudo apt update && sudo apt -y upgrade
 
