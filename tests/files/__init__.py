@@ -1,1 +1,1 @@
-from .test_hash import *
+from .functions import *
