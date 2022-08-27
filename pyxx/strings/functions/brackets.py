@@ -23,7 +23,7 @@ def _check_valid_brackets(opening_bracket: str, closing_bracket: str,
     Verifies that a given pair of opening and closing brackets are a
     valid choice for the PyXX bracket-matching algorithm.  To meet this
     criterion, brackets must be strings of a single character in length,
-    and the opening and closing bracket must be different
+    and the opening and closing bracket must be different.
 
     Parameters
     ----------
