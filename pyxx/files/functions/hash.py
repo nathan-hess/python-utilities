@@ -12,7 +12,7 @@ def compute_file_hash(file: Union[str, pathlib.Path],
     """Computes a file hash
 
     Computes and returns the hash of a file on the disk. Users can select
-    the hash function from those supported by ``hashlib``
+    the hash function from those supported by ``hashlib``.
 
     Parameters
     ----------

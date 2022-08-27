@@ -25,4 +25,5 @@ reducing the need to duplicate code between projects.
     :hidden:
 
     Overview <api_reference/index>
+    api_reference/files
     api_reference/strings
