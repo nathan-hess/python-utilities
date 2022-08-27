@@ -8,5 +8,6 @@ TEST_TMP_DIR = PROJECT_TEST_DIR / 'tmp'
 
 
 # Import and run tests
+from .arrays import *
 from .files import *
 from .strings import *
