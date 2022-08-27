@@ -8,7 +8,7 @@ capabilities.
 
 from typing import Union
 
-from .exceptions import (
+from pyxx.strings.exceptions import (
     NotABracketError,
     UnmatchedBracketsError,
 )

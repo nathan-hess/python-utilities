@@ -7,11 +7,11 @@ strings with parentheses (e.g., determining which parentheses in a string are
 checking string content.
 """
 
-from .content import str_excludes_chars
-from .brackets import (
+from .functions.content import str_excludes_chars
+from .functions.brackets import (
     contains_all_matched_brackets,
     find_matching_bracket,
     find_skip_brackets,
     strip_matched_brackets,
 )
-from .split import split_at_index
+from .functions.split import split_at_index
