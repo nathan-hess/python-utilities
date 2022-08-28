@@ -29,6 +29,7 @@ url = 'https://github.com/nathan-hess/python-utilities'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
+    'sphinx.ext.inheritance_diagram',
     'sphinx.ext.napoleon',
     'sphinxcontrib.spelling',
     'sphinx_copybutton',
@@ -120,9 +121,8 @@ autoclass_content = 'class'
 autodoc_default_options = {
     'members': True,
     'undoc-members': True,
-    'private-members': True,
-    'special-members': '__init__',
-    'inherited-members': False,
+    'private-members': False,
+    'inherited-members': True,
     'member-order': 'bysource',
     'show-inheritance': True,
 }

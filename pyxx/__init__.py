@@ -1,5 +1,7 @@
 """Collection of useful Python utilities and tools"""
 
+from . import arrays
+from . import files
 from . import strings
 
 

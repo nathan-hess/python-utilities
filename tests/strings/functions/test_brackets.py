@@ -8,7 +8,7 @@ from pyxx.strings import (
     find_skip_brackets,
     strip_matched_brackets,
 )
-from pyxx.strings.brackets import _check_valid_brackets
+from pyxx.strings.functions.brackets import _check_valid_brackets
 from pyxx.strings.exceptions import (
     NotABracketError,
     UnmatchedBracketsError,
