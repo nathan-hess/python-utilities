@@ -120,8 +120,7 @@ autoclass_content = 'class'
 autodoc_default_options = {
     'members': True,
     'undoc-members': True,
-    'private-members': True,
-    'special-members': '__init__',
+    'private-members': False,
     'inherited-members': False,
     'member-order': 'bysource',
     'show-inheritance': True,

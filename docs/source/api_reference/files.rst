@@ -6,6 +6,19 @@ pyxx.files
 .. currentmodule:: pyxx.files
 
 
+File Objects
+------------
+
+The classes below are intended to represent files (existing on the file system
+or not).  Once a class instance is created, various read/write and content
+processing methods are available to perform common file-related tasks.
+
+.. autosummary::
+    :toctree: ./api
+
+    File
+
+
 File Hashes
 -----------
 

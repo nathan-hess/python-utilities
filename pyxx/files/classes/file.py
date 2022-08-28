@@ -13,17 +13,10 @@ from pyxx.files.exceptions import UntrackedFileError
 class File:
     """Base class for processing files of any type (text or binary)
 
-    Attributes
-    ----------
-    file : pathlib.Path
-        File that the object represents
-    hashes : dict
-        Dictionary containing file hash(es), if they have been computed
-
-    Methods
-    -------
-    compute_hashes()
-        Computes file hashes and populates the ``hashes`` dictionary
+    This class is intented to represent an arbitrary file (which can but does
+    not necessarily exist).  After creating a new instance of this class, it
+    is possible to perform operations such as calculating file hashes and
+    tracking whether the file has been modified.
     """
 
     def __init__(self, file: Union[str, pathlib.Path]):
@@ -76,7 +69,8 @@ class File:
 
     @property
     def hashes(self):
-        """Returns the file hashes"""
+        """Returns a dictionary containing any file hashes previously
+        computed for the file"""
         return self._hashes
 
     def compute_file_hashes(self,
