@@ -16,7 +16,7 @@ A number of different general-purpose tools are provided.  Some of the tools pro
 
 ## Installation
 
-The easiest way to install PyXX is through [pip](https://pypi.org/project/pyxx/):
+The recommended way to install PyXX is through [pip](https://pypi.org/project/pyxx/):
 
 ```
 pip install pyxx
