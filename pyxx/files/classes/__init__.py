@@ -2,4 +2,6 @@
 files, text files, etc.) and can be used to perform general file operations).
 """
 
+from .binaryfile import BinaryFile
 from .file import File
+from .textfile import TextFile

@@ -7,6 +7,8 @@ related operations (such as computing file hashes).
 """
 
 from .classes import (
+    BinaryFile,
     File,
+    TextFile,
 )
 from .functions.hash import compute_file_hash

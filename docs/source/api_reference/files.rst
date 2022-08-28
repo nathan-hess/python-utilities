@@ -16,7 +16,9 @@ processing methods are available to perform common file-related tasks.
 .. autosummary::
     :toctree: ./api
 
+    BinaryFile
     File
+    TextFile
 
 
 File Hashes

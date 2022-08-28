@@ -79,7 +79,7 @@ class File:
         """Computes hashes of the file
 
         Computes and returns the hashes of the file, with the option to
-        populate the ``self.hashes`` dictionary with their values.
+        populate the :py:attr:`hashes` dictionary with their values.
 
         Parameters
         ----------
@@ -88,7 +88,7 @@ class File:
             to compute. Any hash functions supported by ``hashlib`` can be
             used. Default is ``('md5', 'sha256')``
         store : bool, optional
-            Whether to store the computed hashes in the ``self.hashes``
+            Whether to store the computed hashes in the :py:attr:`hashes`
             dictionary (default is ``False``)
 
         Returns
@@ -153,7 +153,7 @@ class File:
         """Computes and stores hashes of the file
 
         Computes given hashes of the file and populates the
-        ``self.hashes`` dictionary with their values.
+        :py:attr:`hashes` dictionary with their values.
 
         Parameters
         ----------
