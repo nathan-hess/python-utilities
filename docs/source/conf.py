@@ -29,6 +29,7 @@ url = 'https://github.com/nathan-hess/python-utilities'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
+    'sphinx.ext.inheritance_diagram',
     'sphinx.ext.napoleon',
     'sphinxcontrib.spelling',
     'sphinx_copybutton',
