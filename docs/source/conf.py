@@ -122,7 +122,7 @@ autodoc_default_options = {
     'members': True,
     'undoc-members': True,
     'private-members': False,
-    'inherited-members': False,
+    'inherited-members': True,
     'member-order': 'bysource',
     'show-inheritance': True,
 }
