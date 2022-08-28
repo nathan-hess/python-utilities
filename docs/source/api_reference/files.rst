@@ -20,6 +20,9 @@ processing methods are available to perform common file-related tasks.
     File
     TextFile
 
+.. inheritance-diagram:: File BinaryFile TextFile
+    :parts: 1
+
 
 File Hashes
 -----------
