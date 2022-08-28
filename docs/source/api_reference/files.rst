@@ -15,6 +15,7 @@ processing methods are available to perform common file-related tasks.
 
 .. autosummary::
     :toctree: ./api
+    :template: ../_templates/api_reference_files_classes.rst
 
     BinaryFile
     File

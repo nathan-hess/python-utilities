@@ -13,7 +13,7 @@ from pyxx.files.exceptions import UntrackedFileError
 class File:
     """Base class for processing files of any type (text or binary)
 
-    This class is intented to represent an arbitrary file (which can but does
+    This class is intended to represent an arbitrary file (which can but does
     not necessarily exist).  After creating a new instance of this class, it
     is possible to perform operations such as calculating file hashes and
     tracking whether the file has been modified.
