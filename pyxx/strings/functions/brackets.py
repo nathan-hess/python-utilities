@@ -274,7 +274,7 @@ def find_skip_brackets(value: str, target_chars: Union[str, tuple],
                 # This error should never be thrown since the string was
                 # previously check for matching brackets; however, it's
                 # included as an added precaution
-                raise UnmatchedBracketsError(
+                raise UnmatchedBracketsError(   # pragma: no cover
                     f'Unmatched brackets found in string "{value}"')
 
         # Advance to next character in string
