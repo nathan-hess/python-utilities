@@ -6,4 +6,7 @@ files, text files, etc.), as well as functions to perform common file-
 related operations (such as computing file hashes).
 """
 
+from .classes import (
+    File,
+)
 from .functions.hash import compute_file_hash
