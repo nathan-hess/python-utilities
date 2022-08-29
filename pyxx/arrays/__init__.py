@@ -6,3 +6,4 @@ formats.
 """
 
 from .functions.convert import convert_to_tuple
+from .functions.size import max_list_item_len
