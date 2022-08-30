@@ -11,7 +11,7 @@ A number of different general-purpose tools are provided.  Some of the tools pro
 - **Unit Converter**: Components to support a fully customizable unit converter.  Users can define arbitrary units and systems of units.  Functions are available to parse and simplify complex units (such as `(kg*(m/s)^2)/(m^3)`).
 - **String Parsers**: Can assist in a number of string-parsing tasks, particularly related to scientific applications.  For instance, functions are available to analyze a string such as `((x-2)/4)^(-1)` and determine which parentheses form matched pairs.
 - **File Processors**: Objects are available to perform useful file I/O and processing operations, such as removing comments from files and computing file hashes.
-- **Dictionaries**: A customized version of Python's built-in `dict` objects is available.  This class provides greater flexibility in managing and searching dictionary content, and subclasses provide functionality tailored to storing particular types of data, such as lists of files and information needed for unit conversions.
+- **Array Analysis Tools**: A variety of functions are available for common tasks involving lists, tuples, NumPy arrays, and other array-like objects, intended to reduce the need to include duplicate code across projects.  For instance, functions are available to find the maximum length of items in a list, convert inputs to lists or tuples, and check various list equality measures.
 
 
 ## Installation
