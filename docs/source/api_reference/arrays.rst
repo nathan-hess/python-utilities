@@ -26,5 +26,6 @@ array-like objects.
 
 .. autosummary::
     :toctree: ./api
+    :template: ../_templates/api_reference_arrays_max_len.rst
 
     max_list_item_len
