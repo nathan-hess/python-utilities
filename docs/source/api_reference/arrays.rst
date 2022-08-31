@@ -16,3 +16,16 @@ convert one or more arrays of one type to a different type.
     :toctree: ./api
 
     convert_to_tuple
+
+
+Array Size
+----------
+
+These functions can be useful when determining or comparing the sizes of
+array-like objects.
+
+.. autosummary::
+    :toctree: ./api
+    :template: ../_templates/api_reference_arrays_max_len.rst
+
+    max_list_item_len
