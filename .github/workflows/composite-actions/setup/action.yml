@@ -31,7 +31,7 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
-    - name: Set up Python Release Version
+    - name: Set up Python (Version Used for Packaging Releases)
       uses: actions/setup-python@v4
       if: ${{ inputs.python-version == 'release' }}
       with:
