@@ -43,12 +43,12 @@ class TextFile(File):
 
     @property
     def comment_chars(self):
-        """Return a tuple of all characters considered to denote comments"""
+        """A tuple of all characters considered to denote comments"""
         return self._comment_chars
 
     @property
     def contents(self):
-        """Returns a copy of the file content
+        """A copy of the file content
 
         Returns a list containing the text on each line of the file.  Note
         that this list may have been modified when cleaning the file contents.
@@ -57,7 +57,7 @@ class TextFile(File):
 
     @property
     def raw_contents(self):
-        """Returns a copy of the raw file content
+        """A copy of the raw file content
 
         Returns a list containing the original text on each line of the file.
         """
@@ -65,7 +65,7 @@ class TextFile(File):
 
     @property
     def trailing_newline(self):
-        """Returns whether the original file had a newline at the end
+        """Whether the original file had a newline at the end
         of the file"""
         return self._raw_contents[-1].endswith('\n')
 

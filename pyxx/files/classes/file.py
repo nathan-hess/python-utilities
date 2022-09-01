@@ -63,13 +63,13 @@ class File:
 
     @property
     def file(self):
-        """Returns the file path and filename"""
+        """The file path and/or filename"""
         return self._file
 
     @property
     def hashes(self):
-        """Returns a dictionary containing any file hashes previously
-        computed for the file"""
+        """A dictionary containing any file hashes previously computed
+        for the file"""
         return self._hashes
 
     def compute_file_hashes(self,
