@@ -1,1 +1,2 @@
 include pyxx/py.typed
+include requirements.txt
