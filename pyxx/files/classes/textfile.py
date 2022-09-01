@@ -1,5 +1,4 @@
-"""
-This module can be used to process text files.
+"""This module can be used to process text files
 """
 
 import copy

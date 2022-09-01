@@ -1,5 +1,4 @@
-"""
-Base class for processing files of any type (text or binary)
+"""Base class for processing files of any type (text or binary)
 """
 
 import pathlib

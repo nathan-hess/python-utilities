@@ -1,4 +1,5 @@
-"""Functions for evaluating or comparing sizes of array-like objects"""
+"""Functions for evaluating or comparing sizes of array-like objects
+"""
 
 from typing import Union
 

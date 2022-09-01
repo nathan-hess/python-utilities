@@ -1,5 +1,4 @@
-"""
-This module contains functions for computing or analyzing file hashes.
+"""Functions for computing or analyzing file hashes
 """
 
 import hashlib

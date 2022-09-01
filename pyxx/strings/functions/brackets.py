@@ -1,4 +1,5 @@
-"""
+"""Code for processing strings with brackets
+
 This module contains functions for processing and simplifying strings
 containing brackets.  It provides functionality for identifying whether
 brackets in a string form matched pairs (every opening bracket has
