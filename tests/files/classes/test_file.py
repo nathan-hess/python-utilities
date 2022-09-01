@@ -151,6 +151,30 @@ class Test_File(unittest.TestCase):
         self.file_from_str.compute_file_hashes(('md5', 'sha384', 'sha256'))
         self.assertDictEqual(self.file_from_str.hashes, {})
 
+    def test_hashes_copy(self):
+        # Verifies that "hashes" attribute returns a copy so that manipulating
+        # the returned variable does not affect the stored hashes
+        hashes_dict = {
+            'md5': self.hashes['md5'],
+            'sha256': self.hashes['sha256'],
+        }
+
+        with self.subTest(source='pathlib'):
+            self.file_from_pathlib.store_file_hashes()
+
+            hashes_pathlib = self.file_from_pathlib.hashes
+            hashes_pathlib['md5'] = 'modified_hash'
+
+            self.assertDictEqual(self.file_from_pathlib.hashes, hashes_dict)
+
+        with self.subTest(source='str'):
+            self.file_from_str.store_file_hashes()
+
+            hashes_str = self.file_from_str.hashes
+            hashes_str['md5'] = 'modified_hash'
+
+            self.assertDictEqual(self.file_from_str.hashes, hashes_dict)
+
     def test_has_changed_no_stored(self):
         # Verifies that an error is thrown if attempting to evaluate whether
         # a file has been changed, but the hashes of the file were not

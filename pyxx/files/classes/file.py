@@ -1,6 +1,7 @@
 """Base class for processing files of any type (text or binary)
 """
 
+import copy
 import pathlib
 from typing import Union
 
@@ -43,9 +44,9 @@ class File:
         representation += f'--> File: {str(self._file)}\n'
 
         # Display file hashes
-        if len(self.hashes) > 0:
+        if len(self._hashes) > 0:
             header = '--> File hash:' \
-                if len(self.hashes) == 1 else '--> File hashes:'
+                if len(self._hashes) == 1 else '--> File hashes:'
             representation += self.__file_hash_str(header, 4)
 
         return representation[:-1]
@@ -56,7 +57,7 @@ class File:
     def __file_hash_str(self, header: str, indent: int = 0):
         file_hash_str = f'{header}\n'
 
-        for i in self.hashes.items():
+        for i in self._hashes.items():
             file_hash_str += f'{" " * indent}{i[0]}: {i[1]}\n'
 
         return file_hash_str
@@ -68,9 +69,9 @@ class File:
 
     @property
     def hashes(self):
-        """A dictionary containing any file hashes previously computed
-        for the file"""
-        return self._hashes
+        """A copy of the dictionary containing any file hashes previously
+        computed for the file"""
+        return copy.deepcopy(self._hashes)
 
     def compute_file_hashes(self,
             hash_functions: Union[tuple, str] = ('md5', 'sha256'),  # noqa : E128
@@ -133,17 +134,17 @@ class File:
             Whether file has changed since the last time file hashes
             were computed
         """
-        if len(self.hashes) == 0:
+        if len(self._hashes) == 0:
             raise UntrackedFileError(
                 'File hashes have not yet been computed. Cannot '
                 'evaluate whether file has changed')
 
         # Compute hashes of current file
-        current_hashes = self.compute_file_hashes(tuple(self.hashes.keys()),
+        current_hashes = self.compute_file_hashes(tuple(self._hashes.keys()),
                                                   store=False)
 
         # Check whether current file hashes match those stored
-        for key, value in self.hashes.items():
+        for key, value in self._hashes.items():
             if current_hashes[key] != value:
                 return True
 
