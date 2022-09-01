@@ -43,20 +43,20 @@ class File:
         representation += f'--> File: {str(self._file)}\n'
 
         # Display file hashes
-        if len(self._hashes) > 0:
+        if len(self.hashes) > 0:
             header = '--> File hash:' \
-                if len(self._hashes) == 1 else '--> File hashes:'
+                if len(self.hashes) == 1 else '--> File hashes:'
             representation += self.__file_hash_str(header, 4)
 
         return representation[:-1]
 
     def __str__(self):
-        return str(self._file)
+        return str(self.file)
 
     def __file_hash_str(self, header: str, indent: int = 0):
         file_hash_str = f'{header}\n'
 
-        for i in self._hashes.items():
+        for i in self.hashes.items():
             file_hash_str += f'{" " * indent}{i[0]}: {i[1]}\n'
 
         return file_hash_str
