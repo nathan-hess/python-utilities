@@ -103,8 +103,10 @@ class File:
         """
         if not self.file.exists():
             raise FileNotFoundError(
-                f'Cannot compute hash for non-existent file "{self.file}"'
-            )
+                f'Cannot compute hash for non-existent file "{self.file}"')
+        elif not self.file.is_file():
+            raise IsADirectoryError(
+                f'Cannot compute hash for a directory ("{self.file}")')
 
         # Ensure that inputs such as `hash_functions=('md5')` are still
         # interpreted as a tuple, not a string

@@ -116,6 +116,14 @@ class Test_File(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             file.compute_file_hashes()
 
+    def test_compute_directory(self):
+        # Verifies that an error is thrown if attempting to compute file
+        # hashes for a directory
+        file = File(SAMPLE_FILES_DIR)
+
+        with self.assertRaises(IsADirectoryError):
+            file.compute_file_hashes()
+
     def test_compute_store_hashes(self):
         # Verifies that file hashes are computed and stored correctly
         hashes_dict = {
