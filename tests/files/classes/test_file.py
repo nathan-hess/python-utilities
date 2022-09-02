@@ -23,99 +23,73 @@ class Test_File(unittest.TestCase):
             'sha512': 'a8b65a414cba9df08d5fc5f9a476e43d29ef636621011e222830182dc396f4cd4618a49b5e8c21a5dbd8706fe5cd174a118d24969d6d49f614272a2e3841c515',
         }
 
+        self.test_files = {
+            'pathlib': self.file_from_pathlib,
+            'str': self.file_from_str,
+        }
+
     def test_file_str(self):
         # Verifies that path and filename is correctly returned
         # as a string
-        with self.subTest(source='pathlib'):
-            self.assertEqual(
-                str(self.file_from_pathlib),
-                f'<class \'pyxx.files.classes.file.File\'> file="{self.file_str}"'
-            )
-
-        with self.subTest(source='str'):
-            self.assertEqual(
-                str(self.file_from_str),
-                f'<class \'pyxx.files.classes.file.File\'> file="{self.file_str}"'
-            )
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                self.assertEqual(
+                    str(file),
+                    f'<class \'pyxx.files.classes.file.File\'> file="{self.file_str}"'
+                )
 
     def test_file_repr_before(self):
         # Verifies that file object descriptor is computed correctly before
         # computing file hashes
-        self.assertEqual(
-            self.file_from_pathlib.__repr__(),
-            f"<class 'pyxx.files.classes.file.File'>\n--> File: {self.file_str}"
-        )
-
-        self.assertEqual(
-            self.file_from_str.__repr__(),
-            f"<class 'pyxx.files.classes.file.File'>\n--> File: {self.file_str}"
-        )
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                self.assertEqual(
+                    file.__repr__(),
+                    f"<class 'pyxx.files.classes.file.File'>\n--> File: {self.file_str}"
+                )
 
     def test_file_repr_after_single(self):
         # Verifies that file object descriptor is computed correctly after
         # computing file hashes
-        self.file_from_pathlib.compute_file_hashes('sha512', store=True)
-        self.assertEqual(
-            self.file_from_pathlib.__repr__(),
-            (f"<class 'pyxx.files.classes.file.File'>\n"
-             f"--> File: {self.file_str}\n"
-             f"--> File hash:\n"
-             f"    sha512: {self.hashes['sha512']}")
-        )
-
-        self.file_from_str.compute_file_hashes('sha512', store=True)
-        self.assertEqual(
-            self.file_from_str.__repr__(),
-            (f"<class 'pyxx.files.classes.file.File'>\n"
-             f"--> File: {self.file_str}\n"
-             f"--> File hash:\n"
-             f"    sha512: {self.hashes['sha512']}")
-        )
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                file.compute_file_hashes('sha512', store=True)
+                self.assertEqual(
+                    file.__repr__(),
+                    (f"<class 'pyxx.files.classes.file.File'>\n"
+                    f"--> File: {self.file_str}\n"
+                    f"--> File hash:\n"
+                    f"    sha512: {self.hashes['sha512']}")
+                )
 
     def test_file_repr_after_multiple(self):
         # Verifies that file object descriptor is computed correctly after
         # computing file hashes
-        self.file_from_pathlib.compute_file_hashes(('md5', 'sha256'), store=True)
-        self.assertEqual(
-            self.file_from_pathlib.__repr__(),
-            (f"<class 'pyxx.files.classes.file.File'>\n"
-             f"--> File: {self.file_str}\n"
-             f"--> File hashes:\n"
-             f"    md5: {self.hashes['md5']}\n"
-             f"    sha256: {self.hashes['sha256']}")
-        )
-
-        self.file_from_str.compute_file_hashes(('md5', 'sha256'), store=True)
-        self.assertEqual(
-            self.file_from_str.__repr__(),
-            (f"<class 'pyxx.files.classes.file.File'>\n"
-             f"--> File: {self.file_str}\n"
-             f"--> File hashes:\n"
-             f"    md5: {self.hashes['md5']}\n"
-             f"    sha256: {self.hashes['sha256']}")
-        )
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                file.compute_file_hashes(('md5', 'sha256'), store=True)
+                self.assertEqual(
+                    file.__repr__(),
+                    (f"<class 'pyxx.files.classes.file.File'>\n"
+                    f"--> File: {self.file_str}\n"
+                    f"--> File hashes:\n"
+                    f"    md5: {self.hashes['md5']}\n"
+                    f"    sha256: {self.hashes['sha256']}")
+                )
 
     def test_store_hashes(self):
         # Verifies that file hashes are stored correctly
-        self.file_from_pathlib.store_file_hashes(('md5', 'sha384', 'sha256'))
-        self.assertDictEqual(
-            self.file_from_pathlib.hashes,
-            {
-                'md5': self.hashes['md5'],
-                'sha384': self.hashes['sha384'],
-                'sha256': self.hashes['sha256'],
-            }
-        )
-
-        self.file_from_str.store_file_hashes(('md5', 'sha384', 'sha256'))
-        self.assertDictEqual(
-            self.file_from_str.hashes,
-            {
-                'md5': self.hashes['md5'],
-                'sha384': self.hashes['sha384'],
-                'sha256': self.hashes['sha256'],
-            }
-        )
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                file.store_file_hashes(('md5', 'sha384', 'sha256'))
+                self.assertDictEqual(
+                    file.hashes,
+                    {
+                        'md5': self.hashes['md5'],
+                        'sha384': self.hashes['sha384'],
+                        'sha256': self.hashes['sha256'],
+                    }
+                )
 
     def test_compute_no_file(self):
         # Verifies that an error is thrown if attempting to compute file
@@ -141,24 +115,21 @@ class Test_File(unittest.TestCase):
             'sha256': self.hashes['sha256'],
         }
 
-        hashes_pathlib = self.file_from_pathlib.compute_file_hashes(
-            ('md5', 'sha384', 'sha256'), store=True)
-        self.assertDictEqual(self.file_from_pathlib.hashes, hashes_dict)
-        self.assertDictEqual(hashes_pathlib, hashes_dict)
-
-        hashes_str = self.file_from_str.compute_file_hashes(
-            ('md5', 'sha384', 'sha256'), store=True)
-        self.assertDictEqual(self.file_from_str.hashes, hashes_dict)
-        self.assertDictEqual(hashes_str, hashes_dict)
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                hashes = file.compute_file_hashes(
+                    ('md5', 'sha384', 'sha256'), store=True)
+                self.assertDictEqual(file.hashes, hashes_dict)
+                self.assertDictEqual(hashes, hashes_dict)
+            hashes.clear()
 
     def test_no_store_hashes(self):
         # Verifies that no file hashes are stored if user does not set the
         # "store" argument to `True`
-        self.file_from_pathlib.compute_file_hashes(('md5', 'sha384', 'sha256'))
-        self.assertDictEqual(self.file_from_pathlib.hashes, {})
-
-        self.file_from_str.compute_file_hashes(('md5', 'sha384', 'sha256'))
-        self.assertDictEqual(self.file_from_str.hashes, {})
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                file.compute_file_hashes(('md5', 'sha384', 'sha256'))
+                self.assertDictEqual(file.hashes, {})
 
     def test_hashes_copy(self):
         # Verifies that "hashes" attribute returns a copy so that manipulating
@@ -168,31 +139,24 @@ class Test_File(unittest.TestCase):
             'sha256': self.hashes['sha256'],
         }
 
-        with self.subTest(source='pathlib'):
-            self.file_from_pathlib.store_file_hashes()
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                file.store_file_hashes()
 
-            hashes_pathlib = self.file_from_pathlib.hashes
-            hashes_pathlib['md5'] = 'modified_hash'
+                hashes = file.hashes
+                hashes['md5'] = 'modified_hash'
 
-            self.assertDictEqual(self.file_from_pathlib.hashes, hashes_dict)
-
-        with self.subTest(source='str'):
-            self.file_from_str.store_file_hashes()
-
-            hashes_str = self.file_from_str.hashes
-            hashes_str['md5'] = 'modified_hash'
-
-            self.assertDictEqual(self.file_from_str.hashes, hashes_dict)
+                self.assertDictEqual(file.hashes, hashes_dict)
+                hashes.clear()
 
     def test_has_changed_no_stored(self):
         # Verifies that an error is thrown if attempting to evaluate whether
         # a file has been changed, but the hashes of the file were not
         # previously computed
-        with self.assertRaises(UntrackedFileError):
-            self.file_from_pathlib.has_changed()
-
-        with self.assertRaises(UntrackedFileError):
-            self.file_from_str.has_changed()
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                with self.assertRaises(UntrackedFileError):
+                    file.has_changed()
 
     def test_has_changed(self):
         # Verifies that changes in file are correctly identified
