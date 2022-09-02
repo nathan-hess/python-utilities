@@ -26,8 +26,17 @@ class Test_File(unittest.TestCase):
     def test_file_str(self):
         # Verifies that path and filename is correctly returned
         # as a string
-        self.assertEqual(str(self.file_from_pathlib), self.file_str)
-        self.assertEqual(str(self.file_from_str), self.file_str)
+        with self.subTest(source='pathlib'):
+            self.assertEqual(
+                str(self.file_from_pathlib),
+                f'<class \'pyxx.files.classes.file.File\'> file="{self.file_str}"'
+            )
+
+        with self.subTest(source='str'):
+            self.assertEqual(
+                str(self.file_from_str),
+                f'<class \'pyxx.files.classes.file.File\'> file="{self.file_str}"'
+            )
 
     def test_file_repr_before(self):
         # Verifies that file object descriptor is computed correctly before

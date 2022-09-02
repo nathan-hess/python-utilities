@@ -52,7 +52,7 @@ class File:
         return representation[:-1]
 
     def __str__(self):
-        return str(self.file)
+        return f'{__class__} file="{self.file}"'
 
     def __file_hash_str(self, header: str, indent: int = 0):
         file_hash_str = f'{header}\n'
