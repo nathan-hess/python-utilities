@@ -3,11 +3,11 @@
 
 import copy
 import pathlib
-from typing import Union
+from typing import Dict, Optional, Union
 
 from pyxx.arrays.functions.convert import convert_to_tuple
 from pyxx.files.functions.hash import compute_file_hash
-from pyxx.files.exceptions import UntrackedFileError
+from pyxx.files.exceptions import NoFileSpecifiedError, UntrackedFileError
 
 
 class File:
@@ -19,7 +19,7 @@ class File:
     tracking whether the file has been modified.
     """
 
-    def __init__(self, file: Union[str, pathlib.Path]):
+    def __init__(self, file: Optional[Union[str, pathlib.Path]] = None):
         """Define an arbitrary file
 
         Creates an object that represents and can be used to process a file of
@@ -30,18 +30,19 @@ class File:
         file : str or pathlib.Path
             File that the object is to represent
         """
-        # File path
-        self._file = pathlib.Path(file)
+        # Initialize dictionary to store file hashes
+        self._hashes: Dict[str, str] = {}
 
-        # File hashes
-        self._hashes: dict = {}
+        # Store file path
+        self.file = file
 
     def __repr__(self):
         # Display class
         representation = f'{__class__}\n'
 
         # Display path and filename
-        representation += f'--> File: {str(self._file)}\n'
+        if self.file is not None:
+            representation += f'--> File: {str(self.file)}\n'
 
         # Display file hashes
         if len(self._hashes) > 0:
@@ -64,14 +65,32 @@ class File:
 
     @property
     def file(self):
-        """The file path and/or filename"""
+        """Path describing the location of the file on the disk
+
+        Assigning a value to this attribute (regardless whether it matches the
+        current value or is a different path) will save the value as a
+        ``pathlib.Path`` and **will automatically clear any saved file
+        hashes**.
+        """
         return self._file
+
+    @file.setter
+    def file(self, file: Optional[Union[str, pathlib.Path]]):
+        # Clear any existing file hashes
+        self.clear_file_hashes()
+
+        # Store file path
+        self._file = None if file is None else pathlib.Path(file)
 
     @property
     def hashes(self):
         """A copy of the dictionary containing any file hashes previously
         computed for the file"""
         return copy.deepcopy(self._hashes)
+
+    def clear_file_hashes(self):
+        """Clears any stored file hashes"""
+        self._hashes.clear()
 
     def compute_file_hashes(self,
             hash_functions: Union[tuple, str] = ('md5', 'sha256'),  # noqa : E128
@@ -102,6 +121,12 @@ class File:
         pyxx.files.compute_file_hash :
             Function used to compute file hashes
         """
+        # Check that `file` attribute is defined
+        if self.file is None:
+            raise NoFileSpecifiedError(
+                'Attribute "file" must be defined to compute file hashes')
+
+        # Check that file exists
         if not self.file.exists():
             raise FileNotFoundError(
                 f'Cannot compute hash for non-existent file "{self.file}"')

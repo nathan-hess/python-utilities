@@ -1,8 +1,9 @@
+import pathlib
 import shutil
 import unittest
 
 from pyxx.files import File
-from pyxx.files.exceptions import UntrackedFileError
+from pyxx.files.exceptions import NoFileSpecifiedError, UntrackedFileError
 from tests import CreateTempTestDir, SAMPLE_FILES_DIR
 
 
@@ -12,6 +13,7 @@ class Test_File(unittest.TestCase):
 
         self.file_from_pathlib = File(SAMPLE_FILES_DIR / 'general_text_file_001.txt')
         self.file_from_str = File(self.file_str)
+        self.file_empty = File()
 
         # Known file hashes
         self.hashes = {
@@ -27,16 +29,6 @@ class Test_File(unittest.TestCase):
             'pathlib': self.file_from_pathlib,
             'str': self.file_from_str,
         }
-
-    def test_file_str(self):
-        # Verifies that path and filename is correctly returned
-        # as a string
-        for source, file in self.test_files.items():
-            with self.subTest(source=source):
-                self.assertEqual(
-                    str(file),
-                    f'<class \'pyxx.files.classes.file.File\'> file="{self.file_str}"'
-                )
 
     def test_file_repr_before(self):
         # Verifies that file object descriptor is computed correctly before
@@ -77,19 +69,67 @@ class Test_File(unittest.TestCase):
                     f"    sha256: {self.hashes['sha256']}")
                 )
 
-    def test_store_hashes(self):
-        # Verifies that file hashes are stored correctly
+    def test_file_str(self):
+        # Verifies that path and filename is correctly returned
+        # as a string
         for source, file in self.test_files.items():
             with self.subTest(source=source):
-                file.store_file_hashes(('md5', 'sha384', 'sha256'))
+                self.assertEqual(
+                    str(file),
+                    f'<class \'pyxx.files.classes.file.File\'> file="{self.file_str}"'
+                )
+
+        with self.subTest(source='empty'):
+            self.assertEqual(
+                str(self.file_empty),
+                f'<class \'pyxx.files.classes.file.File\'> file="None"'
+            )
+
+    def test_hashes_getter(self):
+        # Verifies that getting the `File.hashes` attribute correctly retrieves
+        # the file hashes
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                file._hashes = {'hash1': 'abcd', 'hash2': 'efghij'}
                 self.assertDictEqual(
                     file.hashes,
-                    {
-                        'md5': self.hashes['md5'],
-                        'sha384': self.hashes['sha384'],
-                        'sha256': self.hashes['sha256'],
-                    }
-                )
+                    {'hash1': 'abcd', 'hash2': 'efghij'})
+
+    def test_file_setter(self):
+        # Verifies that setting the `File.file` attribute correctly sets the
+        # path/filename and clears file hashes
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                # Make sure hashes dictionary is populated
+                file._hashes = {'hash1': 'abcdefg'}
+                self.assertGreater(len(file._hashes), 0)
+
+                # Set new file
+                file.file = 'newFile.rst'
+                self.assertEqual(file._file, pathlib.Path('newFile.rst'))
+                self.assertTrue(isinstance(file._file, pathlib.Path))
+                self.assertDictEqual(file._hashes, {})
+
+    def test_file_getter(self):
+        # Verifies that getting the "file" attribute correctly retrieves
+        # the file path
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                self.assertEqual(file._file, pathlib.Path(self.file_str))
+
+    def test_clear_hashes(self):
+        # Verifies that file hashes are cleared by the
+        # `File.clear_file_hahes()` method
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                file.clear_file_hashes()
+                self.assertDictEqual(file._hashes, {})
+
+    def test_no_path_attribute(self):
+        # Verifies that an error is thrown if attempting to compute file
+        # hashes without the "file" attribute set
+        with self.assertRaises(NoFileSpecifiedError):
+            self.file_empty.compute_file_hashes()
 
     def test_compute_no_file(self):
         # Verifies that an error is thrown if attempting to compute file
@@ -119,7 +159,7 @@ class Test_File(unittest.TestCase):
             with self.subTest(source=source):
                 hashes = file.compute_file_hashes(
                     ('md5', 'sha384', 'sha256'), store=True)
-                self.assertDictEqual(file.hashes, hashes_dict)
+                self.assertDictEqual(file._hashes, hashes_dict)
                 self.assertDictEqual(hashes, hashes_dict)
             hashes.clear()
 
@@ -129,7 +169,7 @@ class Test_File(unittest.TestCase):
         for source, file in self.test_files.items():
             with self.subTest(source=source):
                 file.compute_file_hashes(('md5', 'sha384', 'sha256'))
-                self.assertDictEqual(file.hashes, {})
+                self.assertDictEqual(file._hashes, {})
 
     def test_hashes_copy(self):
         # Verifies that "hashes" attribute returns a copy so that manipulating
@@ -178,3 +218,17 @@ class Test_File(unittest.TestCase):
             # Compute hashes again
             file.store_file_hashes()
             self.assertFalse(file.has_changed())
+
+    def test_store_hashes(self):
+        # Verifies that file hashes are stored correctly
+        for source, file in self.test_files.items():
+            with self.subTest(source=source):
+                file.store_file_hashes(('md5', 'sha384', 'sha256'))
+                self.assertDictEqual(
+                    file.hashes,
+                    {
+                        'md5': self.hashes['md5'],
+                        'sha384': self.hashes['sha384'],
+                        'sha256': self.hashes['sha256'],
+                    }
+                )
