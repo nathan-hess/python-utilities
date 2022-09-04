@@ -232,3 +232,38 @@ class Test_File(unittest.TestCase):
                         'sha256': self.hashes['sha256'],
                     }
                 )
+
+    def test_track_new_file(self):
+        # Verifies that the "track_new_file()" method stores the file path
+        # and file hashes
+        hashes_dict = {
+            'md5': self.hashes['md5'],
+            'sha384': self.hashes['sha384'],
+            'sha256': self.hashes['sha256'],
+        }
+
+        file = File()
+        file.track_new_file(
+            file=self.file_str,
+            hash_functions=('md5', 'sha256', 'sha384')
+        )
+
+        with self.subTest(attribute='file'):
+            self.assertEqual(file._file, pathlib.Path(self.file_str))
+
+        with self.subTest(attribute='hashes'):
+            self.assertDictEqual(file._hashes, hashes_dict)
+
+    def test_track_new_file_invalid(self):
+        # Verifies that an error is thrown if attempting to call the
+        # "track_new_file()" method with "None" as the "file" argument
+        test_files = {
+            'pathlib': self.file_from_pathlib,
+            'str': self.file_from_str,
+            'empty': self.file_empty,
+        }
+
+        for source, file in test_files.items():
+            with self.subTest(source=source):
+                with self.assertRaises(TypeError):
+                    file.track_new_file(file=None)

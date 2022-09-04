@@ -95,10 +95,12 @@ class File:
     def compute_file_hashes(self,
             hash_functions: Union[tuple, str] = ('md5', 'sha256'),  # noqa : E128
             store: bool = False):                                   # noqa : E128
-        """Computes hashes of the file
+        """Computes hashes of the file specified by the :py:attr:`file`
+        attribute
 
-        Computes and returns the hashes of the file, with the option to
-        populate the :py:attr:`hashes` dictionary with their values.
+        Computes and returns the hashes of the file specified by the
+        :py:attr:`file` attribute, with the option to populate the
+        :py:attr:`hashes` dictionary with their values.
 
         Parameters
         ----------
@@ -120,6 +122,12 @@ class File:
         --------
         pyxx.files.compute_file_hash :
             Function used to compute file hashes
+
+        Notes
+        -----
+        Prior to calling this method, the :py:attr:`file` attribute must be
+        defined.  To simultaneously set the :py:attr:`file` attribute and store
+        file hashes, use :py:meth:`track_new_file`.
         """
         # Check that `file` attribute is defined
         if self.file is None:
@@ -150,8 +158,8 @@ class File:
         return output
 
     def has_changed(self):
-        """Returns whether the file has changed since the last time file
-        hashes were computed
+        """Returns whether the file specified by the :py:attr:`file`
+        attribute has changed since the last time file hashes were computed
 
         Returns
         -------
@@ -177,10 +185,12 @@ class File:
 
     def store_file_hashes(self,
             hash_functions: Union[tuple, str] = ('md5', 'sha256')):  # noqa : E128
-        """Computes and stores hashes of the file
+        """Computes and stores hashes of the file specified by the
+        :py:attr:`file` attribute
 
-        Computes given hashes of the file and populates the
-        :py:attr:`hashes` dictionary with their values.
+        Computes given hashes of the file specified by the :py:attr:`file`
+        attribute and populates the :py:attr:`hashes` dictionary with their
+        values.
 
         Parameters
         ----------
@@ -193,5 +203,51 @@ class File:
         --------
         pyxx.files.compute_file_hash :
             Function used to compute file hashes
+        track_new_file :
+            Use this method if you want to store file hashes but the
+            :py:attr:`file` attribute isn't yet defined
+
+        Notes
+        -----
+        Prior to calling this method, the :py:attr:`file` attribute must be
+        defined.  To simultaneously set the :py:attr:`file` attribute and store
+        file hashes, use :py:meth:`track_new_file`.
         """
         _ = self.compute_file_hashes(hash_functions, store=True)
+
+    def track_new_file(self, file: Union[str, pathlib.Path],
+            hash_functions: Union[tuple, str] = ('md5', 'sha256')):  # noqa : E128
+        """Shortcut for simultaneously modifying the :py:attr:`file` attribute
+        and storing file hashes
+
+        This method functions as a "shortcut," both modifying the
+        :py:attr:`file` attribute and storing an optionally user-specified
+        list of file hashes in the :py:attr:`hashes` attribute.  The
+        intention of this method is that if a :py:class:`File` instance is
+        tracking a given file, and user wants to switch to tracking another
+        file, this provides a convenient way to do so with a single line
+        of code.
+
+        Parameters
+        ----------
+        file : str or pathlib.Path
+            File that the object is to represent
+        hash_functions : tuple or str, optional
+            Tuple of strings (or individual string) specifying which hash(es)
+            to compute. Any hash functions supported by ``hashlib`` can be
+            used. Default is ``('md5', 'sha256')``
+
+        See Also
+        --------
+        pyxx.files.compute_file_hash :
+            Function used to compute file hashes
+        """
+        # Store the file path and name
+        if file is None:
+            raise TypeError('Argument "file" cannot be "None" when calling '
+                            '"track_file()" method')
+
+        self.file = file
+
+        # Compute and store file hashes
+        self.store_file_hashes(hash_functions)
