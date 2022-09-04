@@ -19,7 +19,7 @@ class File:
     tracking whether the file has been modified.
     """
 
-    def __init__(self, file: Optional[Union[str, pathlib.Path]] = None):
+    def __init__(self, path: Optional[Union[str, pathlib.Path]] = None):
         """Define an arbitrary file
 
         Creates an object that represents and can be used to process a file of
@@ -27,22 +27,23 @@ class File:
 
         Parameters
         ----------
-        file : str or pathlib.Path
-            File that the object is to represent
+        path : str or pathlib.Path
+            Path describing the location in the file system of the file that
+            the object is to represent
         """
         # Initialize dictionary to store file hashes
         self._hashes: Dict[str, str] = {}
 
         # Store file path
-        self.file = file
+        self.path = path
 
     def __repr__(self):
         # Display class
         representation = f'{__class__}\n'
 
-        # Display path and filename
-        if self.file is not None:
-            representation += f'--> File: {str(self.file)}\n'
+        # Display path
+        if self.path is not None:
+            representation += f'--> File path: {str(self.path)}\n'
 
         # Display file hashes
         if len(self._hashes) > 0:
@@ -53,7 +54,7 @@ class File:
         return representation[:-1]
 
     def __str__(self):
-        return f'{__class__} file="{self.file}"'
+        return f'{__class__} path="{self.path}"'
 
     def __file_hash_str(self, header: str, indent: int = 0):
         file_hash_str = f'{header}\n'
@@ -64,7 +65,13 @@ class File:
         return file_hash_str
 
     @property
-    def file(self):
+    def hashes(self):
+        """A copy of the dictionary containing any file hashes previously
+        computed for the file specified by the :py:attr:`path` attribute"""
+        return copy.deepcopy(self._hashes)
+
+    @property
+    def path(self):
         """Path describing the location of the file on the disk
 
         Assigning a value to this attribute (regardless whether it matches the
@@ -72,21 +79,15 @@ class File:
         ``pathlib.Path`` and **will automatically clear any saved file
         hashes**.
         """
-        return self._file
+        return self._path
 
-    @file.setter
-    def file(self, file: Optional[Union[str, pathlib.Path]]):
+    @path.setter
+    def path(self, path: Optional[Union[str, pathlib.Path]]):
         # Clear any existing file hashes
         self.clear_file_hashes()
 
         # Store file path
-        self._file = None if file is None else pathlib.Path(file)
-
-    @property
-    def hashes(self):
-        """A copy of the dictionary containing any file hashes previously
-        computed for the file"""
-        return copy.deepcopy(self._hashes)
+        self._path = None if path is None else pathlib.Path(path)
 
     def clear_file_hashes(self):
         """Clears any stored file hashes"""
@@ -95,11 +96,11 @@ class File:
     def compute_file_hashes(self,
             hash_functions: Union[tuple, str] = ('md5', 'sha256'),  # noqa : E128
             store: bool = False):                                   # noqa : E128
-        """Computes hashes of the file specified by the :py:attr:`file`
+        """Computes hashes of the file specified by the :py:attr:`path`
         attribute
 
         Computes and returns the hashes of the file specified by the
-        :py:attr:`file` attribute, with the option to populate the
+        :py:attr:`path` attribute, with the option to populate the
         :py:attr:`hashes` dictionary with their values.
 
         Parameters
@@ -125,22 +126,22 @@ class File:
 
         Notes
         -----
-        Prior to calling this method, the :py:attr:`file` attribute must be
-        defined.  To simultaneously set the :py:attr:`file` attribute and store
+        Prior to calling this method, the :py:attr:`path` attribute must be
+        defined.  To simultaneously set the :py:attr:`path` attribute and store
         file hashes, use :py:meth:`track_new_file`.
         """
-        # Check that `file` attribute is defined
-        if self.file is None:
+        # Check that `path` attribute is defined
+        if self.path is None:
             raise NoFileSpecifiedError(
-                'Attribute "file" must be defined to compute file hashes')
+                'Attribute "path" must be defined to compute file hashes')
 
         # Check that file exists
-        if not self.file.exists():
+        if not self.path.exists():
             raise FileNotFoundError(
-                f'Cannot compute hash for non-existent file "{self.file}"')
-        elif not self.file.is_file():
+                f'Cannot compute hash for non-existent file "{self.path}"')
+        elif not self.path.is_file():
             raise IsADirectoryError(
-                f'Cannot compute hash for a directory ("{self.file}")')
+                f'Cannot compute hash for a directory ("{self.path}")')
 
         # Ensure that inputs such as `hash_functions=('md5')` are still
         # interpreted as a tuple, not a string
@@ -149,7 +150,7 @@ class File:
         # Compute file hash(es)
         output = {}
         for func in hash_functions:
-            hash_name, file_hash = compute_file_hash(self.file, func)
+            hash_name, file_hash = compute_file_hash(self.path, func)
             output[hash_name] = file_hash
 
             if store:
@@ -158,7 +159,7 @@ class File:
         return output
 
     def has_changed(self):
-        """Returns whether the file specified by the :py:attr:`file`
+        """Returns whether the file specified by the :py:attr:`path`
         attribute has changed since the last time file hashes were computed
 
         Returns
@@ -186,9 +187,9 @@ class File:
     def store_file_hashes(self,
             hash_functions: Union[tuple, str] = ('md5', 'sha256')):  # noqa : E128
         """Computes and stores hashes of the file specified by the
-        :py:attr:`file` attribute
+        :py:attr:`path` attribute
 
-        Computes given hashes of the file specified by the :py:attr:`file`
+        Computes given hashes of the file specified by the :py:attr:`path`
         attribute and populates the :py:attr:`hashes` dictionary with their
         values.
 
@@ -205,23 +206,23 @@ class File:
             Function used to compute file hashes
         track_new_file :
             Use this method if you want to store file hashes but the
-            :py:attr:`file` attribute isn't yet defined
+            :py:attr:`path` attribute isn't yet defined
 
         Notes
         -----
-        Prior to calling this method, the :py:attr:`file` attribute must be
-        defined.  To simultaneously set the :py:attr:`file` attribute and store
+        Prior to calling this method, the :py:attr:`path` attribute must be
+        defined.  To simultaneously set the :py:attr:`path` attribute and store
         file hashes, use :py:meth:`track_new_file`.
         """
         _ = self.compute_file_hashes(hash_functions, store=True)
 
-    def track_new_file(self, file: Union[str, pathlib.Path],
+    def track_new_file(self, path: Union[str, pathlib.Path],
             hash_functions: Union[tuple, str] = ('md5', 'sha256')):  # noqa : E128
-        """Shortcut for simultaneously modifying the :py:attr:`file` attribute
+        """Shortcut for simultaneously modifying the :py:attr:`path` attribute
         and storing file hashes
 
         This method functions as a "shortcut," both modifying the
-        :py:attr:`file` attribute and storing an optionally user-specified
+        :py:attr:`path` attribute and storing an optionally user-specified
         list of file hashes in the :py:attr:`hashes` attribute.  The
         intention of this method is that if a :py:class:`File` instance is
         tracking a given file, and user wants to switch to tracking another
@@ -243,11 +244,11 @@ class File:
             Function used to compute file hashes
         """
         # Store the file path and name
-        if file is None:
-            raise TypeError('Argument "file" cannot be "None" when calling '
+        if path is None:
+            raise TypeError('Argument "path" cannot be "None" when calling '
                             '"track_file()" method')
 
-        self.file = file
+        self.path = path
 
         # Compute and store file hashes
         self.store_file_hashes(hash_functions)

@@ -37,7 +37,7 @@ class Test_File(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertEqual(
                     file.__repr__(),
-                    f"<class 'pyxx.files.classes.file.File'>\n--> File: {self.file_str}"
+                    f"<class 'pyxx.files.classes.file.File'>\n--> File path: {self.file_str}"
                 )
 
     def test_file_repr_after_single(self):
@@ -49,7 +49,7 @@ class Test_File(unittest.TestCase):
                 self.assertEqual(
                     file.__repr__(),
                     (f"<class 'pyxx.files.classes.file.File'>\n"
-                    f"--> File: {self.file_str}\n"
+                    f"--> File path: {self.file_str}\n"
                     f"--> File hash:\n"
                     f"    sha512: {self.hashes['sha512']}")
                 )
@@ -63,7 +63,7 @@ class Test_File(unittest.TestCase):
                 self.assertEqual(
                     file.__repr__(),
                     (f"<class 'pyxx.files.classes.file.File'>\n"
-                    f"--> File: {self.file_str}\n"
+                    f"--> File path: {self.file_str}\n"
                     f"--> File hashes:\n"
                     f"    md5: {self.hashes['md5']}\n"
                     f"    sha256: {self.hashes['sha256']}")
@@ -76,17 +76,17 @@ class Test_File(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertEqual(
                     str(file),
-                    f'<class \'pyxx.files.classes.file.File\'> file="{self.file_str}"'
+                    f'<class \'pyxx.files.classes.file.File\'> path="{self.file_str}"'
                 )
 
         with self.subTest(source='empty'):
             self.assertEqual(
                 str(self.file_empty),
-                f'<class \'pyxx.files.classes.file.File\'> file="None"'
+                f'<class \'pyxx.files.classes.file.File\'> path="None"'
             )
 
     def test_hashes_getter(self):
-        # Verifies that getting the `File.hashes` attribute correctly retrieves
+        # Verifies that getting the "hashes" attribute correctly retrieves
         # the file hashes
         for source, file in self.test_files.items():
             with self.subTest(source=source):
@@ -96,8 +96,8 @@ class Test_File(unittest.TestCase):
                     {'hash1': 'abcd', 'hash2': 'efghij'})
 
     def test_file_setter(self):
-        # Verifies that setting the `File.file` attribute correctly sets the
-        # path/filename and clears file hashes
+        # Verifies that setting the "path" attribute correctly sets the
+        # path and clears file hashes
         for source, file in self.test_files.items():
             with self.subTest(source=source):
                 # Make sure hashes dictionary is populated
@@ -105,21 +105,21 @@ class Test_File(unittest.TestCase):
                 self.assertGreater(len(file._hashes), 0)
 
                 # Set new file
-                file.file = 'newFile.rst'
-                self.assertEqual(file._file, pathlib.Path('newFile.rst'))
-                self.assertTrue(isinstance(file._file, pathlib.Path))
+                file.path = 'newFile.rst'
+                self.assertEqual(file._path, pathlib.Path('newFile.rst'))
+                self.assertTrue(isinstance(file._path, pathlib.Path))
                 self.assertDictEqual(file._hashes, {})
 
     def test_file_getter(self):
-        # Verifies that getting the "file" attribute correctly retrieves
+        # Verifies that getting the "path" attribute correctly retrieves
         # the file path
         for source, file in self.test_files.items():
             with self.subTest(source=source):
-                self.assertEqual(file._file, pathlib.Path(self.file_str))
+                self.assertEqual(file.path, pathlib.Path(self.file_str))
 
     def test_clear_hashes(self):
         # Verifies that file hashes are cleared by the
-        # `File.clear_file_hahes()` method
+        # `File.clear_file_hashes()` method
         for source, file in self.test_files.items():
             with self.subTest(source=source):
                 file.clear_file_hashes()
@@ -127,7 +127,7 @@ class Test_File(unittest.TestCase):
 
     def test_no_path_attribute(self):
         # Verifies that an error is thrown if attempting to compute file
-        # hashes without the "file" attribute set
+        # hashes without the "path" attribute set
         with self.assertRaises(NoFileSpecifiedError):
             self.file_empty.compute_file_hashes()
 
@@ -244,19 +244,19 @@ class Test_File(unittest.TestCase):
 
         file = File()
         file.track_new_file(
-            file=self.file_str,
+            path=self.file_str,
             hash_functions=('md5', 'sha256', 'sha384')
         )
 
-        with self.subTest(attribute='file'):
-            self.assertEqual(file._file, pathlib.Path(self.file_str))
+        with self.subTest(attribute='path'):
+            self.assertEqual(file._path, pathlib.Path(self.file_str))
 
         with self.subTest(attribute='hashes'):
             self.assertDictEqual(file._hashes, hashes_dict)
 
     def test_track_new_file_invalid(self):
         # Verifies that an error is thrown if attempting to call the
-        # "track_new_file()" method with "None" as the "file" argument
+        # "track_new_file()" method with "None" as the "path" argument
         test_files = {
             'pathlib': self.file_from_pathlib,
             'str': self.file_from_str,
@@ -266,4 +266,4 @@ class Test_File(unittest.TestCase):
         for source, file in test_files.items():
             with self.subTest(source=source):
                 with self.assertRaises(TypeError):
-                    file.track_new_file(file=None)
+                    file.track_new_file(path=None)

@@ -9,7 +9,7 @@ An important concept about the classes in :py:mod:`pyxx.files` is that
 files are considered *a data structure for storing information as a sequence
 of characters*.  Files are not necessarily linked to a location on the disk
 (although they can be).  Therefore, classes in :py:mod:`pyxx.files` can, but
-do not necessarily, have an assigned filename or path.
+do not necessarily, have an assigned path.
 
 The intention of this module is that by subclassing the included classes,
 the basic structure should be provided to manage file content, and a few very
