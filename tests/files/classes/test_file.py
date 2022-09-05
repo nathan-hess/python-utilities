@@ -9,9 +9,9 @@ from tests import CreateTempTestDir, SAMPLE_FILES_DIR
 
 class Test_File(unittest.TestCase):
     def setUp(self):
-        self.file_str = str(SAMPLE_FILES_DIR / 'general_text_file_001.txt')
+        self.file_str = str(SAMPLE_FILES_DIR / 'hashes.txt')
 
-        self.file_from_pathlib = File(SAMPLE_FILES_DIR / 'general_text_file_001.txt')
+        self.file_from_pathlib = File(SAMPLE_FILES_DIR / 'hashes.txt')
         self.file_from_str = File(self.file_str)
         self.file_empty = File()
 

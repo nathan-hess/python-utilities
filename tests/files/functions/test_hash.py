@@ -7,7 +7,7 @@ from tests import SAMPLE_FILES_DIR
 class Test_FileHash(unittest.TestCase):
     def setUp(self):
         # File for which to compute hashes
-        self.file = SAMPLE_FILES_DIR / 'general_text_file_001.txt'
+        self.file = SAMPLE_FILES_DIR / 'hashes.txt'
 
         # Known file hashes for `self.file`
         self.hashes = {
