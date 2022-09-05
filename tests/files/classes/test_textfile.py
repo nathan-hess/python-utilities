@@ -557,6 +557,12 @@ class Test_TextFile_Read(unittest.TestCase):
         with self.assertRaises(AttributeError):
             file.read()
 
+    def test_missing_file(self):
+        # Verifies that an error is thrown if file does not exist
+        file = TextFile(path = SAMPLE_FILES_DIR / 'non_existent_file.docx')
+        with self.assertRaises(FileNotFoundError):
+            file.read()
+
     def test_set_path(self):
         # Verifies that logic to set path matches expectations
         with self.subTest(path='argument_only'):
