@@ -1,9 +1,9 @@
-"""This module can be used to process text files
+"""This module is used to process text files
 """
 
 import copy
 import pathlib
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from pyxx.arrays.functions.convert import convert_to_tuple
 from .file import File
@@ -19,7 +19,7 @@ class TextFile(File):
     removing commented lines.
     """
 
-    def __init__(self, file: Union[str, pathlib.Path],
+    def __init__(self, path: Optional[Union[str, pathlib.Path]] = None,
                  comment_chars: Optional[Union[tuple, str]] = None):
         """Define a text file
 
@@ -28,18 +28,61 @@ class TextFile(File):
 
         Parameters
         ----------
-        file : str or pathlib.Path
-            Path and filename of the text file
+        path : str or pathlib.Path
+            Location of the text file in the file system
         comment_chars : tuple or str, optional
             Character(s) considered to represent comments in the text file
             (default is ``None``, which considers no characters to denote
             comments in the file)
-        """
-        super().__init__(file)
 
+        Notes
+        -----
+        Passing an empty string (``''``) or empty tuple (``()``) as the
+        ``comment_chars`` argument is equivalent to passing ``None`` (or
+        not providing this argument) -- in all these cases, the file will
+        be considered to have no characters denoting comments.
+        """
+        super().__init__(path=path)
+
+        # Initialize lists to store file content
         self._contents: List[str] = []
-        self._raw_contents: List[str] = []
-        self._comment_chars = convert_to_tuple(comment_chars)
+        self._raw_contents: Optional[List[str]] = None
+        self._trailing_newline: Optional[bool] = None
+
+        # Store comment character
+        self._comment_chars: Union[Tuple[str], None]
+        if comment_chars is None:
+            self._comment_chars = None
+        else:
+            if isinstance(comment_chars, (str, tuple)):
+                if len(comment_chars) == 0:
+                    self._comment_chars = None
+                else:
+                    comment_chars_list = convert_to_tuple(comment_chars)
+
+                    # Make sure every character of comment characters tuple is
+                    # a string
+                    for item in comment_chars_list:
+                        if not isinstance(item, str):
+                            raise TypeError(
+                                'All comment characters must be of type "str"')
+
+                    self._comment_chars = comment_chars_list
+            else:
+                raise TypeError(
+                    'Argument "comment_chars" must be either `None` or of '
+                    'type "str" or "tuple"')
+
+    def _check_contents(self, contents: List[str]):
+        # Verify that input is a list
+        if not isinstance(contents, list):
+            raise TypeError('Argument "contents" must be of type "list"')
+
+        # Verify that all elements of the input are strings
+        for line in contents:
+            if not isinstance(line, str):
+                raise TypeError(
+                    'All elements of "contents" must be of type "str"')
 
     @property
     def comment_chars(self):
@@ -48,18 +91,36 @@ class TextFile(File):
 
     @property
     def contents(self):
-        """A copy of the file content
+        """A reference to a list containing the (potentially modified) file
+        content of each line of the file
 
-        Returns a list containing the text on each line of the file.  Note
-        that this list may have been modified when cleaning the file contents.
+        Warnings
+        --------
+        This attribute returns the list **by reference**.  This means that
+        if you set a variable equal to this reference, then editing this
+        variable will edit the :py:attr:`contents` attribute (e.g., if you
+        set ``my_content = MyTextFile.contents``, then editing ``my_content``
+        will change the content stored in ``MyTextFile``).
+
+        Notes
+        -----
+        If trying to set the :py:attr:`contents` attribute, do not try to set
+        this attribute directly (i.e., don't use code similar to
+        ``MyTextFile.contents = ['line1', 'line2', 'line3']``).  Instead, use
+        the :py:meth:`populate_contents` method, as it offers greater control
+        over whether the contents are passed by reference or value.
         """
-        return copy.deepcopy(self._contents)
+        return self._contents
 
     @property
     def raw_contents(self):
         """A copy of the raw file content
 
-        Returns a list containing the original text on each line of the file.
+        If the file was read using the :py:meth:`read` method, this attribute
+        stores the original, unaltered contents of each line of the input
+        file, and it returns a copy of this list of lines.  If the file was
+        not read with the :py:meth:`read` method, this attribute stores a
+        value of ``None``.
         """
         return copy.deepcopy(self._raw_contents)
 
@@ -67,7 +128,13 @@ class TextFile(File):
     def trailing_newline(self):
         """Whether the original file had a newline at the end
         of the file"""
-        return self._raw_contents[-1].endswith('\n')
+        if self._trailing_newline is None:
+            raise AttributeError(
+                'Attribute "trailing_newline" has not been set. Please ensure '
+                'that either the `read()` or `populate_contents()` method has '
+                'been called')
+
+        return self._trailing_newline
 
     def clean_contents(self,
             remove_comments: bool = True,           # noqa : E128
@@ -99,8 +166,11 @@ class TextFile(File):
             Whether to remove lines that contain no content after other
             cleaning operations have completed (default is ``True``)
         """
+        # Confirm that "contents" attribute hasn't been modified improperly
+        self._check_contents(self.contents)
+
         # Store original file contents
-        orig_contents = self.contents
+        orig_contents = copy.deepcopy(self.contents)
 
         # Clean file line-by-line
         self._contents = []
@@ -115,7 +185,7 @@ class TextFile(File):
                     i += 1
 
             # Remove comments
-            if remove_comments:
+            if remove_comments and (self.comment_chars is not None):
                 if not (skip_full_line_comments
                         and line.strip().startswith(self.comment_chars)):
                     for comment_char in self.comment_chars:
@@ -131,38 +201,139 @@ class TextFile(File):
 
             i += 1
 
-    def read(self):
+    def overwrite(self, prologue: str = '', epilogue: Optional[str] = None,
+                  line_ending: str = '\n'):
+        """Write data in :py:attr:`contents` to the file specified by
+        :py:attr:`path`
+
+        Writes the lines of content in the :py:attr:`contents` attribute to
+        the (previously-defined) file specified by the :py:attr:`path`
+        attribute, suppressing warnings before overwriting the file.  This
+        is useful for cases when the file contents are manually populated and
+        it is desired to "dump" them to a file.  This method is also useful if
+        a file's contents need to be updated periodically based on the results
+        of another process.
+
+        Parameters
+        ----------
+        prologue : str, optional
+            Content written at beginning of file (default is ``''``)
+        epilogue : str, optional
+            Content written at end of file (default is to use the value of the
+            ``line_ending`` argument if :py:attr:`trailing_newline` is
+            ``True`` and ``''`` otherwise)
+        line_ending : str, optional
+            String written at the end of each line when writing file content
+            (default is ``'\\n'``)
+        """
+        if self.path is None:
+            raise AttributeError('Attribute "path" must be set to call '
+                                 '"overwrite()" method')
+
+        self.write(
+            output_file = self.path,
+            write_mode = 'w',
+            warn_before_overwrite = False,
+            prologue = prologue,
+            epilogue = epilogue,
+            line_ending = line_ending
+        )
+
+    def populate_contents(self, contents: List[str], trailing_newline: bool,
+                          pass_by_reference: bool = False):
+        """Add data to the :py:attr:`contents` list
+
+        Allows users to manually fill the :py:attr:`contents` list with
+        user-defined content.  The input list must be a list of strings,
+        and the user can optionally choose whether to pass the input by
+        reference or value.
+
+        Parameters
+        ----------
+        contents : list
+            List of strings which are to be assigned to the
+            :py:attr:`contents` list
+        trailing_newline : bool
+            Whether the contents being added represent a file with a trailing
+            newline (because the file wasn't read, the object has no way to
+            determine whether the file has a trailing newline, so users must
+            provide this information)
+        pass_by_reference : bool, optional
+            Whether to pass the ``contents`` argument by reference (default
+            is ``False``)
+
+        Notes
+        -----
+        If passing ``contents`` by reference, this means that if subsequent
+        changes are made to the original ``contents`` object, they will be
+        reflected in the :py:attr:`contents` attribute.  If passing by value,
+        then a *copy* of the ``contents`` argument will be made, so changing
+        the object outside the class instance will not affect the
+        :py:attr:`contents` attribute.
+        """
+        # Verify that input matches required format
+        self._check_contents(contents)
+
+        # Store contents
+        if pass_by_reference:
+            self._contents = contents
+        else:
+            self._contents = copy.deepcopy(contents)
+
+        # Store whether file has a trailing newline
+        if not isinstance(trailing_newline, bool):
+            raise TypeError(
+                'Argument "trailing_newline" must be of type "bool"')
+
+        self._trailing_newline = trailing_newline
+
+    def read(self, path: Optional[Union[str, pathlib.Path]] = None):
         """Read file from disk
 
-        Calling this method reads the file specified by the :py:attr:`file`
+        Calling this method reads the file specified by the :py:attr:`path`
         attribute from the disk, populating :py:attr:`contents` and
         :py:attr:`raw_contents`.  Additionally, the file hashes stored in
         the :py:attr:`hashes` attribute are updated (to make it easier to
         check if the file has been modified later).
         """
+        # Identify file to read, and store in "path" attribute
+        if path is not None:
+            # First priority: use "path" argument if provided
+            self.path = path
+        else:
+            # Second priority: use "path" attribute.  If it isn't yet
+            # defined, throw an error
+            if self.path is None:
+                raise AttributeError(
+                    'Neither the "path" argument was provided nor is the '
+                    '"path" attribute defined.  At least one of these must '
+                    'be provided to read the file')
+
         # Compute and store file hashes
-        super().store_file_hashes()
+        self.store_file_hashes()
 
         # Read file
-        with open(self.file, 'r', encoding='utf_8') as fileID:
+        with open(self.path, 'r', encoding='utf_8') as fileID:
             self._raw_contents = fileID.readlines()
+
+        # Store whether original file has a trailing newline
+        self._trailing_newline = self._raw_contents[-1].endswith('\n')
 
         # Remove trailing newlines.  This is beneficial because if the
         # file is later cleaned and, for example, comments are removed,
         # this can result in an unpredictable mix of lines with trailing
         # newlines and lines without, so it's simpler to remove them all
         # at the beginning and add them when writing the file
-        self._contents = [line[:-1] if line.endswith('\n') else line
-                          for line in self._raw_contents]
+        self._contents = [line.rstrip('\r\n') for line in self._raw_contents]
 
     def write(self, output_file: Union[str, pathlib.Path],
-              write_mode: str = 'w', write_raw: bool = False,
+              write_mode: str = 'w', warn_before_overwrite: bool = True,
               prologue: str = '', epilogue: Optional[str] = None,
-              separator: str = '\n', warn_before_overwrite: bool = True):
+              line_ending: str = '\n'):
         """Write file to disk
 
-        Calling this method writes the file contents stored in either
-        :py:attr:`contents` or :py:attr:`raw_contents` to the disk.
+        Calling this method writes the file contents stored in
+        :py:attr:`contents` to the disk.
 
         Parameters
         ----------
@@ -171,22 +342,22 @@ class TextFile(File):
         write_mode : str, optional
             Any mode (such as ``'w'`` or ``'a'``) for the built-in
             ``open()`` function for writing files (default is ``'w'``)
-        write_raw : bool, optional
-            Whether to write contents of :py:attr:`raw_contents`.  If set
-            to ``False``, the contents of :py:attr:`contents` are written
-            (default is ``False``)
-        prologue : str, optional
-            Content written at beginning of file (default is ``''``)
-        epilogue : str, optional
-            Content written at end of file (default is ``'\\n'`` if
-            :py:attr:`trailing_newline` is ``True`` and ``''`` otherwise)
-        separator : str, optional
-            String written between each line when writing file content
-            (default is ``'\\n'``)
         warn_before_overwrite : bool, optional
             Whether to throw an error if ``output_file`` already exists
             (default is ``True``)
+        prologue : str, optional
+            Content written at beginning of file (default is ``''``)
+        epilogue : str, optional
+            Content written at end of file (default is to use the value of the
+            ``line_ending`` argument if :py:attr:`trailing_newline` is
+            ``True`` and ``''`` otherwise)
+        line_ending : str, optional
+            String written at the end of each line when writing file content
+            (default is ``'\\n'``)
         """
+        # Confirm that "contents" attribute hasn't been modified improperly
+        self._check_contents(self.contents)
+
         # Convert output file to `pathlib.Path`
         output_file = pathlib.Path(output_file).expanduser().resolve()
 
@@ -197,9 +368,10 @@ class TextFile(File):
 
         # Set epilogue
         if epilogue is None:
-            epilogue = '\n' if self.trailing_newline else ''
+            epilogue = line_ending if self.trailing_newline else ''
 
         # Write output file
-        output_content = self.raw_contents if write_raw else self.contents
         with open(output_file, write_mode, encoding='utf_8') as fileID:
-            fileID.write(prologue + separator.join(output_content) + epilogue)
+            fileID.write(prologue)
+            fileID.write(line_ending.join(self.contents))
+            fileID.write(epilogue)
