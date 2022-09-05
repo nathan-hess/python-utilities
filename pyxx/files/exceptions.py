@@ -1,6 +1,11 @@
+"""Customized exceptions for the ``pyxx.files`` module
 """
-Customized exceptions for the ``pyxx.files`` module
-"""
+
+
+class NoFileSpecifiedError(AttributeError):
+    """Error thrown if attempting to perform an operation that requires
+    the ``pyxx.files.File.file`` attribute, but this attribute is set
+    to ``None``"""
 
 
 class UntrackedFileError(Exception):

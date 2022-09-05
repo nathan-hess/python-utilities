@@ -1,5 +1,4 @@
-"""
-This module contains code to assist in analyzing string content.
+"""Code to assist in analyzing string content
 """
 
 

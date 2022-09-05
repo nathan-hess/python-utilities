@@ -1,5 +1,4 @@
-"""
-Customized exceptions for the ``pyxx.strings`` module
+"""Customized exceptions for the ``pyxx.strings`` module
 """
 
 

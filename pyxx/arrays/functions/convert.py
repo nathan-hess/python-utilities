@@ -1,5 +1,6 @@
 """Functions for converting data to an array, or converting one type of
-array to another"""
+array to another
+"""
 
 from typing import Any
 

@@ -1,5 +1,4 @@
-"""
-This module is used to process binary (non-text) files.
+"""This module is used to process binary (non-text) files
 """
 
 from .file import File

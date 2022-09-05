@@ -1,5 +1,4 @@
-"""
-This module contains functions for splitting strings.
+"""Functions for splitting strings
 """
 
 
