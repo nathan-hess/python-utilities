@@ -309,6 +309,10 @@ class TextFile(File):
                     '"path" attribute defined.  At least one of these must '
                     'be provided to read the file')
 
+        # Check that file exists
+        if not self.path.is_file():
+            raise FileNotFoundError(f'Cannot find file "{self.path}"')
+
         # Compute and store file hashes
         self.store_file_hashes()
 
