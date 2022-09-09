@@ -1,6 +1,8 @@
 .. spelling:word-list::
 
     args
+    np
+    tol
 
 
 pyxx.arrays
@@ -21,6 +23,19 @@ convert one or more arrays of one type to a different type.
     :toctree: ./api
 
     convert_to_tuple
+
+
+Array Equality
+--------------
+
+The functions in this section are intended to check whether arrays have equal
+size and/or content.
+
+.. autosummary::
+    :toctree: ./api
+    :template: ../_templates/api_reference_arrays_equality.rst
+
+    np_array_equal
 
 
 Array Size
