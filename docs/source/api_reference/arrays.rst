@@ -1,3 +1,8 @@
+.. spelling:word-list::
+
+    args
+
+
 pyxx.arrays
 ===========
 
@@ -26,6 +31,7 @@ array-like objects.
 
 .. autosummary::
     :toctree: ./api
-    :template: ../_templates/api_reference_arrays_max_len.rst
+    :template: ../_templates/api_reference_arrays_size.rst
 
+    check_len_equal
     max_list_item_len
