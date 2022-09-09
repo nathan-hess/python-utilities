@@ -6,7 +6,7 @@ import numpy as np
 
 def np_array_equal(array1: np.ndarray, array2: np.ndarray, *args: np.ndarray,
                    tol: float = 1e-16):
-    """Checks that NumPy arrays are equal within a given tolerance
+    """Checks that numeric NumPy arrays are equal within a given tolerance
 
     Returns ``True`` if the NumPy arrays passed as arguments are of the same
     shape and the maximum difference between their elements is less than or
@@ -29,6 +29,11 @@ def np_array_equal(array1: np.ndarray, array2: np.ndarray, *args: np.ndarray,
     bool
         Whether ``array1``, ``array2``, ``*args`` have the same shape and
         are equal within tolerance ``tol``
+
+    Warnings
+    --------
+    Since array values are compared within a tolerance, all arrays to be
+    compared must contain only numeric types (integer, float, etc.).
 
     Notes
     -----
