@@ -49,4 +49,5 @@ array-like objects.
     :template: ../_templates/api_reference_arrays_size.rst
 
     check_len_equal
+    is_len_equal
     max_list_item_len

@@ -3,6 +3,7 @@ import unittest
 
 from pyxx.arrays import (
     check_len_equal,
+    is_len_equal,
     max_list_item_len,
 )
 
@@ -103,6 +104,66 @@ class Test_CheckLenEqual(unittest.TestCase):
                 check_len_equal(['a', 'b', 'c'], (1, 2), ('cd', 3), (None, None), 'abcdefjkl'),
                 (False, [3, 2, 2, 2, 9])
             )
+
+
+class Test_IsLenEqual(unittest.TestCase):
+    def test_is_list_equal(self):
+        # Verifies that equality of lengths of lists is evaluated correctly
+        with self.subTest(num_lists=2):
+            self.assertTrue(is_len_equal(['a', 'b', 'c'], [1, 2, 3]))
+            self.assertTrue(is_len_equal(['a'], [1]))
+
+        with self.subTest(num_lists=3):
+            self.assertTrue(is_len_equal(['a', 'b'], [1, 2], ['cd', 3]))
+            self.assertTrue(is_len_equal(['a'], [1], ['c']))
+
+        with self.subTest(num_lists=4):
+            self.assertTrue(is_len_equal(['a', 'b'], [1, 2], ['cd', 3], [None, None]))
+            self.assertTrue(is_len_equal(['a'], [1], ['c'], [None]))
+
+    def test_is_tuple_equal(self):
+        # Verifies that equality of lengths of tuples is evaluated correctly
+        with self.subTest(num_tuples=2):
+            self.assertTrue(is_len_equal(('a', 'b', 'c'), (1, 2, 3)))
+            self.assertTrue(is_len_equal(('a',), (1,)))
+
+        with self.subTest(num_tuples=3):
+            self.assertTrue(is_len_equal(('a', 'b'), (1, 2), ('cd', 3)))
+            self.assertTrue(is_len_equal(('a',), (1,), ('cd',)))
+
+        with self.subTest(num_tuples=4):
+            self.assertTrue(is_len_equal(('a', 'b'), (1, 2), ('cd', 3), (None, None)))
+            self.assertTrue(is_len_equal(('a',), (1,), ('cd',), (None,)))
+
+    def test_is_str_equal(self):
+        # Verifies that equality of lengths of strings is evaluated correctly
+        with self.subTest(num_strings=2):
+            self.assertTrue(is_len_equal('abc', '123'))
+
+        with self.subTest(num_strings=3):
+            self.assertTrue(is_len_equal('ab', '12', 'c3'))
+
+        with self.subTest(num_strings=4):
+            self.assertTrue(is_len_equal('ab', '12', 'c3', 'No'))
+
+    def test_is_mixed_type_equal(self):
+        # Verifies that equality of lengths of mixed list/tuple/string arguments
+        # is evaluated correctly
+        self.assertTrue(is_len_equal(['a', 'b'], (1, 2), ('cd', 3), (None, None), 'ce'))
+        self.assertTrue(is_len_equal(('a',), (1,), ('cd',), (None,), 'c'))
+
+    def test_is_mixed_type_unequal(self):
+        # Verifies that equality of lengths of mixed list/tuple/string arguments with
+        # different lengths is evaluated correctly
+        with self.subTest(num_args=2):
+            self.assertFalse(is_len_equal((1, 2), 'abcdefjkl'))
+
+        with self.subTest(num_args=3):
+            self.assertFalse(is_len_equal(('cd', 3), (None, None), 'abcdefjkl'))
+
+        with self.subTest(num_args=5):
+            self.assertFalse(is_len_equal(['a', 'b', 'c'], (1, 2), ('cd', 3),
+                                          (None, None), 'abcdefjkl'))
 
 
 class Test_MaxListLength(unittest.TestCase):
