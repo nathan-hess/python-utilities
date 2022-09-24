@@ -28,3 +28,29 @@ reducing the need to duplicate code between projects.
     api_reference/arrays
     api_reference/files
     api_reference/strings
+
+
+Quick Links
+-----------
+
+.. grid:: 2
+
+    .. grid-item-card:: Installation
+        :link: section-installation
+        :link-type: ref
+
+        .. figure:: ./_static/download_icon.svg
+            :align: center
+            :width: 200px
+        
+        Instructions for installing and running |PackageNameStylized|
+
+    .. grid-item-card:: API Reference
+        :link: section-api_reference
+        :link-type: ref
+
+        .. figure:: ./_static/code_run_icon.svg
+            :align: center
+            :width: 200px
+
+        Detailed documentation of all members in the |PackageNameStylized| package
