@@ -1,3 +1,10 @@
+.. spelling:word-list::
+
+    args
+    np
+    tol
+
+
 pyxx.arrays
 ===========
 
@@ -18,6 +25,19 @@ convert one or more arrays of one type to a different type.
     convert_to_tuple
 
 
+Array Equality
+--------------
+
+The functions in this section are intended to check whether arrays have equal
+size and/or content.
+
+.. autosummary::
+    :toctree: ./api
+    :template: ../_templates/api_reference_arrays_equality.rst
+
+    is_array_equal
+
+
 Array Size
 ----------
 
@@ -26,6 +46,8 @@ array-like objects.
 
 .. autosummary::
     :toctree: ./api
-    :template: ../_templates/api_reference_arrays_max_len.rst
+    :template: ../_templates/api_reference_arrays_size.rst
 
+    check_len_equal
+    is_len_equal
     max_list_item_len

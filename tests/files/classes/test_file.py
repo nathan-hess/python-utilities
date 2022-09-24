@@ -30,6 +30,13 @@ class Test_File(unittest.TestCase):
             'str': self.file_from_str,
         }
 
+    def test_file_repr_empty(self):
+        # Verifies that the file object string representation is computed
+        # correctly if `path` attribute has not been assigned a value
+        self.assertEqual(
+            self.file_empty.__repr__(),
+            "<class 'pyxx.files.classes.file.File'>")
+
     def test_file_repr_before(self):
         # Verifies that file object descriptor is computed correctly before
         # computing file hashes

@@ -10,6 +10,7 @@ import sys
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 import pyxx
+from pyxx.arrays.functions.equality import Array_or_Number_or_String
 
 
 # -- Project information -----------------------------------------------------
@@ -125,6 +126,11 @@ autodoc_default_options = {
     'inherited-members': True,
     'member-order': 'bysource',
     'show-inheritance': True,
+}
+
+# Type aliases
+autodoc_type_aliases = {
+    Array_or_Number_or_String: Array_or_Number_or_String,
 }
 
 
