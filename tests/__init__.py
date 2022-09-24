@@ -1,6 +1,8 @@
+import io
 import pathlib
 import os
 import shutil
+import sys
 
 
 # Define variables available to all tests
@@ -10,6 +12,17 @@ TEST_TMP_DIR = PROJECT_TEST_DIR / 'tmp'
 
 
 # Define context managers to facilitate testing
+class CapturePrint:
+    """Captures text printed to the terminal when running commands"""
+    def __enter__(self):
+        self.terminal_stdout = io.StringIO()
+        sys.stdout = self.terminal_stdout
+        return self.terminal_stdout
+
+    def __exit__(self, *args, **kwargs):
+        sys.stdout = sys.__stdout__
+
+
 class CreateTempTestDir:
     """Sets up temporary folder for reading/writing test files"""
     def __enter__(self):

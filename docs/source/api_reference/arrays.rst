@@ -35,7 +35,7 @@ size and/or content.
     :toctree: ./api
     :template: ../_templates/api_reference_arrays_equality.rst
 
-    np_array_equal
+    is_array_equal
 
 
 Array Size
