@@ -162,6 +162,10 @@ class Test_NumPyListEqual(unittest.TestCase):
             self.assertTrue(is_array_equal(-5, -5))
             self.assertTrue(is_array_equal(-5.0, -5))
 
+        with self.subTest(result='equal_numpy'):
+            self.assertTrue(is_array_equal(-5.0, np.array(-5)))
+            self.assertTrue(is_array_equal(-5.0, np.array(-5), np.int32(-5)))
+
         with self.subTest(result='unequal'):
             self.assertFalse(is_array_equal(3.142, 3.1))
             self.assertFalse(is_array_equal(-5, 5))
@@ -259,6 +263,15 @@ class Test_NumPyListEqual(unittest.TestCase):
         with self.subTest(comment='number_type'):
             self.assertFalse(is_array_equal(int, 3, 0))
             self.assertFalse(is_array_equal([1, 2, 3], [1, 2, float]))
+
+    def test_unspecified_type(self):
+        # Verifies that objects that are evaluated as equal (even if not
+        # numbers or strings) can be compared
+        with self.subTest(comment='single_value'):
+            self.assertTrue(is_array_equal(int, int))
+
+        with self.subTest(comment='array'):
+            self.assertTrue(is_array_equal([int, float], [int, float]))
 
     def test_empty(self):
         # Verifies that empty arrays are evaluated as equal

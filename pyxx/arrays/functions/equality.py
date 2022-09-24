@@ -95,6 +95,10 @@ def is_array_equal(item1: Array_or_Number_or_String,
     # Create list of array(s) to compare with `item1`
     items = [item2] + list(args)
 
+    # Check whether each of the input arguments is an array-like object
+    is_array = [isinstance(x, (list, tuple, np.ndarray))
+                for x in [item1, *items]]
+
     # If inputs are numbers, directly compare them (requiring difference
     # between numbers to be less than or equal to `tol` to consider the
     # inputs equal)
@@ -121,18 +125,10 @@ def is_array_equal(item1: Array_or_Number_or_String,
 
         return True
 
-    # If inputs are strings, directly compare them (requiring strings to be
-    # identical to consider the inputs equal)
-    elif isinstance(item1, str):
-        for x in items:
-            if not isinstance(x, str) or item1 != x:
-                return False
-        return True
-
-    else:
-        # Verify that inputs are of expected types
-        if not all(map(lambda x: isinstance(x, (list, tuple, np.ndarray)),
-                       [item1, *items])):
+    # If inputs are array-like objects, compare their contents
+    elif any(is_array):
+        # Verify that inputs are array-like objects
+        if not all(is_array):
             return False
 
         # Verify that all inputs have equal length
@@ -149,4 +145,13 @@ def is_array_equal(item1: Array_or_Number_or_String,
                                   tol=tol):
                 return False
 
+        return True
+
+    else:
+        # Inputs are not numbers or array-like objects, so try to directly
+        # compare them.  This allows strings, user-defined classes/types,
+        # or other objects to be compared
+        for x in items:
+            if item1 != x:
+                return False
         return True
