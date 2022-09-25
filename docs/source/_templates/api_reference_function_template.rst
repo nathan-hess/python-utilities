@@ -1,5 +1,7 @@
 .. spelling:word-list::
 
+    len
+    np
     str
 
 

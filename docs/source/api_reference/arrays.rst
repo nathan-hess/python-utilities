@@ -33,7 +33,7 @@ size and/or content.
 
 .. autosummary::
     :toctree: ./api
-    :template: ../_templates/api_reference_arrays_equality.rst
+    :template: ../_templates/api_reference_function_template.rst
 
     is_array_equal
 
@@ -46,7 +46,7 @@ array-like objects.
 
 .. autosummary::
     :toctree: ./api
-    :template: ../_templates/api_reference_arrays_size.rst
+    :template: ../_templates/api_reference_function_template.rst
 
     check_len_equal
     is_len_equal
