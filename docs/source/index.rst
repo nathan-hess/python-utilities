@@ -39,7 +39,7 @@ Quick Links
         :link: section-installation
         :link-type: ref
 
-        .. figure:: ./_static/download_icon.svg
+        .. figure:: ./_static/icon_download.svg
             :align: center
             :width: 200px
         
@@ -49,7 +49,7 @@ Quick Links
         :link: section-api_reference
         :link-type: ref
 
-        .. figure:: ./_static/code_run_icon.svg
+        .. figure:: ./_static/icon_python_shell.svg
             :align: center
             :width: 200px
 
