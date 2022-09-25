@@ -1,4 +1,4 @@
 """This module contains classes to perform unit conversions
 """
 
-from .unitsystem import UnitSystem
+from .unitsystem import UnitSystem, UnitSystemSI

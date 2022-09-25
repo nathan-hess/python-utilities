@@ -2,6 +2,7 @@ import unittest
 
 from pyxx.units import (
     UnitSystem,
+    UnitSystemSI,
 )
 
 
@@ -128,3 +129,23 @@ class Test_UnitSystem(unittest.TestCase):
         system = UnitSystem(7)
         with self.assertRaises(AttributeError):
             system.num_base_units = 10
+
+
+class Test_UnitSystemSI(unittest.TestCase):
+    def setUp(self):
+        self.unit_system = UnitSystemSI()
+
+    def test_num_base_units(self):
+        # Verifies that `UnitSystemSI` objects have the correct number of
+        # base units configured
+        self.assertEqual(self.unit_system.num_base_units, 7)
+
+    def test_name(self):
+        # Verifies that `UnitSystemSI` objects have the correct name configured
+        self.assertEqual(self.unit_system.name, 'SI')
+
+    def test_description(self):
+        # Verifies that `UnitSystemSI` objects have the correct
+        # description configured
+        self.assertEqual(self.unit_system.description,
+                         'International System of Units')

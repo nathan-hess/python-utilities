@@ -89,3 +89,54 @@ class UnitSystem:
     def num_base_units(self):
         """The number of base units in the system of units"""
         return self._num_base_units
+
+
+class UnitSystemSI(UnitSystem):
+    """Class representing the SI system of units
+
+    Class that can be used to represent the International System of
+    Units (SI).  This system of units has 7 base units, which are
+    described in the "Notes" section.
+
+    Notes
+    -----
+    The base units in the SI system are:
+
+    - Length: meter [m]
+    - Time: second [s]
+    - Amount of substance: mole [mol]
+    - Electric current: ampere [A]
+    - Temperature: Kelvin [K]
+    - Luminous intensity: candela [cd]
+    - Mass: kilogram [kg]
+
+    References
+    ----------
+    https://www.nist.gov/pml/weights-and-measures/metric-si/si-units
+    """
+
+    def __init__(self, name: Optional[str] = 'SI',
+                 description: Optional[str] = 'International System of Units'):
+        """Creates an instance of the :py:class:`UnitSystemSI` class
+
+        Creates a system of units corresponding to the International System of
+        Units (SI).  This system of units has 7 base units.
+
+        Parameters
+        ----------
+        name : str, optional
+            A short, descriptive name of the system of units (default is
+            ``'SI'``)
+        description : str, optional
+            A description of the system of units (default is ``'International
+            System of Units'``)
+        """
+        # Configure the appropriate number of base units (7) for SI
+        num_base_units = 7
+
+        # Initialize the object
+        super().__init__(
+            num_base_units=num_base_units,
+            name=name,
+            description=description
+        )
