@@ -8,7 +8,7 @@ Bracket Concepts
 
 This section describes some of the basic concepts and terminology used in the
 documentation and source code of the bracket-related functions in the
-``pyxx.strings`` module.
+:py:mod:`pyxx.strings` module.
 
 
 Definitions
@@ -28,7 +28,7 @@ the term "bracket" is used to refer to any of parentheses, square brackets,
 and braces.
 
 Rather than using a complex and potentially confusing term such as "enclosing
-characters," to refer to parentheses, square brackets, and braces, in
+characters" to refer to parentheses, square brackets, and braces, in
 |PackageNameStylized| all of these characters are collectively referred to as
 "brackets," and the ``[]`` are specifically referred to as "square brackets."
 This approach aims to strike a balance between precise lexical terminology
