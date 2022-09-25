@@ -1,4 +1,4 @@
-.. include:: ../../constants.rst
+.. include:: ../constants.rst
 
 
 .. _section-bracket_concepts:

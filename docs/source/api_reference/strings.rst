@@ -35,11 +35,6 @@ it can be useful to parse strings containing brackets and identify pairs of
     this section operate on a conceptual level, refer to the
     :ref:`section-bracket_concepts` page.
 
-.. toctree::
-    :hidden:
-
-    concepts/brackets
-
 .. autosummary::
     :toctree: ./api
 
