@@ -1,9 +1,13 @@
 .. spelling:word-list::
 
    BinaryFile
+   candela
+   num
    TextFile
    TypedList
    TypedListWithID
+   UnitSystem
+   UnitSystemSI
 
 
 {{ fullname | escape | underline}}

@@ -102,13 +102,13 @@ class UnitSystemSI(UnitSystem):
     -----
     The base units in the SI system are:
 
-    - Length: meter [m]
-    - Time: second [s]
-    - Amount of substance: mole [mol]
-    - Electric current: ampere [A]
-    - Temperature: Kelvin [K]
-    - Luminous intensity: candela [cd]
-    - Mass: kilogram [kg]
+    1. Length: meter [:math:`m`]
+    2. Time: second [:math:`s`]
+    3. Amount of substance: mole [:math:`mol`]
+    4. Electric current: ampere [:math:`A`]
+    5. Temperature: Kelvin [:math:`K`]
+    6. Luminous intensity: candela [:math:`cd`]
+    7. Mass: kilogram [:math:`kg`]
 
     References
     ----------

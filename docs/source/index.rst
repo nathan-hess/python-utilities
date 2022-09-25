@@ -30,6 +30,7 @@ reducing the need to duplicate code between projects.
     api_reference/files
     api_reference/numbers
     api_reference/strings
+    api_reference/units
 
 
 Quick Links

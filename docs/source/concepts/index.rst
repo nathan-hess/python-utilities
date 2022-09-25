@@ -15,3 +15,4 @@ the reference pages.
     :maxdepth: 2
 
     brackets
+    units
