@@ -1,0 +1,91 @@
+"""This module contains classes intended to represent a system of
+units (that is, a system with a set of base units from which all
+other relevant units can be derived).
+"""
+
+from typing import Optional
+
+
+class UnitSystem:
+    """Base class representing a system of units
+
+    This class can be used to represent a system of units with an arbitrary
+    number of base units.  For more information about systems of units and
+    unit conversions, refer to the :ref:`section-units_concepts` section
+    of the documentation.
+    """
+
+    def __init__(self, num_base_units: int, name: Optional[str] = None,
+                 description: Optional[str] = None):
+        """Creates an instance of the :py:class:`UnitSystem` class
+
+        Creates a system of units, assigning the number of base units
+        (which cannot be changed later) and optionally an identifying name
+        and description.
+
+        Parameters
+        ----------
+        num_base_units : int
+            The number of base units in the system of units
+        name : str, optional
+            A short, descriptive name of the system of units (default is
+            ``None``)
+        description : str, optional
+            A description of the system of units (default is ``None``)
+        """
+        # Store number of base units
+        if not isinstance(num_base_units, int):
+            raise TypeError(
+                'Argument "num_base_units" must be of type "int"')
+        if num_base_units <= 0:
+            raise ValueError(
+                'Argument "num_base_units" must be positive')
+        self._num_base_units = num_base_units
+
+        # Store name and description
+        self.name = name
+        self.description = description
+
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        representation = str(self.__class__)
+
+        if self.name is not None:
+            representation += f' - {self.name}'
+
+        if self.description is not None:
+            representation += f' - {self.description}'
+
+        return representation
+
+    @property
+    def description(self):
+        """A brief description of the system of units, such as a list of the
+        base units or details on other relevant specifications"""
+        return self._description
+
+    @description.setter
+    def description(self, description: Optional[str]):
+        if not (isinstance(description, str) or description is None):
+            raise TypeError('Argument "description" must be of type "str"')
+
+        self._description = description
+
+    @property
+    def name(self):
+        """A short, descriptive name identifying the system of units"""
+        return self._name
+
+    @name.setter
+    def name(self, name: Optional[str]):
+        if not (isinstance(name, str) or name is None):
+            raise TypeError('Argument "name" must be of type "str"')
+
+        self._name = name
+
+    @property
+    def num_base_units(self):
+        """The number of base units in the system of units"""
+        return self._num_base_units
