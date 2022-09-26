@@ -14,7 +14,10 @@ from pyxx.strings.functions.brackets import (
     find_skip_brackets,
     strip_matched_brackets,
 )
-from pyxx.strings.functions.content import str_excludes_chars
+from pyxx.strings.functions.content import (
+    str_excludes_chars,
+    str_includes_only,
+)
 from pyxx.strings.functions.split import split_at_index
 from pyxx.units.exceptions import (
     InvalidUnitError,
@@ -263,7 +266,15 @@ def parse_unit(unit: str, max_iterations: int = 10000):
 
                 # Verify that exponent is a number
                 try:
-                    exp = float(sympy.simplify(strip_matched_brackets(exp)))
+                    # For security, verify that the exponent contains only
+                    # expected characters
+                    strip_exp = strip_matched_brackets(exp)
+                    if not str_includes_only(strip_exp, special_chars + 'e+-'):
+                        raise ValueError
+
+                    # Attempt to simplify exponent
+                    exp = float(sympy.simplify(strip_exp))
+
                 except (ValueError, TypeError):
                     raise InvalidExponentError(
                         f'Invalid exponent "{exp}" encountered when '

@@ -319,6 +319,7 @@ class Test_ParseUnit(unittest.TestCase):
 
         with self.subTest(operator='exponent'):
             self.assertDictEqual(parse_unit('kg^(2^4)'), {'kg': 16})
+            self.assertDictEqual(parse_unit('kg^(2**4)'), {'kg': 16})
 
         with self.subTest(operator='combination'):
             self.assertDictEqual(parse_unit('kg^(2- 1^4)/m*tx^(6+ 2^2/8)'),
