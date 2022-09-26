@@ -302,6 +302,30 @@ class Test_ParseUnit(unittest.TestCase):
                 parse_unit('mm*cm^-2/(ft^-4)/micron*mm^3'),
                 {'mm': 4, 'cm': -2, 'micron': -1, 'ft': 4})
 
+    def test_exponent_math(self):
+        # Verifies that unit parser handles units with math expressions in
+        # an exponent
+        with self.subTest(operator='addition'):
+            self.assertDictEqual(parse_unit('kg^(2+5)'), {'kg': 7})
+
+        with self.subTest(operator='subraction'):
+            self.assertDictEqual(parse_unit('kg^(3.4-1.2)'), {'kg': 2.2})
+
+        with self.subTest(operator='multiplication'):
+            self.assertDictEqual(parse_unit('kg^(5* 2)'), {'kg': 10})
+
+        with self.subTest(operator='division'):
+            self.assertDictEqual(parse_unit('kg^((4/(8)))'), {'kg': 0.5})
+
+        with self.subTest(operator='exponent'):
+            self.assertDictEqual(parse_unit('kg^(2^4)'), {'kg': 16})
+
+        with self.subTest(operator='combination'):
+            self.assertDictEqual(parse_unit('kg^(2- 1^4)/m*tx^(6+ 2^2/8)'),
+                                 {'kg': 1, 'm': -1, 'tx': 6.5})
+            self.assertDictEqual(parse_unit('kg^(2-   ( (1^4)/5 + (3^(2*1.5)*0.5)))'),
+                                 {'kg': -11.7})
+
     def test_compound_unit(self):
         # Verifies unit parser functionality for relatively complex, compound
         # unit expressions

@@ -7,6 +7,8 @@ be converted to the format: ``{'kg': 1.0, 's': -2.0, 'm': 1.0}``.
 import copy
 import string
 
+import sympy
+
 from pyxx.strings.functions.brackets import (
     contains_all_matched_brackets,
     find_skip_brackets,
@@ -261,7 +263,7 @@ def parse_unit(unit: str, max_iterations: int = 10000):
 
                 # Verify that exponent is a number
                 try:
-                    exp = float(strip_matched_brackets(exp))
+                    exp = float(sympy.simplify(strip_matched_brackets(exp)))
                 except (ValueError, TypeError):
                     raise InvalidExponentError(
                         f'Invalid exponent "{exp}" encountered when '
