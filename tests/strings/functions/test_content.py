@@ -19,6 +19,18 @@ class Test_StrExcludesChars(unittest.TestCase):
         self.assertFalse(str_excludes_chars('abcd12345*()', 'def'))
         self.assertFalse(str_excludes_chars('abcd12345*()', '('))
 
+    def test_invalid_type(self):
+        # Verifies that an error is thrown if attempting to pass non-string
+        # arguments
+        with self.assertRaises(TypeError):
+            str_excludes_chars('abc', 0)
+
+        with self.assertRaises(TypeError):
+            str_excludes_chars(0, 'abc')
+
+        with self.assertRaises(TypeError):
+            str_excludes_chars(0, 0)
+
 
 class Test_StrIncludesOnly(unittest.TestCase):
     def test_all_allowed_chars(self):
@@ -35,3 +47,15 @@ class Test_StrIncludesOnly(unittest.TestCase):
         self.assertFalse(str_includes_only('abcde', 'abcd'))
         self.assertFalse(str_includes_only('abcd1234', 'efg'))
         self.assertFalse(str_includes_only('abc', ''))
+
+    def test_invalid_type(self):
+        # Verifies that an error is thrown if attempting to pass non-string
+        # arguments
+        with self.assertRaises(TypeError):
+            str_includes_only('abc', 0)
+
+        with self.assertRaises(TypeError):
+            str_includes_only(0, 'abc')
+
+        with self.assertRaises(TypeError):
+            str_includes_only(0, 0)
