@@ -6,3 +6,4 @@ arbitrary units and convert quantities between such units.
 """
 
 from .classes import UnitSystem, UnitSystemSI
+from .functions.parser import parse_unit
