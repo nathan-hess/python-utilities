@@ -35,3 +35,16 @@ conversions.
 
     UnitSystem
     UnitSystemSI
+
+
+Unit-Parsing
+------------
+
+The objects in this section can be used to parse strings containing units (such
+as ``'kg/m/(s*m^2)'``), separating the component units in the string.  This is
+an essential precursor to performing unit conversions with complex units.
+
+.. autosummary::
+    :toctree: ./api
+
+    parse_unit
