@@ -126,7 +126,7 @@ def is_array_equal(item1: Array_or_Number_or_String,
         return True
 
     # If inputs are array-like objects, compare their contents
-    elif any(is_array):
+    if any(is_array):
         # Verify that inputs are array-like objects
         if not all(is_array):
             return False
@@ -147,11 +147,10 @@ def is_array_equal(item1: Array_or_Number_or_String,
 
         return True
 
-    else:
-        # Inputs are not numbers or array-like objects, so try to directly
-        # compare them.  This allows strings, user-defined classes/types,
-        # or other objects to be compared
-        for x in items:
-            if item1 != x:
-                return False
-        return True
+    # Inputs are not numbers or array-like objects, so try to directly
+    # compare them.  This allows strings, user-defined classes/types,
+    # or other objects to be compared
+    for x in items:
+        if item1 != x:
+            return False
+    return True
