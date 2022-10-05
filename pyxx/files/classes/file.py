@@ -139,7 +139,8 @@ class File:
         if not self.path.exists():
             raise FileNotFoundError(
                 f'Cannot compute hash for non-existent file "{self.path}"')
-        elif not self.path.is_file():
+
+        if not self.path.is_file():
             raise IsADirectoryError(
                 f'Cannot compute hash for a directory ("{self.path}")')
 

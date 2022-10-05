@@ -42,8 +42,8 @@ def check_len_equal(item1: Any, item2: Any, *args: Any):
 
     if len(set(lengths)) == 1:
         return True, lengths[0]
-    else:
-        return False, lengths
+
+    return False, lengths
 
 
 def is_len_equal(item1: Any, item2: Any, *args: Any):
