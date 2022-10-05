@@ -275,10 +275,10 @@ def parse_unit(unit: str, max_iterations: int = 10000):
                     # Attempt to simplify exponent
                     exp = float(sympy.simplify(strip_exp))
 
-                except (ValueError, TypeError):
+                except (ValueError, TypeError) as exception:
                     raise InvalidExponentError(
                         f'Invalid exponent "{exp}" encountered when '
-                        f' parsing unit "{original_unit}"')
+                        f' parsing unit "{original_unit}"') from exception
 
                 # Verify that base is either a unit or enclosed in
                 # matched parentheses
