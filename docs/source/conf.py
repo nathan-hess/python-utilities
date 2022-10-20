@@ -30,6 +30,7 @@ url = 'https://github.com/nathan-hess/python-utilities'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
+    'sphinx.ext.doctest',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.napoleon',
     'sphinxcontrib.spelling',
@@ -132,6 +133,17 @@ autodoc_default_options = {
 autodoc_type_aliases = {
     Array_or_Number_or_String: Array_or_Number_or_String,
 }
+
+
+# -- Sphinx `doctest` extension options --------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/doctest.html
+
+# Test code in "standard" reStructuredText blocks (i.e., lines that are not
+# inside a `.. doctest::` block but start with `>>>` are tested)
+doctest_test_doctest_blocks = 'default'
+
+# Code executed before running test code sections for all documentation files
+doctest_global_setup = 'import pyxx'
 
 
 # -- Matplotlib plotting extension options -----------------------------------
