@@ -22,8 +22,8 @@ processing methods are available to perform common file-related tasks.
     :toctree: ./api
     :template: ../_templates/api_reference_class_template.rst
 
-    BinaryFile
     File
+    BinaryFile
     TextFile
 
 

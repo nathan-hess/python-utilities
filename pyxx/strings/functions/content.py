@@ -19,5 +19,13 @@ def str_excludes_chars(value: str, prohibited_chars: str):
     bool
         Returns ``True`` if none of the characters in ``prohibited_chars`` are
         found in ``value``, and ``False`` otherwise
+
+    Examples
+    --------
+    >>> pyxx.strings.str_excludes_chars('abcdefg', 'xyz')
+    True
+
+    >>> pyxx.strings.str_excludes_chars('abcdefg', 'a')
+    False
     """
     return len(set(value).intersection(set(prohibited_chars))) <= 0
