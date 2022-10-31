@@ -2,7 +2,7 @@
 """
 
 
-def str_excludes_chars(value: str, prohibited_chars: str):
+def str_excludes_chars(value: str, prohibited_chars: str) -> bool:
     """Checks that a string does not contain any of a specified list of
     prohibited characters
 
@@ -34,7 +34,7 @@ def str_excludes_chars(value: str, prohibited_chars: str):
     return len(set(value).intersection(set(prohibited_chars))) <= 0
 
 
-def str_includes_only(value: str, allowed_chars: str):
+def str_includes_only(value: str, allowed_chars: str) -> bool:
     """Checks that a string contains only characters present in a specified
     set of characters
 

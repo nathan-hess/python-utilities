@@ -17,7 +17,8 @@ from pyxx.strings.exceptions import (
 
 def _check_valid_brackets(opening_bracket: str, closing_bracket: str,
                           opening_bracket_name: str = 'opening_bracket',
-                          closing_bracket_name: str = 'closing_bracket'):
+                          closing_bracket_name: str = 'closing_bracket'
+                          ) -> bool:
     """Checks that a given set of opening and closing brackets form a
     valid pair
 
@@ -72,7 +73,7 @@ def _check_valid_brackets(opening_bracket: str, closing_bracket: str,
 
 
 def contains_all_matched_brackets(value: str, opening_bracket: str = '(',
-                                  closing_bracket: str = ')'):
+                                  closing_bracket: str = ')') -> bool:
     """Checks whether all opening brackets in a string have a
     corresponding closing bracket
 
@@ -115,7 +116,7 @@ def contains_all_matched_brackets(value: str, opening_bracket: str = '(',
 
 
 def find_matching_bracket(value: str, begin: int, opening_bracket: str = '(',
-                          closing_bracket: str = ')'):
+                          closing_bracket: str = ')') -> int:
     """Finds the index of the bracket that forms a matched pair with another
     bracket at a given index
 
@@ -188,7 +189,8 @@ def find_matching_bracket(value: str, begin: int, opening_bracket: str = '(',
 
 def find_skip_brackets(value: str, target_chars: Union[str, tuple],
                        begin: int, direction: str = 'forward',
-                       opening_bracket: str = '(', closing_bracket: str = ')'):
+                       opening_bracket: str = '(', closing_bracket: str = ')'
+                       ) -> int:
     """Finds the index of a target character, skipping over matched brackets
 
     This function is useful for finding the index of a particular character

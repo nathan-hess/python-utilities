@@ -20,7 +20,7 @@ Array_or_Number_or_String = Union[List[__element_types],
 def is_array_equal(item1: Array_or_Number_or_String,
                    item2: Array_or_Number_or_String,
                    *args: Array_or_Number_or_String,
-                   tol: float = 1e-16):
+                   tol: float = 1e-16) -> bool:
     """Checks that arrays are equal in shape and content
 
     Returns ``True`` if all arrays passed as arguments are of the same shape
