@@ -2,6 +2,8 @@
 
    BinaryFile
    TextFile
+   TypedList
+   TypedListWithID
 
 
 {{ fullname | escape | underline}}
