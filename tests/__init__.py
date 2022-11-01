@@ -45,4 +45,5 @@ class CreateTempTestDir:
 # Import and run tests
 from .arrays import *
 from .files import *
+from .numbers import *
 from .strings import *

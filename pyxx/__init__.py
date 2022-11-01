@@ -2,6 +2,7 @@
 
 from . import arrays
 from . import files
+from . import numbers
 from . import strings
 
 
