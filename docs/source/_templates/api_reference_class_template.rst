@@ -17,7 +17,6 @@
 .. autoclass:: {{ objname }}
 
    {% block methods %}
-   .. automethod:: __init__
 
    {%- set methods_non_inherited = [] %}
    {%- set methods_inherited = [] %}
