@@ -27,6 +27,7 @@ reducing the need to duplicate code between projects.
     Overview <api_reference/index>
     api_reference/arrays
     api_reference/files
+    api_reference/numbers
     api_reference/strings
 
 
