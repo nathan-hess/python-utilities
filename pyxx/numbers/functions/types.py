@@ -40,7 +40,6 @@ def is_float(value: Any):
 
     >>> pyxx.numbers.is_float('-6.28')
     True
-
     """
     try:
         float(value)
@@ -86,6 +85,5 @@ def is_integer(value: Any):
 
     >>> pyxx.numbers.is_integer(0.5)
     False
-
     """
     return is_float(value) and float(value).is_integer()
