@@ -5,5 +5,9 @@ allows users to define customized systems of units and add associated,
 arbitrary units and convert quantities between such units.
 """
 
-from .classes import UnitSystem, UnitSystemSI
+from .classes import (
+    Unit,
+    UnitSystem,
+    UnitSystemSI,
+)
 from .functions.parser import parse_unit
