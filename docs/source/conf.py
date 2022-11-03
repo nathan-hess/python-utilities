@@ -31,6 +31,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
+    'sphinx.ext.imgconverter',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.napoleon',
     'sphinxcontrib.spelling',
