@@ -140,15 +140,44 @@ def parse_unit(unit: str, max_iterations: int = 10000):
     are not allowed to be used in fully-simplified units: ``0123456789.*/^()``
 
     A unit is considered fully-simplified if it does not contain any of these
-    special characters.  **Attempting to include any of these characters in
-    the simple component units may result in the compound unit being
-    impossible to parse, or other unexpected behavior.**
+    special characters.  Attempting to include any of these characters in the
+    simple component units may result in the compound unit being impossible
+    to parse, or other unexpected behavior.
 
     Notes
     -----
     It is assumed that parentheses ``()`` are used to group components of
     compound units.  Square brackets ``[]`` and braces ``{}`` are not
     recognized as valid types of brackets for grouping components of units.
+
+    Examples
+    --------
+    Consider a relatively simple unit, like :math:`m/s` or :math:`m/s^2`.
+    Parsing these units results in dictionaries with the component units
+    as keys and their exponents as the corresponding values:
+
+    >>> pyxx.units.parse_unit('m/s')
+    {'s': -1.0, 'm': 1.0}
+    >>> pyxx.units.parse_unit('m/s^2')
+    {'s': -2.0, 'm': 1.0}
+
+    The main value of PyXX's unit parser is that it can handle much more
+    complex cases.  For instance, units with parentheses can be parsed:
+
+    >>> pyxx.units.parse_unit('kg*(m/s)^2')
+    {'kg': 1.0, 's': -2.0, 'm': 2.0}
+
+    Units with nested parentheses and math expressions in their exponents
+    can be parsed:
+
+    >>> pyxx.units.parse_unit('kg / (m^(1/2+3.14) / s^(5-7))^3')
+    {'s': -6.0, 'm': -10.92, 'kg': 1.0}
+
+    Any units can be parsed, as long as they don't use the prohibited
+    characters specified in the "Warnings" section.
+
+    >>> pyxx.units.parse_unit('my_unit^3 * degreesC')
+    {'my_unit': 3.0, 'degreesC': 1.0}
     """
     # Store original unit string
     original_unit = unit
