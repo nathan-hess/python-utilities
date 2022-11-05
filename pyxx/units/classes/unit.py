@@ -57,7 +57,7 @@ class Unit:
 
         Parameters
         ----------
-        unit_system : pyxx.units.UnitSystem
+        unit_system : UnitSystem
             The system of units to which the unit belongs
         base_unit_exps : list or tuple or np.ndarray
             A 1D list of exponents relating the given object's unit to the
@@ -239,3 +239,140 @@ class Unit:
         inputs = np.array(value)
 
         return self.to_base_function(inputs, exponent)
+
+
+class UnitLinear(Unit):
+    """Class for representing units with linear transformations to/from
+    the base units
+
+    Defines a unit in which the transformations to/from the base units
+    of the system of units (that is, the functions given by
+    :py:attr:`from_base_function` and :py:attr:`to_base_function`) are linear.
+    A large portion of the units encountered in everyday use can be considered
+    linear units, so this class was created to simplify defining such units.
+
+    Notes
+    -----
+    To convert an array of arbitrary dimensions ``inputs`` from the given
+    object's unit to the base units, the following equation is applied:
+
+    .. code-block:: python
+
+        outputs = (scale * inputs) + offset
+
+    Examples
+    --------
+    First, create two units, one that represents *millimeters* and another
+    that represents *meters*:
+
+    >>> mm = pyxx.units.UnitLinear(
+    ...          unit_system=pyxx.units.UnitSystemSI(),
+    ...          base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
+    ...          scale=0.001, offset=0,
+    ...          identifier='mm', name='millimeter'
+    ... )
+    >>> m = pyxx.units.UnitLinear(
+    ...          unit_system=pyxx.units.UnitSystemSI(),
+    ...          base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
+    ...          scale=1, offset=0,
+    ...          identifier='m', name='meter'
+    ... )
+
+    Display the units' properties:
+
+    >>> print(mm)
+    mm - millimeter - [1. 0. 0. 0. 0. 0. 0.] - scale: 0.001 - offset: 0.0
+    >>> print(m)
+    m - meter - [1. 0. 0. 0. 0. 0. 0.] - scale: 1.0 - offset: 0.0
+
+    Verify that it's possible to convert values from millimeters to meters
+    and vice versa:
+
+    >>> mm.is_convertible(m)
+    True
+    >>> m.is_convertible(mm)
+    True
+
+    With these units defined, we can now convert a value from millimeters
+    to the base units (meters):
+
+    >>> mm.to_base(100)
+    0.1
+
+    We can also perform conversions in cases where units are raised to an
+    exponent.  For instance, this is one way to convert :math:`1\ m^2` to
+    square millimeters:
+
+    >>> mm.from_base(1, exponent=2)
+    1000000.0
+    """
+
+    def __init__(
+            self, unit_system: UnitSystem,
+            base_unit_exps: Union[List[float], Tuple[float, ...], np.ndarray],
+            scale: float,
+            offset: float,
+            identifier: Optional[str] = None,
+            name: Optional[str] = None,
+            **kwargs):
+        """Creates an instance of the :py:class:`UnitLinear` class
+
+        Defines an object representing a base or derived unit in which the
+        functions converting a value to/from the base units of the system
+        of units :py:attr:`unit_system` are linear functions.
+
+        Parameters
+        ----------
+        unit_system : UnitSystem
+            The system of units to which the unit belongs
+        base_unit_exps : list or tuple or np.ndarray
+            A 1D list of exponents relating the given object's unit to the
+            base units of ``unit system``
+        scale : float
+            The multiplicative factor applied when converting from
+            the given object's unit to the base units
+        offset : float
+            The constant value added when converting from the given
+            object's unit to the base units
+        identifier : str, optional
+            A short identifier describing the unit (example: ``'kg'``)
+            (default is ``None``)
+        name : str, optional
+            A name describing the unit (example: ``'kilogram'``) (default
+            is ``None``)
+        **kwargs : Any, optional
+            Other keyword arguments (can be passed as inputs but are ignored)
+        """
+        # Store inputs
+        if not isinstance(scale, (float, int, np.number)):
+            raise TypeError('Argument "scale" must be of type "float"')
+        self._scale = float(scale)
+
+        if not isinstance(offset, (float, int, np.number)):
+            raise TypeError('Argument "offset" must be of type "float"')
+        self._offset = float(offset)
+
+        # Initialize object
+        super().__init__(
+            unit_system        = unit_system,
+            base_unit_exps     = base_unit_exps,
+            to_base_function   = lambda x, exp: (scale**exp) * x + offset,
+            from_base_function = lambda x, exp: (x - offset) / (scale**exp),
+            identifier         = identifier,
+            name               = name
+        )
+
+    def __str__(self):
+        return f'{super().__str__()} - scale: {self.scale} - offset: {self.offset}'
+
+    @property
+    def offset(self):
+        """The constant value added when converting from the given
+        object's unit to the base units"""
+        return self._offset
+
+    @property
+    def scale(self):
+        """The multiplicative factor applied when converting from
+        the given object's unit to the base units"""
+        return self._scale

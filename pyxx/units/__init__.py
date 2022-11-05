@@ -7,6 +7,7 @@ arbitrary units and convert quantities between such units.
 
 from .classes import (
     Unit,
+    UnitLinear,
     UnitSystem,
     UnitSystemSI,
 )

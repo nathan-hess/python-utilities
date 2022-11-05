@@ -4,6 +4,7 @@ import numpy as np
 
 from pyxx.units import (
     Unit,
+    UnitLinear,
     UnitSystem,
     UnitSystemSI,
 )
@@ -290,3 +291,111 @@ class Test_Unit(unittest.TestCase):
         self.assertTrue(np.array_equal(
             self.unit05_exponent.from_base(np.array((7, 7.4, 9)), 0.2),
             np.array((11.730412131161865, 12.522770939493443, 15.766610165238236))))
+
+
+class Test_LinearUnit(unittest.TestCase):
+    def setUp(self):
+        self.unit01 = UnitLinear(
+            unit_system=UnitSystemSI(),
+            base_unit_exps=[0, 0, 0, 0, 0, 0, 1],
+            scale=0.001, offset=0,
+            identifier='g', name='gram')
+
+        self.unit02 = UnitLinear(
+            unit_system=UnitSystem(5),
+            base_unit_exps=[0, 1, 0, 0, 0],
+            scale=5/9, offset=273.15-32*5/9,
+            identifier='°F', name='degrees Fahrenheit')
+
+    def test_set_scale(self):
+        # Verifies that "scale" attribute is set correctly
+        self.assertAlmostEqual(self.unit01.scale, 0.001)
+        self.assertAlmostEqual(self.unit02.scale, 5/9)
+
+    def test_set_scale_invalid(self):
+        # Verifies that an error is thrown if attempting to set the "scale"
+        # attribute to an invalid value
+        with self.assertRaises(TypeError):
+            UnitLinear(
+                unit_system=UnitSystemSI(),
+                base_unit_exps=[0, 0, 0, 0, 0, 0, 1],
+                scale='1.5', offset=0,
+                identifier='g', name='gram'
+            )
+
+    def test_set_offset(self):
+        # Verifies that "offset" attribute is set correctly
+        self.assertAlmostEqual(self.unit01.offset, 0)
+        self.assertAlmostEqual(self.unit02.offset, 273.15-32*5/9)
+
+    def test_set_offset_invalid(self):
+        # Verifies that an error is thrown if attempting to set the "offset"
+        # attribute to an invalid value
+        with self.assertRaises(TypeError):
+            UnitLinear(
+                unit_system=UnitSystemSI(),
+                base_unit_exps=[0, 0, 0, 0, 0, 0, 1],
+                scale=0.001, offset='0',
+                identifier='g', name='gram'
+            )
+
+    def test_str(self):
+        # Verifies that string representation of object is formatted correctly
+        self.assertEqual(
+            str(self.unit01),
+            'g - gram - [0. 0. 0. 0. 0. 0. 1.] - scale: 0.001 - offset: 0.0')
+
+        self.assertEqual(
+            str(self.unit02),
+            ('°F - degrees Fahrenheit - [0. 1. 0. 0. 0.] '
+             '- scale: 0.5555555555555556 - offset: 255.3722222222222'))
+
+    def test_to_base(self):
+        # Verifies that conversion of from base units to the given object's
+        # units is performed correctly
+        self.assertTrue(np.array_equal(
+            self.unit01.to_base([2, 4.3, 930]),
+            np.array([0.002, 0.0043, 0.93])))
+
+        diff = self.unit02.to_base([32, 9.332, 14, -40]) \
+            - np.array([273.15, 273.15+(9.332-32)*(5/9), 263.15, 233.15])
+        self.assertLessEqual(np.max(np.abs(diff)), 1e-12)
+
+    def test_from_base(self):
+        # Verifies that conversion of from the given object's
+        # units to the base units is performed correctly
+        self.assertTrue(np.array_equal(
+            self.unit01.from_base([0.002, 0.0043, 0.93]),
+            np.array([2, 4.3, 930])))
+
+        diff = self.unit02.from_base([273.15, 273.15+(9.332-32)*(5/9), 263.15, 233.15]) \
+            - np.array([32, 9.332, 14, -40])
+        self.assertLessEqual(np.max(np.abs(diff)), 1e-12)
+
+    def test_to_base_exponent(self):
+        # Checks conversion of value to base units with user-specified exponent
+        self.assertTrue(np.array_equal(
+            self.unit01.to_base((40, -5), 1),
+            np.array((0.04, -0.005))))
+
+        self.assertTrue(all(np.isclose(
+            self.unit01.to_base((40, -5), 2),
+            np.array((40e-6, -5e-6)))))
+
+        self.assertTrue(np.array_equal(
+            self.unit01.to_base((40, -5), 3),
+            np.array((40e-9, -5e-9))))
+
+    def test_from_base_exponent(self):
+        # Checks conversion of value from base units with user-specified exponent
+        self.assertTrue(np.array_equal(
+            self.unit01.from_base((40, -5), 1),
+            np.array((40000, -5000))))
+
+        self.assertTrue(np.array_equal(
+            self.unit01.from_base((40, -5), 2),
+            np.array((40e6, -5e6))))
+
+        self.assertTrue(np.array_equal(
+            self.unit01.from_base((40, -5), 3),
+            np.array((40e9, -5e9))))
