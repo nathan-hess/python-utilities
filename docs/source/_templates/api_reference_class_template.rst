@@ -2,10 +2,14 @@
 
    BinaryFile
    candela
+   exps
+   ndarray
+   np
    num
    TextFile
    TypedList
    TypedListWithID
+   UnitLinear
    UnitSystem
    UnitSystemSI
 

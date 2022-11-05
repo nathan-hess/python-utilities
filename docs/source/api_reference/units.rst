@@ -1,5 +1,6 @@
 .. spelling:word-list::
 
+    exps
     num
 
 
@@ -35,6 +36,26 @@ conversions.
 
     UnitSystem
     UnitSystemSI
+
+
+Units
+-----
+
+The classes in this section can be used to define custom units associated with
+a given system of units.
+
+.. inheritance-diagram:: Unit UnitLinear UnitLinearSI
+    :parts: 1
+
+|
+
+.. autosummary::
+    :toctree: ./api
+    :template: ../_templates/api_reference_class_template.rst
+
+    Unit
+    UnitLinear
+    UnitLinearSI
 
 
 Unit-Parsing
