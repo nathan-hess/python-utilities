@@ -7,7 +7,7 @@ from typing import Any, Callable, List, Optional, Tuple, Union
 import numpy as np
 
 from pyxx.arrays.functions.equality import is_array_equal
-from .unitsystem import UnitSystem
+from .unitsystem import UnitSystem, UnitSystemSI
 
 
 # Disable Pylint's "unused argument" warnings.  In this case, we want to allow
@@ -376,3 +376,62 @@ class UnitLinear(Unit):
         """The multiplicative factor applied when converting from
         the given object's unit to the base units"""
         return self._scale
+
+
+class UnitLinearSI(UnitLinear):
+    """Class for representing units with linear transformations to/from
+    the base units and using the International System of Units (SI)
+
+    This class is very similar to :py:class:`UnitLinear`, with the
+    addition that the system of units is automatically set to SI.
+
+    See Also
+    --------
+    UnitLinear :
+        Nearly identical class, but additionally allows users to specify
+        an arbitrary system of units
+    """
+
+    def __init__(
+            self,
+            base_unit_exps: Union[List[float], Tuple[float, ...], np.ndarray],
+            scale: float,
+            offset: float,
+            identifier: Optional[str] = None,
+            name: Optional[str] = None,
+            **kwargs):
+        """Creates an instance of the :py:class:`UnitLinearSI` class
+
+        Defines an object representing a base or derived unit in which the
+        functions converting a value to/from the base units of the system
+        of units :py:attr:`unit_system` are linear functions, and the unit
+        belongs to the SI system of units.
+
+        Parameters
+        ----------
+        base_unit_exps : list or tuple or np.ndarray
+            A 1D list of exponents relating the given object's unit to the
+            base units of ``unit system``
+        scale : float
+            The multiplicative factor applied when converting from
+            the given object's unit to the base units
+        offset : float
+            The constant value added when converting from the given
+            object's unit to the base units
+        identifier : str, optional
+            A short identifier describing the unit (example: ``'kg'``)
+            (default is ``None``)
+        name : str, optional
+            A name describing the unit (example: ``'kilogram'``) (default
+            is ``None``)
+        **kwargs : Any, optional
+            Other keyword arguments (can be passed as inputs but are ignored)
+        """
+        super().__init__(
+            unit_system    = UnitSystemSI(),
+            base_unit_exps = base_unit_exps,
+            scale          = scale,
+            offset         = offset,
+            identifier     = identifier,
+            name           = name
+        )

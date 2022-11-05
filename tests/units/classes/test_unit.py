@@ -5,6 +5,7 @@ import numpy as np
 from pyxx.units import (
     Unit,
     UnitLinear,
+    UnitLinearSI,
     UnitSystem,
     UnitSystemSI,
 )
@@ -399,3 +400,13 @@ class Test_LinearUnit(unittest.TestCase):
         self.assertTrue(np.array_equal(
             self.unit01.from_base((40, -5), 3),
             np.array((40e9, -5e9))))
+
+
+class Test_LinearUnitSI(unittest.TestCase):
+    def test_unit_system(self):
+        # Verifies that the unit system is set to "SI"
+        unit = UnitLinearSI(
+            base_unit_exps=[0, 0, 0, 0, 0, 0, 1],
+            scale=0.001, offset=0)
+
+        self.assertIs(type(unit.unit_system), UnitSystemSI)
