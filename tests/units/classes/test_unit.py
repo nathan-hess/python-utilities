@@ -506,6 +506,303 @@ class Test_Unit(unittest.TestCase):
                 '(kilogram/second)*meter*(kilogram/second)*meter'
             )
 
+    def test_divide_single_unit(self):
+        # Verifies that cases of dividing units are performed correctly
+        m = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 0, 0],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x
+        )
+
+        mm = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 0, 0],
+            to_base_function=lambda x, exp: (0.001**exp)*x,
+            from_base_function=lambda x, exp: (1000**exp)*x
+        )
+
+        with self.subTest(unit='m'):
+            with self.subTest(exponent=2):
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose((m/m).base_unit_exps, np.array([0, 0, 0])))
+
+                with self.subTest(check='to_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((m/m).to_base(inputs), outputs))
+
+                with self.subTest(check='from_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((m/m).from_base(inputs), outputs))
+
+            with self.subTest(exponent=4):
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose((m/m/m/m).base_unit_exps, np.array([-2, 0, 0])))
+
+                with self.subTest(check='to_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((m/m/m/m).to_base(inputs), outputs))
+
+                with self.subTest(check='from_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((m/m/m/m).from_base(inputs), outputs))
+
+        with self.subTest(unit='mm'):
+            with self.subTest(exponent=2):
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose((mm/mm).base_unit_exps, np.array([0, 0, 0])))
+
+                with self.subTest(check='to_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((mm/mm).to_base(inputs), outputs))
+
+                with self.subTest(check='from_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((mm/mm).from_base(inputs), outputs))
+
+            with self.subTest(exponent=4):
+                # Note: mm/mm/mm/mm = mm^(-2)  
+                #       =>  1 mm^(-2) * ((1e3 mm) / (1 m))^2 = 1e6 m^(-2)
+                # Example (with more realistic units): 1 m/(ms^2) = 1e6 m/s^2
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose((mm/mm/mm/mm).base_unit_exps, np.array([-2, 0, 0])))
+
+                with self.subTest(check='to_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs * 1e6
+                    self.assertTrue(np.allclose((mm/mm/mm/mm).to_base(inputs), outputs))
+
+                with self.subTest(check='from_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs / 1e6
+                    self.assertTrue(np.allclose((mm/mm/mm/mm).from_base(inputs), outputs))
+
+        with self.subTest(check='nested_exponent'):
+            with self.subTest(check='to_base'):
+                inputs = 1e6*np.random.randn(100)
+                outputs = 1e6 * inputs
+                self.assertTrue(np.allclose((m/mm).to_base(inputs, 2), outputs))
+
+            with self.subTest(check='from_base'):
+                inputs = 1e-6*np.random.randn(100)
+                outputs = inputs / 1e6
+                self.assertTrue(np.allclose((m/mm).from_base(inputs, 2), outputs))
+
+    def test_divide_multiple_units(self):
+        # Verifies that cases of dividing units are performed correctly
+        m = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[0, 1, 0],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x
+        )
+
+        kN = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 1, -2],
+            to_base_function=lambda x, exp: (1000**exp)*x,
+            from_base_function=lambda x, exp: (0.001**exp)*x
+        )
+
+        unit = m / kN
+
+        with self.subTest(check='base_unit_exps'):
+            self.assertTrue(np.allclose(unit.base_unit_exps, np.array([-1, 0, 2])))
+
+        with self.subTest(check='to_base'):
+            inputs = 100*np.random.randn(100)
+            outputs = inputs / 1000
+            self.assertTrue(np.allclose(unit.to_base(inputs), outputs))
+
+        with self.subTest(check='from_base'):
+            inputs = 100*np.random.randn(100)
+            outputs = 1000 * inputs
+            self.assertTrue(np.allclose(unit.from_base(inputs), outputs))
+
+    def test_divide_constant(self):
+        # Verifies that cases of dividing units are performed correctly
+        kN = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 1, -2],
+            to_base_function=lambda x, exp: (1000**exp)*x,
+            from_base_function=lambda x, exp: (0.001**exp)*x
+        )
+
+        with self.subTest(order='left'):
+            mN = kN / 1e6
+
+            with self.subTest(check='base_unit_exps'):
+                self.assertTrue(np.allclose(mN.base_unit_exps, np.array([1, 1, -2])))
+
+            for exponent in [1, 2, 3, 4, -1, -3]:
+                with self.subTest(exponent=exponent):
+                    with self.subTest(check='to_base'):
+                        inputs = 100*np.random.randn(100)
+                        outputs = inputs/(1000**exponent)
+                        self.assertTrue(np.allclose(mN.to_base(inputs, exponent), outputs))
+
+                    with self.subTest(check='from_base'):
+                        inputs = 100*np.random.randn(100)
+                        outputs = (1000**exponent)*inputs
+                        self.assertTrue(np.allclose(mN.from_base(inputs, exponent), outputs))
+
+        with self.subTest(order='right'):
+            mNi = 1e6 / kN
+
+            with self.subTest(check='base_unit_exps'):
+                self.assertTrue(np.allclose(mNi.base_unit_exps, np.array([-1, -1, 2])))
+
+            for exponent in [1, 2, 3, 4, -1, -3]:
+                with self.subTest(exponent=exponent):
+                    with self.subTest(check='to_base'):
+                        inputs = 100*np.random.randn(100)
+                        outputs = (1000**exponent)*inputs
+                        self.assertTrue(np.allclose(mNi.to_base(inputs, exponent), outputs))
+
+                    with self.subTest(check='from_base'):
+                        inputs = 100*np.random.randn(100)
+                        outputs = inputs/(1000**exponent)
+                        self.assertTrue(np.allclose(mNi.from_base(inputs, exponent), outputs))
+
+    def test_divide_invalid(self):
+        # Verifies that an error is thrown if attempting to divide a unit
+        # by an invalid value
+        test_cases = [
+            'mm',
+            float,
+        ]
+
+        m = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[0, 1, 0],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x
+        )
+
+        for value in test_cases:
+            with self.subTest(value=value):
+                with self.subTest(order='left'):
+                    with self.assertRaises(TypeError):
+                        value / m
+                with self.subTest(order='right'):
+                    with self.assertRaises(TypeError):
+                        m / value
+
+    def test_divide_id(self):
+        # Verifies that the "identifier" attribute of units is
+        # correct after division
+        with self.subTest(case='none'):
+            self.assertEqual((self.unit06_no_id_name / self.unit06_no_id_name).identifier, None)
+            self.assertEqual((self.unit01 / self.unit06_no_id_name).identifier, None)
+            self.assertEqual((self.unit06_no_id_name / self.unit01).identifier, None)
+
+        with self.subTest(case='simple'):
+            self.assertEqual((self.unit01 / self.unit01).identifier, 'kg/kg')
+
+        with self.subTest(case='complex'):
+            self.assertEqual(
+                (self.unit07_complex_id_name / self.unit07_complex_id_name).identifier,
+                '(kg/s)*m/((kg/s)*m)'
+            )
+
+    def test_divide_name(self):
+        # Verifies that the "name" attribute of units is
+        # correct after division
+        with self.subTest(case='none'):
+            self.assertEqual((self.unit06_no_id_name / self.unit06_no_id_name).name, None)
+            self.assertEqual((self.unit01 / self.unit06_no_id_name).name, None)
+            self.assertEqual((self.unit06_no_id_name / self.unit01).name, None)
+
+        with self.subTest(case='simple'):
+            self.assertEqual((self.unit01 / self.unit01).name, 'kilogram/kilogram')
+
+        with self.subTest(case='complex'):
+            self.assertEqual(
+                (self.unit07_complex_id_name / self.unit07_complex_id_name).name,
+                '(kilogram/second)*meter/((kilogram/second)*meter)'
+            )
+
+    def test_power(self):
+        # Verifies that units can be raised to an exponent
+        kN = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 1, -2],
+            to_base_function=lambda x, exp: (1000**exp)*x,
+            from_base_function=lambda x, exp: (0.001**exp)*x
+        )
+
+        with self.subTest(check='base_unit_exps'):
+            self.assertTrue(np.allclose((kN**3).base_unit_exps, np.array([3, 3, -6])))
+
+        with self.subTest(check='to_base'):
+            inputs = 1e-6*np.random.randn(100)
+            outputs = inputs * 1e9
+            self.assertTrue(np.allclose((kN**3).to_base(inputs), outputs))
+
+        with self.subTest(check='from_base'):
+            inputs = 1e12*np.random.randn(100)
+            outputs = inputs / 1e9
+            self.assertTrue(np.allclose((kN**3).from_base(inputs), outputs))
+
+        with self.subTest(check='nested_exponent'):
+            with self.subTest(check='to_base'):
+                inputs = 1e-3*np.random.randn(100)
+                outputs = inputs * 1000
+                self.assertTrue(np.allclose((kN**3).to_base(inputs, 1/3), outputs))
+
+            with self.subTest(check='from_base'):
+                inputs = 1e3*np.random.randn(100)
+                outputs = inputs / 1000
+                self.assertTrue(np.allclose((kN**3).from_base(inputs, 1/3), outputs))
+
+    def test_power_id(self):
+        # Verifies that the "identifier" attribute of units is
+        # correct after raising the unit to an exponent
+        with self.subTest(case='none'):
+            self.assertEqual((self.unit06_no_id_name**2).identifier, None)
+
+        with self.subTest(sign='positive'):
+            with self.subTest(case='simple'):
+                self.assertEqual((self.unit01**2).identifier, 'kg^2.0')
+
+            with self.subTest(case='complex'):
+                self.assertEqual((self.unit07_complex_id_name**2).identifier, '((kg/s)*m)^2.0')
+
+        with self.subTest(sign='negative'):
+            with self.subTest(case='simple'):
+                self.assertEqual((self.unit01**(-2)).identifier, 'kg^(-2.0)')
+
+            with self.subTest(case='complex'):
+                self.assertEqual((self.unit07_complex_id_name**(-2)).identifier, '((kg/s)*m)^(-2.0)')
+
+    def test_power_name(self):
+        # Verifies that the "name" attribute of units is
+        # correct after raising the unit to an exponent
+        with self.subTest(case='none'):
+            self.assertEqual((self.unit06_no_id_name**2).name, None)
+
+        with self.subTest(sign='positive'):
+            with self.subTest(case='simple'):
+                self.assertEqual((self.unit01**2).name, 'kilogram^2.0')
+
+            with self.subTest(case='complex'):
+                self.assertEqual((self.unit07_complex_id_name**2).name,
+                                 '((kilogram/second)*meter)^2.0')
+
+        with self.subTest(sign='negative'):
+            with self.subTest(case='simple'):
+                self.assertEqual((self.unit01**(-2)).name, 'kilogram^(-2.0)')
+
+            with self.subTest(case='complex'):
+                self.assertEqual((self.unit07_complex_id_name**(-2)).name,
+                                 '((kilogram/second)*meter)^(-2.0)')
+
 
 class Test_LinearUnit(unittest.TestCase):
     def setUp(self):

@@ -149,11 +149,85 @@ class Unit:
             name               = name
         )
 
+    def __pow__(self, exponent: float):
+        # Ensure that exponent is a number
+        exponent = float(exponent)
+        exponent_str = f'{exponent}' if exponent >= 0 else f'({exponent})'
+
+        # Set name and identifier of output unit
+        if self.identifier is None:
+            identifier = None
+        elif str_includes_only(self.identifier, self.__unit_chars):
+            identifier = f'{self.identifier}^{exponent_str}'
+        else:
+            identifier = f'({self.identifier})^{exponent_str}'
+
+        if self.name is None:
+            name = None
+        elif str_includes_only(self.name, self.__unit_chars):
+            name = f'{self.name}^{exponent_str}'
+        else:
+            name = f'({self.name})^{exponent_str}'
+
+        return Unit(
+            unit_system        = self.unit_system,
+            base_unit_exps     = exponent * self.base_unit_exps,
+            to_base_function   = lambda x, exp:
+                self.to_base_function(x, exp*exponent),
+            from_base_function = lambda x, exp:
+                self.from_base_function(x, exp*exponent),
+            identifier         = identifier,
+            name               = name
+        )
+
+    def __truediv__(self, value: Union['Unit', float]) -> 'Unit':
+        # Verify that "value" is a valid unit or can be converted to
+        # a constant unit
+        if isinstance(value, Unit):
+            divisor = value
+        else:
+            try:
+                divisor = self.__create_const_unit(value)
+            except (TypeError, ValueError) as exception:
+                raise TypeError(
+                    f'Unable to divide units.  Operand {value} is not of '
+                    'type "Unit" or a constant') from exception
+
+        # Set name and identifier of output unit
+        if self.identifier is None or divisor.identifier is None:
+            identifier = None
+        elif str_includes_only(divisor.identifier, self.__unit_chars):
+            identifier = f'{self.identifier}/{divisor.identifier}'
+        else:
+            identifier = f'{self.identifier}/({divisor.identifier})'
+
+        if self.name is None or divisor.name is None:
+            name = None
+        elif str_includes_only(divisor.name, self.__unit_chars):
+            name = f'{self.name}/{divisor.name}'
+        else:
+            name = f'{self.name}/({divisor.name})'
+
+        # Output units after division
+        return Unit(
+            unit_system        = self.unit_system,
+            base_unit_exps     = self.base_unit_exps - divisor.base_unit_exps,
+            to_base_function   = lambda x, exp:
+                self.to_base_function(divisor.to_base_function(x, -exp), exp),
+            from_base_function = lambda x, exp:
+                self.from_base_function(divisor.from_base_function(x, -exp), exp),
+            identifier         = identifier,
+            name               = name
+        )
+
     def __repr__(self):
         return f'{self.__class__} {str(self)}'
 
     def __rmul__(self, value: Union['Unit', float]) -> 'Unit':
         return self.__mul__(value)
+
+    def __rtruediv__(self, value: Union['Unit', float]) -> 'Unit':
+        return (self.__truediv__(value))**(-1)
 
     def __str__(self):
         representation = ''
