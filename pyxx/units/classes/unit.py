@@ -2,11 +2,13 @@
 given system of units.
 """
 
+import string
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import numpy as np
 
 from pyxx.arrays.functions.equality import is_array_equal
+from pyxx.strings.functions.content import str_includes_only
 from .unitsystem import UnitSystem, UnitSystemSI
 
 
@@ -40,6 +42,9 @@ class Unit:
     of a given system of units.  The attributes of this class specify how
     the unit relates to the base units of the system of units.
     """
+
+    # Characters expected in unit names
+    __unit_chars = string.ascii_letters + '_'
 
     def __init__(
             self,
@@ -108,8 +113,47 @@ class Unit:
         self._to_base_function = to_base_function
         self._from_base_function = from_base_function
 
+    def __mul__(self, value: Union['Unit', float]) -> 'Unit':
+        # Verify that "value" is a valid unit or can be converted to
+        # a constant unit
+        if isinstance(value, Unit):
+            unit = value
+        else:
+            try:
+                unit = self.__create_const_unit(value)
+            except (TypeError, ValueError) as exception:
+                raise TypeError(
+                    f'Unable to multiply units.  Operand {value} is not of '
+                    'type "Unit" or a constant') from exception
+
+        # Set name and identifier of output unit
+        if self.identifier is None or unit.identifier is None:
+            identifier = None
+        else:
+            identifier = f'{self.identifier}*{unit.identifier}'
+
+        if self.name is None or unit.name is None:
+            name = None
+        else:
+            name = f'{self.name}*{unit.name}'
+
+        # Output units after multiplication
+        return Unit(
+            unit_system        = self.unit_system,
+            base_unit_exps     = self.base_unit_exps + unit.base_unit_exps,
+            to_base_function   = lambda x, exp:
+                self.to_base_function(unit.to_base_function(x, exp), exp),
+            from_base_function = lambda x, exp:
+                self.from_base_function(unit.from_base_function(x, exp), exp),
+            identifier         = identifier,
+            name               = name
+        )
+
     def __repr__(self):
         return f'{self.__class__} {str(self)}'
+
+    def __rmul__(self, value: Union['Unit', float]) -> 'Unit':
+        return self.__mul__(value)
 
     def __str__(self):
         representation = ''
@@ -123,6 +167,20 @@ class Unit:
         representation += f'{self.base_unit_exps}'
 
         return representation
+
+    def __create_const_unit(self, value: float):
+        try:
+            return Unit(
+                unit_system        = self.unit_system,
+                base_unit_exps     = [0] * self.unit_system.num_base_units,
+                to_base_function   = lambda x, exp: (float(value))**exp * x,
+                from_base_function = lambda x, exp: x / (float(value))**exp,
+                identifier         = f'{float(value)}'
+            )
+        except (TypeError, ValueError) as exception:
+            raise TypeError(
+                f'Unable to create constant unit.  Constant {value} '
+                'cannot be converted to type "float"') from exception
 
     @property
     def base_unit_exps(self):

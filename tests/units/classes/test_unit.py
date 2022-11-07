@@ -48,6 +48,19 @@ class Test_Unit(unittest.TestCase):
             from_base_function=lambda x, exp: (x**(exp+1) + exp*x),
             identifier='mv', name='millivalue')
 
+        self.unit06_no_id_name = Unit(
+            unit_system=UnitSystemSI(),
+            base_unit_exps=[0, 0, 0, 0, 0, 0, 1],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x)
+
+        self.unit07_complex_id_name = Unit(
+            unit_system=UnitSystemSI(),
+            base_unit_exps=[0, 6, 0, 9, 0, 0, 1],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x,
+            identifier='(kg/s)*m', name='(kilogram/second)*meter')
+
     def test_get_unit_system(self):
         # Verifies that unit system can be retrieved correctly
         self.assertIs(type(self.unit01.unit_system), UnitSystemSI)
@@ -292,6 +305,206 @@ class Test_Unit(unittest.TestCase):
         self.assertTrue(np.array_equal(
             self.unit05_exponent.from_base(np.array((7, 7.4, 9)), 0.2),
             np.array((11.730412131161865, 12.522770939493443, 15.766610165238236))))
+
+    def test_multiply_single_unit(self):
+        # Verifies that cases of multiplying units are performed correctly
+        m = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 0, 0],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x
+        )
+
+        mm = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 0, 0],
+            to_base_function=lambda x, exp: (0.001**exp)*x,
+            from_base_function=lambda x, exp: (1000**exp)*x
+        )
+
+        with self.subTest(unit='m'):
+            with self.subTest(exponent=2):
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose((m*m).base_unit_exps, np.array([2, 0, 0])))
+
+                with self.subTest(check='to_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((m*m).to_base(inputs), outputs))
+
+                with self.subTest(check='from_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((m*m).from_base(inputs), outputs))
+
+            with self.subTest(exponent=4):
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose((m*m*m*m).base_unit_exps, np.array([4, 0, 0])))
+
+                with self.subTest(check='to_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((m*m*m*m).to_base(inputs), outputs))
+
+                with self.subTest(check='from_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs
+                    self.assertTrue(np.allclose((m*m*m*m).from_base(inputs), outputs))
+
+        with self.subTest(unit='mm'):
+            with self.subTest(exponent=2):
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose((mm*mm).base_unit_exps, np.array([2, 0, 0])))
+
+                with self.subTest(check='to_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs / 1e6
+                    self.assertTrue(np.allclose((mm*mm).to_base(inputs), outputs))
+
+                with self.subTest(check='from_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs * 1e6
+                    self.assertTrue(np.allclose((mm*mm).from_base(inputs), outputs))
+
+            with self.subTest(exponent=4):
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose((mm*mm*mm*mm).base_unit_exps, np.array([4, 0, 0])))
+
+                with self.subTest(check='to_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs / 1e12
+                    self.assertTrue(np.allclose((mm*mm*mm*mm).to_base(inputs), outputs))
+
+                with self.subTest(check='from_base'):
+                    inputs = 100*np.random.randn(100)
+                    outputs = inputs * 1e12
+                    self.assertTrue(np.allclose((mm*mm*mm*mm).from_base(inputs), outputs))
+
+        with self.subTest(check='nested_exponent'):
+            with self.subTest(check='to_base'):
+                inputs = 1e6*np.random.randn(100)
+                outputs = 1e-12*inputs
+                self.assertTrue(np.allclose((mm*mm).to_base(inputs, 2), outputs))
+
+            with self.subTest(check='from_base'):
+                inputs = 1e-6*np.random.randn(100)
+                outputs = 1e12*inputs
+                self.assertTrue(np.allclose((mm*mm).from_base(inputs, 2), outputs))
+
+    def test_multiply_multiple_units(self):
+        # Verifies that cases of multiplying units are performed correctly
+        m = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[0, 1, 0],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x
+        )
+
+        kN = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 1, -2],
+            to_base_function=lambda x, exp: (1000**exp)*x,
+            from_base_function=lambda x, exp: (0.001**exp)*x
+        )
+
+        torque = kN*m
+
+        with self.subTest(check='base_unit_exps'):
+            self.assertTrue(np.allclose(torque.base_unit_exps, np.array([1, 2, -2])))
+
+        with self.subTest(check='to_base'):
+            inputs = 100*np.random.randn(100)
+            outputs = 1000 * inputs
+            self.assertTrue(np.allclose(torque.to_base(inputs), outputs))
+
+        with self.subTest(check='from_base'):
+            inputs = 100*np.random.randn(100)
+            outputs = inputs / 1000
+            self.assertTrue(np.allclose(torque.from_base(inputs), outputs))
+
+    def test_multiply_constant(self):
+        # Verifies that cases of multiplying units are performed correctly
+        N = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[1, 1, -2],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x
+        )
+
+        for i, kN in enumerate((N*1000, 1000*N)):
+            with self.subTest(order=('left' if i == 0 else 'right')):
+                with self.subTest(check='base_unit_exps'):
+                    self.assertTrue(np.allclose(kN.base_unit_exps, np.array([1, 1, -2])))
+
+                for exponent in [1, 2, 3, 4, -1, -3]:
+                    with self.subTest(exponent=exponent):
+                        with self.subTest(check='to_base'):
+                            inputs = 100*np.random.randn(100)
+                            outputs = (1000**exponent)*inputs
+                            self.assertTrue(np.allclose(kN.to_base(inputs, exponent), outputs))
+
+                        with self.subTest(check='from_base'):
+                            inputs = 100*np.random.randn(100)
+                            outputs = inputs/(1000**exponent)
+                            self.assertTrue(np.allclose(kN.from_base(inputs, exponent), outputs))
+
+    def test_multiply_invalid(self):
+        # Verifies that an error is thrown if attempting to multiply a unit
+        # by an invalid value
+        test_cases = [
+            'mm',
+            float,
+        ]
+
+        m = Unit(
+            unit_system=UnitSystem(3),
+            base_unit_exps=[0, 1, 0],
+            to_base_function=lambda x, exp: x,
+            from_base_function=lambda x, exp: x
+        )
+
+        for value in test_cases:
+            with self.subTest(value=value):
+                with self.subTest(order='left'):
+                    with self.assertRaises(TypeError):
+                        value * m
+                with self.subTest(order='right'):
+                    with self.assertRaises(TypeError):
+                        m * value
+
+    def test_multiply_id(self):
+        # Verifies that the "identifier" attribute of units is
+        # correct after multiplication
+        with self.subTest(case='none'):
+            self.assertEqual((self.unit06_no_id_name * self.unit06_no_id_name).identifier, None)
+            self.assertEqual((self.unit01 * self.unit06_no_id_name).identifier, None)
+            self.assertEqual((self.unit06_no_id_name * self.unit01).identifier, None)
+
+        with self.subTest(case='simple'):
+            self.assertEqual((self.unit01 * self.unit01).identifier, 'kg*kg')
+
+        with self.subTest(case='complex'):
+            self.assertEqual(
+                (self.unit07_complex_id_name * self.unit07_complex_id_name).identifier,
+                '(kg/s)*m*(kg/s)*m'
+            )
+
+    def test_multiply_name(self):
+        # Verifies that the "name" attribute of units is
+        # correct after multiplication
+        with self.subTest(case='none'):
+            self.assertEqual((self.unit06_no_id_name * self.unit06_no_id_name).name, None)
+            self.assertEqual((self.unit01 * self.unit06_no_id_name).name, None)
+            self.assertEqual((self.unit06_no_id_name * self.unit01).name, None)
+
+        with self.subTest(case='simple'):
+            self.assertEqual((self.unit01 * self.unit01).name, 'kilogram*kilogram')
+
+        with self.subTest(case='complex'):
+            self.assertEqual(
+                (self.unit07_complex_id_name * self.unit07_complex_id_name).name,
+                '(kilogram/second)*meter*(kilogram/second)*meter'
+            )
 
 
 class Test_LinearUnit(unittest.TestCase):
