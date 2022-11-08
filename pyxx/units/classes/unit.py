@@ -116,6 +116,10 @@ class Unit:
     This class can be used to represent an arbitrary unit that is part
     of a given system of units.  The attributes of this class specify how
     the unit relates to the base units of the system of units.
+
+    Examples
+    --------
+    For examples, refer to the :ref:`section-examples_units` page.
     """
 
     # Characters expected in unit names
@@ -530,49 +534,7 @@ class UnitLinear(Unit):
 
     Examples
     --------
-    First, create two units, one that represents *millimeters* and another
-    that represents *meters*:
-
-    >>> mm = pyxx.units.UnitLinear(
-    ...          unit_system=pyxx.units.UnitSystemSI(),
-    ...          base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
-    ...          scale=0.001, offset=0,
-    ...          identifier='mm', name='millimeter'
-    ... )
-    >>> m = pyxx.units.UnitLinear(
-    ...          unit_system=pyxx.units.UnitSystemSI(),
-    ...          base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
-    ...          scale=1, offset=0,
-    ...          identifier='m', name='meter'
-    ... )
-
-    Display the units' properties:
-
-    >>> print(mm)
-    mm - millimeter - [1. 0. 0. 0. 0. 0. 0.] - scale: 0.001 - offset: 0.0
-    >>> print(m)
-    m - meter - [1. 0. 0. 0. 0. 0. 0.] - scale: 1.0 - offset: 0.0
-
-    Verify that it's possible to convert values from millimeters to meters
-    and vice versa:
-
-    >>> mm.is_convertible(m)
-    True
-    >>> m.is_convertible(mm)
-    True
-
-    With these units defined, we can now convert a value from millimeters
-    to the base units (meters):
-
-    >>> mm.to_base(100)
-    0.1
-
-    We can also perform conversions in cases where units are raised to an
-    exponent.  For instance, this is one way to convert :math:`1\ m^2` to
-    square millimeters:
-
-    >>> mm.from_base(1, exponent=2)
-    1000000.0
+    For examples, refer to the :ref:`section-examples_units` page.
     """
 
     def __init__(
@@ -652,6 +614,10 @@ class UnitLinearSI(UnitLinear):
 
     This class is very similar to :py:class:`UnitLinear`, with the
     addition that the system of units is automatically set to SI.
+
+    Examples
+    --------
+    For examples, refer to the :ref:`section-examples_units` page.
 
     See Also
     --------

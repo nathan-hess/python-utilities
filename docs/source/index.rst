@@ -18,6 +18,7 @@ reducing the need to duplicate code between projects.
     :hidden:
 
     getting_started/installation
+    getting_started/examples/index
 
 
 .. toctree::
