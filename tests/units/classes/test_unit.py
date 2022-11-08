@@ -3,12 +3,14 @@ import unittest
 import numpy as np
 
 from pyxx.units import (
+    ConstantUnitMathConventions,
     Unit,
     UnitLinear,
     UnitLinearSI,
     UnitSystem,
     UnitSystemSI,
 )
+from pyxx.units.exceptions import InvalidUnitMathError
 
 
 class Test_Unit(unittest.TestCase):
@@ -60,6 +62,9 @@ class Test_Unit(unittest.TestCase):
             to_base_function=lambda x, exp: x,
             from_base_function=lambda x, exp: x,
             identifier='(kg/s)*m', name='(kilogram/second)*meter')
+
+    def tearDown(self):
+        Unit.CONSTANT_MATH_CONVENTION = ConstantUnitMathConventions.DISABLE
 
     def test_get_unit_system(self):
         # Verifies that unit system can be retrieved correctly
@@ -431,22 +436,48 @@ class Test_Unit(unittest.TestCase):
             from_base_function=lambda x, exp: x
         )
 
-        for i, kN in enumerate((N*1000, 1000*N)):
-            with self.subTest(order=('left' if i == 0 else 'right')):
-                with self.subTest(check='base_unit_exps'):
-                    self.assertTrue(np.allclose(kN.base_unit_exps, np.array([1, 1, -2])))
+        with self.subTest(convention=ConstantUnitMathConventions.DISABLE):
+            with self.assertRaises(InvalidUnitMathError):
+                N * 1000
 
-                for exponent in [1, 2, 3, 4, -1, -3]:
-                    with self.subTest(exponent=exponent):
-                        with self.subTest(check='to_base'):
-                            inputs = 100*np.random.randn(100)
-                            outputs = (1000**exponent)*inputs
-                            self.assertTrue(np.allclose(kN.to_base(inputs, exponent), outputs))
+            with self.assertRaises(InvalidUnitMathError):
+                1000 * N
 
-                        with self.subTest(check='from_base'):
-                            inputs = 100*np.random.randn(100)
-                            outputs = inputs/(1000**exponent)
-                            self.assertTrue(np.allclose(kN.from_base(inputs, exponent), outputs))
+        test_conventions = (
+            ConstantUnitMathConventions.UNIT_BASED,
+            ConstantUnitMathConventions.QUANTITY_BASED,
+        )
+        for convention in test_conventions:
+            with self.subTest(convention=convention):
+                # Configure convention for performing math operations between units and constants
+                Unit.CONSTANT_MATH_CONVENTION = convention
+
+                # Define units to test (each of these represents a way to define kN in terms of N
+                # for the selected math convention)
+                if convention == ConstantUnitMathConventions.UNIT_BASED:
+                    test_units = (N*1000, 1000*N)       # kN = N*1000 = 1000*N
+                elif ConstantUnitMathConventions.QUANTITY_BASED:
+                    test_units = (N*0.001, 0.001*N)     # kN = N*0.001 = 0.001*N
+                else:
+                    raise ValueError('Unexpected math convention')
+
+                # Test unit behavior
+                for i, kN in enumerate(test_units):
+                    with self.subTest(order=('left' if i == 0 else 'right')):
+                        with self.subTest(check='base_unit_exps'):
+                            self.assertTrue(np.allclose(kN.base_unit_exps, np.array([1, 1, -2])))
+
+                        for exponent in [1, 2, 3, 4, -1, -3]:
+                            with self.subTest(exponent=exponent):
+                                with self.subTest(check='to_base'):
+                                    inputs = 100*np.random.randn(100)
+                                    outputs = (1000**exponent)*inputs
+                                    self.assertTrue(np.allclose(kN.to_base(inputs, exponent), outputs))
+
+                                with self.subTest(check='from_base'):
+                                    inputs = 100*np.random.randn(100)
+                                    outputs = inputs/(1000**exponent)
+                                    self.assertTrue(np.allclose(kN.from_base(inputs, exponent), outputs))
 
     def test_multiply_invalid(self):
         # Verifies that an error is thrown if attempting to multiply a unit
@@ -463,14 +494,22 @@ class Test_Unit(unittest.TestCase):
             from_base_function=lambda x, exp: x
         )
 
-        for value in test_cases:
-            with self.subTest(value=value):
-                with self.subTest(order='left'):
-                    with self.assertRaises(TypeError):
-                        value * m
-                with self.subTest(order='right'):
-                    with self.assertRaises(TypeError):
-                        m * value
+        test_conventions = (
+            ConstantUnitMathConventions.UNIT_BASED,
+            ConstantUnitMathConventions.QUANTITY_BASED,
+        )
+        for convention in test_conventions:
+            with self.subTest(convention=convention):
+                Unit.CONSTANT_MATH_CONVENTION = convention
+
+                for value in test_cases:
+                    with self.subTest(value=value):
+                        with self.subTest(order='left'):
+                            with self.assertRaises(InvalidUnitMathError):
+                                value * m
+                        with self.subTest(order='right'):
+                            with self.assertRaises(InvalidUnitMathError):
+                                m * value
 
     def test_multiply_id(self):
         # Verifies that the "identifier" attribute of units is
@@ -634,41 +673,73 @@ class Test_Unit(unittest.TestCase):
             from_base_function=lambda x, exp: (0.001**exp)*x
         )
 
-        with self.subTest(order='left'):
-            mN = kN / 1e6
+        with self.subTest(convention=ConstantUnitMathConventions.DISABLE):
+            with self.assertRaises(InvalidUnitMathError):
+                kN / 1e6
 
-            with self.subTest(check='base_unit_exps'):
-                self.assertTrue(np.allclose(mN.base_unit_exps, np.array([1, 1, -2])))
+            with self.assertRaises(InvalidUnitMathError):
+                1e6 / kN
 
-            for exponent in [1, 2, 3, 4, -1, -3]:
-                with self.subTest(exponent=exponent):
-                    with self.subTest(check='to_base'):
-                        inputs = 100*np.random.randn(100)
-                        outputs = inputs/(1000**exponent)
-                        self.assertTrue(np.allclose(mN.to_base(inputs, exponent), outputs))
+        test_conventions = (
+            ConstantUnitMathConventions.UNIT_BASED,
+            ConstantUnitMathConventions.QUANTITY_BASED,
+        )
+        for convention in test_conventions:
+            with self.subTest(convention=convention):
+                # Configure convention for performing math operations between units and constants
+                Unit.CONSTANT_MATH_CONVENTION = convention
 
-                    with self.subTest(check='from_base'):
-                        inputs = 100*np.random.randn(100)
-                        outputs = (1000**exponent)*inputs
-                        self.assertTrue(np.allclose(mN.from_base(inputs, exponent), outputs))
+                with self.subTest(order='left'):
+                    # Define units to test (each of these represents a way to define kN in terms of N
+                    # for the selected math convention)
+                    if convention == ConstantUnitMathConventions.UNIT_BASED:
+                        mN = kN / 1e6
+                    elif ConstantUnitMathConventions.QUANTITY_BASED:
+                        mN = kN / 1e-6
+                    else:
+                        raise ValueError('Unexpected math convention')
 
-        with self.subTest(order='right'):
-            mNi = 1e6 / kN
+                    # Test unit behavior
+                    with self.subTest(check='base_unit_exps'):
+                        self.assertTrue(np.allclose(mN.base_unit_exps, np.array([1, 1, -2])))
 
-            with self.subTest(check='base_unit_exps'):
-                self.assertTrue(np.allclose(mNi.base_unit_exps, np.array([-1, -1, 2])))
+                    for exponent in [1, 2, 3, 4, -1, -3]:
+                        with self.subTest(exponent=exponent):
+                            with self.subTest(check='to_base'):
+                                inputs = 100*np.random.randn(100)
+                                outputs = inputs/(1000**exponent)
+                                self.assertTrue(np.allclose(mN.to_base(inputs, exponent), outputs))
 
-            for exponent in [1, 2, 3, 4, -1, -3]:
-                with self.subTest(exponent=exponent):
-                    with self.subTest(check='to_base'):
-                        inputs = 100*np.random.randn(100)
-                        outputs = (1000**exponent)*inputs
-                        self.assertTrue(np.allclose(mNi.to_base(inputs, exponent), outputs))
+                            with self.subTest(check='from_base'):
+                                inputs = 100*np.random.randn(100)
+                                outputs = (1000**exponent)*inputs
+                                self.assertTrue(np.allclose(mN.from_base(inputs, exponent), outputs))
 
-                    with self.subTest(check='from_base'):
-                        inputs = 100*np.random.randn(100)
-                        outputs = inputs/(1000**exponent)
-                        self.assertTrue(np.allclose(mNi.from_base(inputs, exponent), outputs))
+                with self.subTest(order='right'):
+                    # Define units to test (each of these represents a way to define kN in terms of N
+                    # for the selected math convention)
+                    if convention == ConstantUnitMathConventions.UNIT_BASED:
+                        mNi = 1e6 / kN
+                    elif ConstantUnitMathConventions.QUANTITY_BASED:
+                        mNi = 1e-6 / kN
+                    else:
+                        raise ValueError('Unexpected math convention')
+
+                    # Test unit behavior
+                    with self.subTest(check='base_unit_exps'):
+                        self.assertTrue(np.allclose(mNi.base_unit_exps, np.array([-1, -1, 2])))
+
+                    for exponent in [1, 2, 3, 4, -1, -3]:
+                        with self.subTest(exponent=exponent):
+                            with self.subTest(check='to_base'):
+                                inputs = 100*np.random.randn(100)
+                                outputs = (1000**exponent)*inputs
+                                self.assertTrue(np.allclose(mNi.to_base(inputs, exponent), outputs))
+
+                            with self.subTest(check='from_base'):
+                                inputs = 100*np.random.randn(100)
+                                outputs = inputs/(1000**exponent)
+                                self.assertTrue(np.allclose(mNi.from_base(inputs, exponent), outputs))
 
     def test_divide_invalid(self):
         # Verifies that an error is thrown if attempting to divide a unit
@@ -685,14 +756,22 @@ class Test_Unit(unittest.TestCase):
             from_base_function=lambda x, exp: x
         )
 
-        for value in test_cases:
-            with self.subTest(value=value):
-                with self.subTest(order='left'):
-                    with self.assertRaises(TypeError):
-                        value / m
-                with self.subTest(order='right'):
-                    with self.assertRaises(TypeError):
-                        m / value
+        test_conventions = (
+            ConstantUnitMathConventions.UNIT_BASED,
+            ConstantUnitMathConventions.QUANTITY_BASED,
+        )
+        for convention in test_conventions:
+            with self.subTest(convention=convention):
+                Unit.CONSTANT_MATH_CONVENTION = convention
+
+                for value in test_cases:
+                    with self.subTest(value=value):
+                        with self.subTest(order='left'):
+                            with self.assertRaises(InvalidUnitMathError):
+                                value / m
+                        with self.subTest(order='right'):
+                            with self.assertRaises(InvalidUnitMathError):
+                                m / value
 
     def test_divide_id(self):
         # Verifies that the "identifier" attribute of units is

@@ -11,5 +11,10 @@ class InvalidExponentError(InvalidUnitError):
     raised to a non-numeric exponent"""
 
 
+class InvalidUnitMathError(TypeError):
+    """Error thrown if attempting to perform invalid math operations with
+    :py:class:`Unit` objects"""
+
+
 class ParserMaxIterationError(InvalidUnitError):
     """Error thrown if unit parser reaches its iteration limit"""

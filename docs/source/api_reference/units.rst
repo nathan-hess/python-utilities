@@ -56,6 +56,7 @@ a given system of units.
     Unit
     UnitLinear
     UnitLinearSI
+    ConstantUnitMathConventions
 
 
 Unit-Parsing

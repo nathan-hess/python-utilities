@@ -2,6 +2,7 @@
 
    BinaryFile
    candela
+   ConstantUnitMathConventions
    exps
    ndarray
    np
@@ -10,6 +11,7 @@
    TypedList
    TypedListWithID
    UnitLinear
+   UnitLinearSI
    UnitSystem
    UnitSystemSI
 
