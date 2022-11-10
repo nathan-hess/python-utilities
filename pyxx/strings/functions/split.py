@@ -2,7 +2,8 @@
 """
 
 
-def split_at_index(value: str, index: int, return_index: bool = False):
+def split_at_index(value: str, index: int,
+                   return_index: bool = False) -> tuple:
     """Splits a string at a given index
 
     This function can be used to split a string at a given position,

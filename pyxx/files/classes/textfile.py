@@ -50,7 +50,7 @@ class TextFile(File):
         self._trailing_newline: Optional[bool] = None
 
         # Store comment character
-        self._comment_chars: Union[Tuple[str], None]
+        self._comment_chars: Union[Tuple[str, ...], None]
         if comment_chars is None:
             self._comment_chars = None
         else:

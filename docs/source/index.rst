@@ -18,6 +18,8 @@ reducing the need to duplicate code between projects.
     :hidden:
 
     getting_started/installation
+    getting_started/examples/index
+    getting_started/concepts/index
 
 
 .. toctree::
@@ -29,12 +31,13 @@ reducing the need to duplicate code between projects.
     api_reference/files
     api_reference/numbers
     api_reference/strings
+    api_reference/units
 
 
 Quick Links
 -----------
 
-.. grid:: 2
+.. grid:: 3
 
     .. grid-item-card:: Installation
         :link: section-installation
@@ -55,3 +58,13 @@ Quick Links
             :width: 200px
 
         Detailed documentation of all members in the |PackageNameStylized| package
+
+    .. grid-item-card:: Concepts
+        :link: section-concepts
+        :link-type: ref
+
+        .. figure:: ./_static/icon_abstract_concepts.svg
+            :align: center
+            :width: 200px
+
+        Discussion of important concepts behind |PackageNameStylized| objects and code

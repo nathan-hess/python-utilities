@@ -15,9 +15,10 @@ content has a particular structure.
 
 .. autosummary::
     :toctree: ./api
-    :template: ../_templates/api_reference_strings_content.rst
+    :template: ../_templates/api_reference_function_template.rst
 
     str_excludes_chars
+    str_includes_only
 
 
 Bracket Parsing
@@ -34,11 +35,6 @@ it can be useful to parse strings containing brackets and identify pairs of
     For more information on terminology definitions and how the functions in
     this section operate on a conceptual level, refer to the
     :ref:`section-bracket_concepts` page.
-
-.. toctree::
-    :hidden:
-
-    concepts/brackets
 
 .. autosummary::
     :toctree: ./api

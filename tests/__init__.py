@@ -47,3 +47,4 @@ from .arrays import *
 from .files import *
 from .numbers import *
 from .strings import *
+from .units import *

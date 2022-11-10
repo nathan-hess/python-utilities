@@ -46,7 +46,7 @@ def check_len_equal(item1: Any, item2: Any, *args: Any):
     return False, lengths
 
 
-def is_len_equal(item1: Any, item2: Any, *args: Any):
+def is_len_equal(item1: Any, item2: Any, *args: Any) -> bool:
     """Checks whether the lengths of a set of sequence-type objects
     are equal
 
@@ -85,7 +85,7 @@ def is_len_equal(item1: Any, item2: Any, *args: Any):
     return True
 
 
-def max_list_item_len(input_list: Union[list, tuple]):
+def max_list_item_len(input_list: Union[list, tuple]) -> int:
     """Finds the maximum length of any item in a list or tuple
 
     Parameters

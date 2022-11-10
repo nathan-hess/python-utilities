@@ -5,7 +5,7 @@ array to another
 from typing import Any
 
 
-def convert_to_tuple(value: Any):
+def convert_to_tuple(value: Any) -> tuple:
     """Convert an input to a tuple
 
     Convert any input to a one-element tuple, or directly return

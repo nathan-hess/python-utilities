@@ -1,4 +1,4 @@
-"""Customized exceptions for the ``pyxx.files`` module
+"""Customized exceptions for the :py:mod:`pyxx.files` module
 """
 
 

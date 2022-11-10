@@ -3,11 +3,11 @@
 
 import hashlib
 import pathlib
-from typing import Union
+from typing import Tuple, Union
 
 
 def compute_file_hash(file: Union[str, pathlib.Path],
-                      hash_function: str = 'sha256'):
+                      hash_function: str = 'sha256') -> Tuple[str, str]:
     """Computes a file hash
 
     Computes and returns the hash of a file on the disk. Users can select

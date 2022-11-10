@@ -31,6 +31,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
+    'sphinx.ext.imgconverter',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.napoleon',
     'sphinxcontrib.spelling',
@@ -95,6 +96,13 @@ html_sidebars = {
 }
 
 
+# -- Other general Sphinx configuration options ------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+# Show parentheses after function and method names
+add_function_parentheses = True
+
+
 # -- Spell-checking options --------------------------------------------------
 # https://sphinxcontrib-spelling.readthedocs.io/en/latest/
 
@@ -124,6 +132,7 @@ autodoc_default_options = {
     'members': True,
     'undoc-members': True,
     'private-members': False,
+    'special-members': '__init__',
     'inherited-members': True,
     'member-order': 'bysource',
     'show-inheritance': True,

@@ -1,9 +1,19 @@
 .. spelling:word-list::
 
    BinaryFile
+   candela
+   ConstantUnitMathConventions
+   exps
+   ndarray
+   np
+   num
    TextFile
    TypedList
    TypedListWithID
+   UnitLinear
+   UnitLinearSI
+   UnitSystem
+   UnitSystemSI
 
 
 {{ fullname | escape | underline}}
@@ -13,7 +23,6 @@
 .. autoclass:: {{ objname }}
 
    {% block methods %}
-   .. automethod:: __init__
 
    {%- set methods_non_inherited = [] %}
    {%- set methods_inherited = [] %}
