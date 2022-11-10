@@ -67,9 +67,8 @@ Unit Arithmetic
 ^^^^^^^^^^^^^^^
 
 Once we have already defined several units, we may want to create new units
-based on the units we have already defined.  For instance, we've already
-created a unit of meters, and suppose we also define a unit representing
-seconds:
+based on the units we have already defined.  For instance, we already created
+a unit of meters, and suppose we also define a unit representing seconds:
 
 >>> s = pyxx.units.UnitLinearSI(
 ...          base_unit_exps=[0, 1, 0, 0, 0, 0, 0],
