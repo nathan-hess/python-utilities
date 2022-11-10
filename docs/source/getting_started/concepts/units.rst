@@ -1,4 +1,4 @@
-.. include:: ../constants.rst
+.. include:: ../../constants.rst
 
 .. spelling:word-list::
 

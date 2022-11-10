@@ -19,6 +19,7 @@ reducing the need to duplicate code between projects.
 
     getting_started/installation
     getting_started/examples/index
+    getting_started/concepts/index
 
 
 .. toctree::
@@ -26,7 +27,6 @@ reducing the need to duplicate code between projects.
     :hidden:
 
     Overview <api_reference/index>
-    concepts/index
     api_reference/arrays
     api_reference/files
     api_reference/numbers

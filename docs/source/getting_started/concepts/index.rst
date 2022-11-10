@@ -1,4 +1,4 @@
-.. include:: ../constants.rst
+.. include:: ../../constants.rst
 
 
 .. _section-concepts:
@@ -16,5 +16,5 @@ the reference pages.
     :caption: Concepts Pages
     :maxdepth: 2
 
-    brackets
     units
+    brackets
