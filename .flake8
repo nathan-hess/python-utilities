@@ -14,6 +14,10 @@ ignore =
     # improve code readability
     E251,
 
+    # Allow block comments with multiple leading '#' characters to improve
+    # code readability by making it easier to identify comment section headers
+    E266,
+
     # Ignore "invalid escape sequence" to prevent flagging false positives
     # in docstrings
     W605,
