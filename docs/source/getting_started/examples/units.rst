@@ -37,11 +37,11 @@ define a unit of *meters*.  Since meters are one of the base units in the SI
 system of units, this is fairly straightforward:
 
 >>> m = pyxx.units.Unit(
-...          unit_system=pyxx.units.UnitSystemSI(),
-...          base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
-...          to_base_function=lambda x, exp: x,
-...          from_base_function=lambda x, exp: x,
-...          identifier='m', name='meter'
+...         unit_system=pyxx.units.UnitSystemSI(),
+...         base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
+...         to_base_function=lambda x, exp: x,
+...         from_base_function=lambda x, exp: x,
+...         identifier='m', name='meter'
 ... )
 >>> print(m)
 m - meter - [1. 0. 0. 0. 0. 0. 0.]
@@ -71,9 +71,9 @@ based on the units we have already defined.  For instance, we already created
 a unit of meters, and suppose we also define a unit representing seconds:
 
 >>> s = pyxx.units.UnitLinearSI(
-...          base_unit_exps=[0, 1, 0, 0, 0, 0, 0],
-...          scale=1, offset=0,
-...          identifier='s', name='second'
+...         base_unit_exps=[0, 1, 0, 0, 0, 0, 0],
+...         scale=1, offset=0,
+...         identifier='s', name='second'
 ... )
 >>> print(s)
 s - second - [0. 1. 0. 0. 0. 0. 0.] - scale: 1.0 - offset: 0.0
@@ -123,7 +123,7 @@ exponents (``**``).
     Then, we can perform operations multiplying or dividing units by a constant:
 
     >>> cm = 10 * mm
-    >>> cm.to_base(100)
+    >>> print( cm.to_base(100) )
     1.0
 
     However, this is an advanced feature, and it requires detailed
@@ -154,6 +154,7 @@ True
 >>> m.is_convertible(mm)
 True
 
+
 Converting To/From Base Units
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -163,11 +164,41 @@ convert a given quantity from a given unit to the base units, or vice versa.
 For instance, to convert a value from millimeters to the base units (meters),
 we could run:
 
->>> mm.to_base(100)
+>>> print( mm.to_base(100) )
 0.1
 
 We can also perform conversions in cases where units are raised to an exponent.
 For instance, this is one way to convert :math:`1\ m^2` to square millimeters:
 
->>> mm.from_base(1, exponent=2)
+>>> print( mm.from_base(1, exponent=2) )
 1000000.0
+
+
+Converting Between Units
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Perhaps a more interesting case, however, is to convert between units.  This
+can be accomplished using the :py:meth:`pyxx.units.Unit.convert` method.
+
+For instance, we previously defined units of :math:`m` and :math:`mm`, so to
+convert :math:`2\ m` to :math:`mm`, we can use:
+
+>>> print( m.convert(2, 'to', mm) )
+2000.0
+
+We can just as easily convert "the other direction," from :math:`mm` to
+:math:`m`:
+
+>>> print( m.convert(2, 'from', mm) )
+0.002
+
+It's also possible to convert multiple values at once by providing a list,
+tuple, or NumPy array as an input:
+
+>>> print( m.convert([1, 2, 3, 4], 'to', mm) )
+[1000. 2000. 3000. 4000.]
+
+More complex unit conversions can be performed using unit arithmetic:
+
+>>> print( (m/s).convert([3.14, 6.28], 'to', mm/s) )
+[3140. 6280.]

@@ -10,7 +10,10 @@ from pyxx.units import (
     UnitSystem,
     UnitSystemSI,
 )
-from pyxx.units.exceptions import InvalidUnitMathError
+from pyxx.units.exceptions import (
+    IncompatibleUnitsError,
+    InvalidUnitMathError,
+)
 
 
 class Test_Unit(unittest.TestCase):
@@ -999,3 +1002,125 @@ class Test_LinearUnitSI(unittest.TestCase):
             scale=0.001, offset=0)
 
         self.assertIs(type(unit.unit_system), UnitSystemSI)
+
+
+class Test_Convert(unittest.TestCase):
+    def setUp(self):
+        self.m = UnitLinearSI(
+            base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
+            scale=1, offset=0,
+            identifier='m', name='meter')
+
+        self.mm = UnitLinearSI(
+            base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
+            scale=0.001, offset=0,
+            identifier='mm', name='millimeter')
+
+        self.s = UnitLinearSI(
+            base_unit_exps=[0, 1, 0, 0, 0, 0, 0],
+            scale=1, offset=0,
+            identifier='s', name='second')
+
+        self.ms = UnitLinearSI(
+            base_unit_exps=[0, 1, 0, 0, 0, 0, 0],
+            scale=0.001, offset=0,
+            identifier='ms', name='millisecond')
+
+        self.test_values = np.array([0, 1, 100, 1e12, -2, -3.14159, -6e-7])
+
+    def test_convert_to(self):
+        # Tests a variety of unit conversions
+        with self.subTest(conversion='mm --> mm'):
+            self.assertListEqual(
+                list(self.mm.convert(self.test_values, 'to', self.mm)),
+                list(self.test_values)
+            )
+
+        with self.subTest(conversion='mm --> m'):
+            self.assertListEqual(
+                list(self.mm.convert(self.test_values, 'to', self.m)),
+                list(self.test_values / 1000)
+            )
+
+        with self.subTest(conversion='s^2 --> ms^2'):
+            self.assertListEqual(
+                list((self.s**2).convert(self.test_values, 'to', self.ms**2)),
+                list(self.test_values * 1e6)
+            )
+
+        with self.subTest(conversion='m/s --> m/ms'):
+            self.assertListEqual(
+                list((self.m / self.s).convert(self.test_values, 'to', self.m / self.ms)),
+                list(self.test_values / 1000)
+            )
+
+        with self.subTest(conversion='mm --> mm', notes='different_class'):
+            mm = Unit(
+                unit_system=UnitSystemSI(),
+                base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
+                to_base_function=lambda x, exp: (0.001**exp) * x,
+                from_base_function=lambda x, exp: x / (0.001**exp)
+            )
+
+            self.assertListEqual(
+                list(mm.convert(self.test_values, 'to', self.mm)),
+                list(self.test_values)
+            )
+
+    def test_convert_from(self):
+        # Tests a variety of unit conversions
+        with self.subTest(conversion='mm <-- mm'):
+            self.assertListEqual(
+                list(self.mm.convert(self.test_values, 'from', self.mm)),
+                list(self.test_values)
+            )
+
+        with self.subTest(conversion='mm <-- m'):
+            self.assertListEqual(
+                list(self.mm.convert(self.test_values, 'from', self.m)),
+                list(self.test_values * 1000)
+            )
+
+        with self.subTest(conversion='ms^2 <-- s^2'):
+            self.assertListEqual(
+                list((self.ms**2).convert(self.test_values, 'from', self.s**2)),
+                list(self.test_values * 1e6)
+            )
+
+        with self.subTest(conversion='m/s <-- m/ms'):
+            self.assertListEqual(
+                list((self.m / self.s).convert(self.test_values, 'from', self.m / self.ms)),
+                list(self.test_values * 1000)
+            )
+
+        with self.subTest(conversion='mm <-- mm', notes='different_class'):
+            mm = Unit(
+                unit_system=UnitSystemSI(),
+                base_unit_exps=[1, 0, 0, 0, 0, 0, 0],
+                to_base_function=lambda x, exp: (0.001**exp) * x,
+                from_base_function=lambda x, exp: x / (0.001**exp)
+            )
+
+            self.assertListEqual(
+                list(mm.convert(self.test_values, 'from', self.mm)),
+                list(self.test_values)
+            )
+
+    def test_convert_invalid(self):
+        # Verifies that an appropriate error is thrown if attempting to specify
+        # an invalid unit conversion
+        with self.subTest(issue='incorrect_conversion_type'):
+            with self.assertRaises(TypeError):
+                self.m.convert(self.test_values, 0, self.mm)
+
+        with self.subTest(issue='incorrect_conversion_value'):
+            with self.assertRaises(ValueError):
+                self.m.convert(self.test_values, 'to_unit', self.mm)
+
+        with self.subTest(issue='not_a_unit'):
+            with self.assertRaises(TypeError):
+                self.m.convert(self.test_values, 'to', 'mm')
+
+        with self.subTest(issue='incompatible_units'):
+            with self.assertRaises(IncompatibleUnitsError):
+                self.m.convert(self.test_values, 'to', self.ms)

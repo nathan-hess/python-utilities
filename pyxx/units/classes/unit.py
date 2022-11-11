@@ -10,7 +10,10 @@ import numpy as np
 
 from pyxx.arrays.functions.equality import is_array_equal
 from pyxx.strings.functions.content import str_includes_only
-from pyxx.units.exceptions import InvalidUnitMathError
+from pyxx.units.exceptions import (
+    IncompatibleUnitsError,
+    InvalidUnitMathError,
+)
 from .unitsystem import UnitSystem, UnitSystemSI
 
 
@@ -397,13 +400,13 @@ class Unit:
             '"CONSTANT_MATH_CONVENTION" is not set to a recognized value')
 
     @property
-    def base_unit_exps(self):
+    def base_unit_exps(self) -> np.ndarray:
         """A list of exponents relating the given object's units to the
         base units of :py:attr:`unit_system`"""
         return self._base_unit_exps
 
     @property
-    def identifier(self):
+    def identifier(self) -> Optional[str]:
         """A user-defined string that represents the unit
         (examples: kg, m, rad)"""
         return self._identifier
@@ -415,7 +418,7 @@ class Unit:
         return self._from_base_function
 
     @property
-    def name(self):
+    def name(self) -> Optional[str]:
         """A user-defined string that describes the unit
         (examples: kilogram, meter, radian)"""
         return self._name
@@ -427,11 +430,66 @@ class Unit:
         return self._to_base_function
 
     @property
-    def unit_system(self):
+    def unit_system(self) -> UnitSystem:
         """The system of units to which the unit belongs"""
         return self._unit_system
 
-    def is_convertible(self, unit: 'Unit'):
+    def convert(self, value: Union[np.ndarray, list, tuple, float],
+                convert_type: str, unit: 'Unit') -> np.ndarray:
+        """Converts a quantity from one unit to another
+
+        This method performs a unit conversion, converting one or more values
+        from this object's units to another unit.  This conversion can be
+        performed in "either direction" -- either from this object's units to
+        another unit, or from another unit to this object's units.
+
+        Parameters
+        ----------
+        value : np.ndarray or list or tuple or float
+            Quantities to convert to a different unit
+        convert_type : str
+            Must be either ``'to'`` or ``'from'``.  Describes whether to
+            convert ``value`` from this object's units to the units specified
+            by ``unit``, or vice versa
+        unit : Unit
+            The unit to convert ``value`` to or from
+
+        Returns
+        -------
+        np.ndarray
+            NumPy array of the same shape as ``value`` containing the
+            quantities after performing the specified unit conversion
+
+        Examples
+        --------
+        For examples, refer to the :ref:`section-examples_units` page.
+        """
+        # Validate input argument types
+        if not isinstance(convert_type, str):
+            raise TypeError('Argument "convert_type" must be of type "str"')
+
+        if not isinstance(unit, Unit):
+            raise TypeError(f'Argument "unit" must be of type {Unit}')
+
+        # Verify that units can be converted
+        if not self.is_convertible(unit):
+            raise IncompatibleUnitsError(
+                'Cannot perform unit conversion: units are not compatible')
+
+        # Convert inputs to NumPy array
+        inputs = np.array(value, dtype=np.float64)
+
+        # Perform unit conversion
+        if convert_type.lower() == 'from':
+            return self.from_base(unit.to_base(inputs))
+
+        if convert_type.lower() == 'to':
+            return unit.from_base(self.to_base(inputs))
+
+        raise ValueError('Argument "convert_type" must be exactly one of the '
+                         'following: ("from", "to")')
+
+    def is_convertible(self, unit: 'Unit') -> bool:
         """Checks whether a unit can be converted to another unit
 
         Checks two units can be converted between each other (i.e., whether
@@ -456,7 +514,7 @@ class Unit:
         return is_array_equal(self.base_unit_exps, unit.base_unit_exps)
 
     def from_base(self, value: Union[np.ndarray, list, tuple, float],
-                  exponent: float = 1.0):
+                  exponent: float = 1.0) -> np.ndarray:
         """Converts a value or array from base units of the unit
         system to the given unit
 
@@ -484,7 +542,7 @@ class Unit:
         return self.from_base_function(inputs, exponent)
 
     def to_base(self, value: Union[np.ndarray, list, tuple, float],
-                exponent: float = 1.0):
+                exponent: float = 1.0) -> np.ndarray:
         """Converts a value or array from the given unit to the base
         units of the unit system
 
@@ -596,13 +654,13 @@ class UnitLinear(Unit):
         return f'{super().__str__()} - scale: {self.scale} - offset: {self.offset}'
 
     @property
-    def offset(self):
+    def offset(self) -> float:
         """The constant value added when converting from the given
         object's unit to the base units"""
         return self._offset
 
     @property
-    def scale(self):
+    def scale(self) -> float:
         """The multiplicative factor applied when converting from
         the given object's unit to the base units"""
         return self._scale
