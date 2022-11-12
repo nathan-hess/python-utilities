@@ -4,7 +4,7 @@ given system of units.
 
 import enum
 import string
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -15,29 +15,6 @@ from pyxx.units.exceptions import (
     InvalidUnitMathError,
 )
 from .unitsystem import UnitSystem, UnitSystemSI
-
-
-# Disable Pylint's "unused argument" warnings.  In this case, we want to allow
-# users to pass keyword arguments but ignore them -- this allows users to
-# define different units using the same code.
-#
-# For instance, using the line below, if users set "myUnit" using one
-# of the lines below:
-#   myUnit = pyxx.units.Unit(...)
-#   myUnit = pyxx.units.UnitLinearSI(...)
-# However, each of these classes requires a different set of keyword
-# arguments, which can cause issues if attempting to create a single line of
-# code that can create an instance of either class.
-#
-# However, if we allow arbitrary keyword arguments (with **kwargs) in the
-# `Unit` class constructors, then users can easily define different units
-# using the same code:
-#   unit = myUnit(unit_system=UnitSystem(1), ...)
-#
-# This becomes particularly useful when setting up unit converters, which need
-# to be general enough to handle any type of `Unit` class.
-#
-# pylint: disable=unused-argument
 
 
 class ConstantUnitMathConventions(enum.Enum):
@@ -165,8 +142,7 @@ class Unit:
             to_base_function: Callable[[np.ndarray, float], np.ndarray],
             from_base_function: Callable[[np.ndarray, float], np.ndarray],
             identifier: Optional[str] = None,
-            name: Optional[str] = None,
-            **kwargs: Any):
+            name: Optional[str] = None):
         """Creates an instance of the :py:class:`Unit` class
 
         Defines an object representing a base or derived unit that is part of
@@ -191,8 +167,6 @@ class Unit:
         name : str, optional
             A name describing the unit (example: ``'kilogram'``) (default
             is ``None``)
-        **kwargs : Any, optional
-            Other keyword arguments (can be passed as inputs but are ignored)
         """
         # Store system of units
         if not isinstance(unit_system, UnitSystem):
@@ -601,8 +575,7 @@ class UnitLinear(Unit):
             scale: float,
             offset: float,
             identifier: Optional[str] = None,
-            name: Optional[str] = None,
-            **kwargs):
+            name: Optional[str] = None):
         """Creates an instance of the :py:class:`UnitLinear` class
 
         Defines an object representing a base or derived unit in which the
@@ -628,8 +601,6 @@ class UnitLinear(Unit):
         name : str, optional
             A name describing the unit (example: ``'kilogram'``) (default
             is ``None``)
-        **kwargs : Any, optional
-            Other keyword arguments (can be passed as inputs but are ignored)
         """
         # Store inputs
         if not isinstance(scale, (float, int, np.number)):
@@ -690,8 +661,7 @@ class UnitLinearSI(UnitLinear):
             scale: float,
             offset: float,
             identifier: Optional[str] = None,
-            name: Optional[str] = None,
-            **kwargs):
+            name: Optional[str] = None):
         """Creates an instance of the :py:class:`UnitLinearSI` class
 
         Defines an object representing a base or derived unit in which the
@@ -716,8 +686,6 @@ class UnitLinearSI(UnitLinear):
         name : str, optional
             A name describing the unit (example: ``'kilogram'``) (default
             is ``None``)
-        **kwargs : Any, optional
-            Other keyword arguments (can be passed as inputs but are ignored)
         """
         super().__init__(
             unit_system    = UnitSystemSI(),
