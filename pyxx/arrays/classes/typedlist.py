@@ -4,14 +4,22 @@ added requirement that all items in the list are of a specific, user-specified
 type.
 """
 
-import collections.abc
 import itertools
-from typing import Any
+import sys
+from typing import Any, overload, Type, TypeVar
 
 from pyxx.arrays.functions.size import max_list_item_len
 
+if sys.version_info < (3, 9):
+    from typing import Iterable, MutableSequence
+else:
+    from collections.abc import Iterable, MutableSequence
 
-class TypedList(collections.abc.MutableSequence):
+
+T = TypeVar('T')
+
+
+class TypedList(MutableSequence[T]):
     """A list whose elements must be of a specific type
 
     This class defines a custom version of Python's :py:class:`list` object.
@@ -21,8 +29,9 @@ class TypedList(collections.abc.MutableSequence):
     can be used to manage data in a :py:class:`TypedList` instance.
     """
 
-    def __init__(self, *values: Any, list_type: type,
-                 print_multiline: bool = True, multiline_padding: int = 1):
+    def __init__(self, *values: T, list_type: Type[T],
+                 print_multiline: bool = True,
+                 multiline_padding: int = 1) -> None:
         """Creates a :py:class:`TypedList` list instance
 
         Creates an instance of the :py:class:`TypedList` object.  This list
@@ -31,9 +40,9 @@ class TypedList(collections.abc.MutableSequence):
 
         Parameters
         ----------
-        *values : Any
+        *values : T
             Items to add to the list when initializing the list
-        list_type : type
+        list_type : Type[T]
             The required type of all items in the list
         print_multiline : bool, optional
             Whether to return a printable string representation of the list in
@@ -89,15 +98,23 @@ class TypedList(collections.abc.MutableSequence):
 
         return True
 
+    @overload
+    def __getitem__(self, index: int) -> T:
+        ...
+
+    @overload
+    def __getitem__(self, index: slice) -> MutableSequence[T]:
+        ...
+
     def __getitem__(self, index):
         """Retrieves an item at a specified index from the list"""
         return self._data[index]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Returns the number of items in the list"""
         return len(self._data)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Create a string representation illustrating the list and its
         contents"""
         if self.print_multiline:
@@ -120,7 +137,15 @@ class TypedList(collections.abc.MutableSequence):
 
         return str(self._data)
 
-    def __setitem__(self, index, value) -> None:
+    @overload
+    def __setitem__(self, index: int, value: T) -> None:
+        ...
+
+    @overload
+    def __setitem__(self, index: slice, value: Iterable[T]) -> None:
+        ...
+
+    def __setitem__(self, index, value):
         """Sets the value of items at one or more indices in the list
 
         Like the built-in :py:class:`list` object, this method can either set
@@ -131,7 +156,7 @@ class TypedList(collections.abc.MutableSequence):
         if isinstance(index, int):
             self.__check_item_type(value)
         elif isinstance(index, slice) \
-                and isinstance(value, collections.abc.Iterable):
+                and isinstance(value, Iterable):
             for val in value:
                 self.__check_item_type(val)
         else:
@@ -143,22 +168,22 @@ class TypedList(collections.abc.MutableSequence):
         # Store items in list
         self._data[index] = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns a string representation of the list"""
         return self.__repr__()
 
-    def insert(self, index: int, value: Any):
+    def insert(self, index: int, value: T):
         """Inserts a value at a given index in the list"""
         self.__check_item_type(value)
         self._data.insert(index, value)
 
     @property
-    def list_type(self):
+    def list_type(self) -> Type[T]:
         """The required type of all items in the list"""
         return self._list_type
 
     @property
-    def print_multiline(self):
+    def print_multiline(self) -> bool:
         """Whether to display the object's string representation in
         multiline format"""
         return self._print_multiline
@@ -172,7 +197,7 @@ class TypedList(collections.abc.MutableSequence):
         self._print_multiline = print_multiline
 
     @property
-    def multiline_padding(self):
+    def multiline_padding(self) -> int:
         """The number of spaces on either side of the list of items in
         the list when displaying the list's string representation in
         multiline format"""
@@ -186,7 +211,7 @@ class TypedList(collections.abc.MutableSequence):
         self._multiline_padding = multiline_padding
 
 
-class TypedListWithID(TypedList):
+class TypedListWithID(TypedList[T]):
     """A list whose elements must be of a specific type, where each class
     instance is given a unique identifier
 
@@ -207,8 +232,9 @@ class TypedListWithID(TypedList):
     # class instance
     _id = itertools.count(0)
 
-    def __init__(self, *values, list_type: type,
-                 print_multiline: bool = True, multiline_padding: int = 1):
+    def __init__(self, *values: T, list_type: Type[T],
+                 print_multiline: bool = True,
+                 multiline_padding: int = 1) -> None:
         super().__init__(
             *values,
             list_type=list_type,
@@ -220,6 +246,6 @@ class TypedListWithID(TypedList):
         self.__id = next(self._id)
 
     @property
-    def id(self):
+    def id(self) -> int:
         """A unique class instance identification number"""
         return self.__id
