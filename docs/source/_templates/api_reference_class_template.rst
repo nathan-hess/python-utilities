@@ -10,6 +10,7 @@
    TextFile
    TypedList
    TypedListWithID
+   UnitConverterEntry
    UnitLinear
    UnitLinearSI
    UnitSystem

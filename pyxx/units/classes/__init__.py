@@ -2,4 +2,5 @@
 """
 
 from .unit import ConstantUnitMathConventions, Unit, UnitLinear, UnitLinearSI
+from .unitconverter import UnitConverterEntry
 from .unitsystem import UnitSystem, UnitSystemSI

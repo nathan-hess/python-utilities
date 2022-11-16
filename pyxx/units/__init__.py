@@ -8,6 +8,7 @@ arbitrary units and convert quantities between such units.
 from .classes import (
     ConstantUnitMathConventions,
     Unit,
+    UnitConverterEntry,
     UnitLinear,
     UnitLinearSI,
     UnitSystem,
