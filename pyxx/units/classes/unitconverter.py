@@ -48,7 +48,7 @@ class UnitConverterEntry:
         self.unit = unit
 
     @property
-    def description(self) -> Optional[str]:
+    def description(self) -> Union[str, None]:
         """A description of the unit"""
         return self._description
 

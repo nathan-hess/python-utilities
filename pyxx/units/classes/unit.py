@@ -380,7 +380,7 @@ class Unit:
         return self._base_unit_exps
 
     @property
-    def identifier(self) -> Optional[str]:
+    def identifier(self) -> Union[str, None]:
         """A user-defined string that represents the unit
         (examples: kg, m, rad)"""
         return self._identifier
@@ -392,7 +392,7 @@ class Unit:
         return self._from_base_function
 
     @property
-    def name(self) -> Optional[str]:
+    def name(self) -> Union[str, None]:
         """A user-defined string that describes the unit
         (examples: kilogram, meter, radian)"""
         return self._name
