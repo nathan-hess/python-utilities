@@ -33,4 +33,10 @@ per-file-ignores =
     # errors for __init__.py files
     __init__.py: F401, F403
 
+    # Prevents "expected 2 blank lines, found 1" warnings before class
+    # definitions in files containing exclusively a list of customized
+    # exceptions.  In these files, the objective is to list a classes, so
+    # allowing tighter spacing reduces file length and improves readability
+    exceptions.py: E302
+
 max-line-length = 85
