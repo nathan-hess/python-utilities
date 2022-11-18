@@ -33,3 +33,17 @@ class UnitConversionError(Exception):
 class IncompatibleUnitsError(UnitConversionError):
     """Error thrown when attempting to convert a quantity between units, but
     the units are not compatible"""
+
+
+# Errors specific to `UnitConverter` objects
+class UnitConverterError(Exception):
+    """General error for runtime issues related to :py:class:`UnitConverter`
+    objects"""
+
+class UnitNotFoundError(UnitConverterError, KeyError):
+    """Error thrown when unable to retrieve a unit from a
+    :py:class:`pyxx.units.UnitConverter` instance"""
+
+class UnitAlreadyDefinedError(UnitConverterError):
+    """Error thrown if attempting to add a unit to a :py:class:`UnitConverter`
+    and the unit already exists"""

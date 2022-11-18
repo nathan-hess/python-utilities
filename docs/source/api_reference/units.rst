@@ -26,7 +26,8 @@ simple-to-use interface to convert units, specified as strings.  Most of the
 lower-level details of parsing units and performing unit conversions are
 abstracted away from the user for simplicity.
 
-.. inheritance-diagram:: UnitConverterEntry
+.. inheritance-diagram:: UnitConverter UnitConverterEntry
+    :top-classes: pyxx.units.classes.unitconverter.UnitConverter
     :parts: 1
 
 |
@@ -35,6 +36,7 @@ abstracted away from the user for simplicity.
     :toctree: ./api
     :template: ../_templates/api_reference_class_template.rst
 
+    UnitConverter
     UnitConverterEntry
 
 

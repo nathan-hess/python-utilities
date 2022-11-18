@@ -482,6 +482,11 @@ class Unit:
             same system of units and have the same :py:attr:`base_unit_exps`
             attribute, and ``False`` otherwise
         """
+        # This does not use `isinstance()` or else units with system of units
+        # `UnitSystem` could be converted to any other system of units.
+        # Instead, users should create a unique `UnitSystem` subclass,
+        # corresponding their own conventions.  This prevents accidentally
+        # converting units based on different conventions
         if not (type(self.unit_system) is type(unit.unit_system)):  # noqa: E721
             return False
 

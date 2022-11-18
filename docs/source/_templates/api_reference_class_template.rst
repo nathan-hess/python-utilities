@@ -1,5 +1,6 @@
 .. spelling:word-list::
 
+   args
    BinaryFile
    candela
    ConstantUnitMathConventions
@@ -10,6 +11,7 @@
    TextFile
    TypedList
    TypedListWithID
+   UnitConverter
    UnitConverterEntry
    UnitLinear
    UnitLinearSI

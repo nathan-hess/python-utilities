@@ -1,9 +1,20 @@
 import unittest
 
+import numpy as np
+
 from pyxx.arrays import TypedList
 from pyxx.units import (
+    Unit,
+    UnitConverter,
     UnitConverterEntry,
     UnitLinearSI,
+    UnitSystem,
+    UnitSystemSI,
+)
+from pyxx.units.exceptions import (
+    IncompatibleUnitsError,
+    UnitAlreadyDefinedError,
+    UnitNotFoundError,
 )
 
 
@@ -124,3 +135,367 @@ class Test_UnitConverterEntry(unittest.TestCase):
         # Verifies that "unit" attribute is retrieved correctly
         self.entry_required_args._unit = 'myUnit'
         self.assertEqual(self.entry_required_args.unit, 'myUnit')
+
+
+class Test_UnitConverter(unittest.TestCase):
+    def setUp(self) -> None:
+        # Sample units
+        self.m  = UnitLinearSI([1,0,0,0,0,0,0], scale=1, offset=0)
+        self.mm  = UnitLinearSI([1,0,0,0,0,0,0], scale=0.001, offset=0)
+        self.s  = UnitLinearSI([0,1,0,0,0,0,0], scale=1, offset=0)
+        self.ms = UnitLinearSI([0,1,0,0,0,0,0], scale=0.001, offset=0)
+        self.kg = UnitLinearSI([0,0,0,0,0,0,1], scale=1, offset=0)
+        self.N = UnitLinearSI([1,-2,0,0,0,0,1], scale=1, offset=0)
+        self.kN = UnitLinearSI([1,-2,0,0,0,0,1], scale=1000, offset=0)
+
+        # Sample unit converter entries
+        self.entry_m = UnitConverterEntry(
+            unit        = UnitLinearSI([1,0,0,0,0,0,0], scale=1, offset=0),
+            tags        = ['length'],
+            description = 'meters')
+        self.entry_mm = UnitConverterEntry(
+            unit        = UnitLinearSI([1,0,0,0,0,0,0], scale=0.001, offset=0),
+            tags        = ['length'],
+            description = 'millimeters')
+        self.entry_s = UnitConverterEntry(
+            unit        = UnitLinearSI([0,1,0,0,0,0,0], scale=1, offset=0),
+            tags        = ['time'],
+            description = 'seconds')
+        self.entry_ms = UnitConverterEntry(
+            unit        = UnitLinearSI([0,1,0,0,0,0,0], scale=0.001, offset=0),
+            tags        = ['time'],
+            description = 'milliseconds')
+        self.entry_kg = UnitConverterEntry(
+            unit        = UnitLinearSI([0,0,0,0,0,0,1], scale=1, offset=0),
+            tags        = ['mass'],
+            description = 'kilograms')
+        self.entry_N = UnitConverterEntry(
+            unit        = UnitLinearSI([1,-2,0,0,0,0,1], scale=1, offset=0),
+            tags        = ['force'],
+            description = 'Newtons')
+        self.entry_kN = UnitConverterEntry(
+            unit        = UnitLinearSI([1,-2,0,0,0,0,1], scale=1000, offset=0),
+            tags        = ['force'],
+            description = 'kilonewtons')
+
+        # Sample unit converter
+        self.unit_converter = UnitConverter(unit_system=UnitSystemSI())
+        self.unit_converter['m'] = self.entry_m
+        self.unit_converter['mm'] = self.entry_mm
+        self.unit_converter['s'] = self.entry_s
+        self.unit_converter['kg'] = self.entry_kg
+        self.unit_converter['N'] = self.entry_N
+        self.unit_converter['kN'] = self.entry_kN
+
+    def test_unit_system(self):
+        # Verifies that "unit_system" attribute is stored correctly
+        with self.subTest(comment='constructor'):
+            self.assertIs(type(self.unit_converter.unit_system), UnitSystemSI)
+
+        with self.subTest(comment='read_only'):
+            with self.assertRaises(AttributeError):
+                self.unit_converter.unit_system = UnitSystemSI(name='new_SI')
+
+        with self.subTest(comment='invalid_type'):
+            with self.assertRaises(TypeError):
+                UnitConverter(unit_system=UnitSystemSI)
+
+    def test_get_unit(self):
+        # Verifies that units can be correctly retrieved from a unit converter
+        self.assertIs(self.unit_converter['m'], self.entry_m)
+        self.assertIs(self.unit_converter['mm'], self.entry_mm)
+        self.assertIs(self.unit_converter['s'], self.entry_s)
+        self.assertIs(self.unit_converter['kg'], self.entry_kg)
+        self.assertIs(self.unit_converter['N'], self.entry_N)
+        self.assertIs(self.unit_converter['kN'], self.entry_kN)
+
+    def test_get_unit_invalid(self):
+        # Verifies that an appropriate error is thrown if providing invalid
+        # inputs when attempting to retrieve a unit
+        with self.subTest(issue='invalid_key_type'):
+            with self.assertRaises(TypeError):
+                self.unit_converter[0]
+
+            with self.assertRaises(TypeError):
+                self.unit_converter[self.m]
+
+        with self.subTest(issue='unit_not_found'):
+            with self.assertRaises(UnitNotFoundError):
+                self.unit_converter['ms']
+
+    def test_set_unit(self):
+        # Verifies that new units can be added to the unit converter as expected
+        with self.subTest(operation='add_unit'):
+            self.assertEqual(len(self.unit_converter), 6)
+            self.assertListEqual(
+                list(self.unit_converter.keys()),
+                ['m', 'mm', 's', 'kg', 'N', 'kN']
+            )
+
+            self.unit_converter['ms'] = self.entry_ms
+            self.assertEqual(len(self.unit_converter), 7)
+            self.assertListEqual(
+                list(self.unit_converter.keys()),
+                ['m', 'mm', 's', 'kg', 'N', 'kN', 'ms']
+            )
+
+        with self.subTest(operation='modify'):
+            self.unit_converter['m'] = self.entry_kN
+            self.assertIs(self.unit_converter['m'], self.entry_kN)
+            self.assertListEqual(
+                list(self.unit_converter.keys()),
+                ['m', 'mm', 's', 'kg', 'N', 'kN', 'ms']
+            )
+
+    def test_set_unit_invalid(self):
+        # Verifies that an appropriate error is thrown if attempting to add a
+        # unit to the unit converter and providing invalid inputs
+        with self.subTest(issue='invalid_value_type'):
+            with self.assertRaises(TypeError):
+                self.unit_converter['ms'] = self.ms
+
+        with self.subTest(issue='key_not_str'):
+            with self.assertRaises(TypeError):
+                self.unit_converter[self.ms] = self.entry_ms
+
+            with self.assertRaises(TypeError):
+                self.unit_converter[100] = self.entry_ms
+
+        with self.subTest(issue='compound_unit_key'):
+            with self.assertRaises(ValueError):
+                self.unit_converter['m/s'] = self.entry_ms
+
+        with self.subTest(issue='incorrect_unit_system'):
+            with self.assertRaises(TypeError):
+                self.unit_converter['ms'] = UnitConverterEntry(
+                    Unit(UnitSystem(7), [1, 0, 0, 0, 0, 0, 0],
+                    to_base_function=lambda x, exp: x,
+                    from_base_function=lambda x, exp: x)
+                )
+
+    def test_add_unit(self):
+        # Verifies that a new unit can be added to the unit converter
+        with self.subTest(step='add_unit'):
+            self.assertEqual(len(self.unit_converter), 6)
+            self.assertListEqual(
+                list(self.unit_converter.keys()),
+                ['m', 'mm', 's', 'kg', 'N', 'kN']
+            )
+
+            self.unit_converter.add_unit(
+                key='ms', unit=self.ms, tags=['time', 'milliseconds'],
+                description='units of milliseconds', overwrite=False)
+
+            self.assertEqual(len(self.unit_converter), 7)
+            self.assertListEqual(
+                list(self.unit_converter.keys()),
+                ['m', 'mm', 's', 'kg', 'N', 'kN', 'ms'])
+            self.assertListEqual(
+                list(self.unit_converter['ms'].tags), ['time', 'milliseconds'])
+            self.assertEqual(
+                self.unit_converter['ms'].description, 'units of milliseconds')
+
+        with self.subTest(step='no_overwrite'):
+            with self.assertRaises(UnitAlreadyDefinedError):
+                self.unit_converter.add_unit(
+                    key='ms', unit=self.ms, tags=['time', 'milliseconds'],
+                    description='units of milliseconds', overwrite=False)
+
+        with self.subTest(step='overwrite'):
+            self.unit_converter.add_unit(
+                key='ms', unit=self.ms, tags=['duration'],
+                description='units of ms', overwrite=True)
+
+            self.assertEqual(len(self.unit_converter), 7)
+            self.assertListEqual(
+                list(self.unit_converter.keys()),
+                ['m', 'mm', 's', 'kg', 'N', 'kN', 'ms'])
+            self.assertListEqual(
+                list(self.unit_converter['ms'].tags), ['duration'])
+            self.assertEqual(
+                self.unit_converter['ms'].description, 'units of ms')
+
+    def test_add_alias(self):
+        # Verifies that a single unit alias can be added as expected
+        with self.subTest(step='add_alias'):
+            self.assertEqual(len(self.unit_converter), 6)
+            self.assertListEqual(
+                list(self.unit_converter.keys()),
+                ['m', 'mm', 's', 'kg', 'N', 'kN']
+            )
+
+            self.unit_converter.add_alias(key='s', aliases='second')
+
+            self.assertEqual(len(self.unit_converter), 7)
+            self.assertListEqual(
+                list(self.unit_converter.keys()),
+                ['m', 'mm', 's', 'kg', 'N', 'kN', 'second']
+            )
+            self.assertIs(self.unit_converter['second'], self.unit_converter['s'])
+
+        with self.subTest(step='check_ref'):
+            self.unit_converter['second'].description = 'seconds unit'
+            self.assertEqual(self.unit_converter['s'].description, 'seconds unit')
+
+    def test_add_aliases(self):
+        # Verifies that multiple unit aliases can be added as expected
+        self.assertEqual(len(self.unit_converter), 6)
+        self.assertListEqual(
+            list(self.unit_converter.keys()),
+            ['m', 'mm', 's', 'kg', 'N', 'kN']
+        )
+
+        self.unit_converter.add_alias(key='s', aliases=('sec', 'second'))
+
+        self.assertEqual(len(self.unit_converter), 8)
+        self.assertListEqual(
+            list(self.unit_converter.keys()),
+            ['m', 'mm', 's', 'kg', 'N', 'kN', 'sec', 'second']
+        )
+        self.assertIs(self.unit_converter['sec'], self.unit_converter['s'])
+        self.assertIs(self.unit_converter['second'], self.unit_converter['s'])
+
+    def test_convert_simple(self):
+        # Verifies that unit converter performs unit conversions correctly
+        # for simple units
+        inputs = 1000 * np.random.randn(100)
+
+        with self.subTest(unit_conversion='m -> m'):
+            self.assertTrue(np.allclose(
+                self.unit_converter.convert(quantity=inputs, from_unit='m', to_unit='m'),
+                inputs
+            ))
+
+        with self.subTest(unit_conversion='mm -> m'):
+            self.assertTrue(np.allclose(
+                self.unit_converter.convert(quantity=inputs, from_unit='mm', to_unit='m'),
+                inputs / 1000
+            ))
+
+        with self.subTest(unit_conversion='kN -> N'):
+            self.assertTrue(np.allclose(
+                self.unit_converter.convert(quantity=inputs, from_unit='kN', to_unit='N'),
+                inputs * 1000
+            ))
+
+    def test_convert_compound(self):
+        # Verifies that unit converter performs unit conversions correctly
+        # for compound units
+        inputs = 1000 * np.random.randn(100)
+
+        with self.subTest(unit_conversion='m/s -> m/s'):
+            self.assertTrue(np.allclose(
+                self.unit_converter.convert(quantity=inputs, from_unit='m/s', to_unit='m/s'),
+                inputs
+            ))
+
+        with self.subTest(unit_conversion='m^2/s -> mm^2/s'):
+            self.assertTrue(np.allclose(
+                self.unit_converter.convert(quantity=inputs, from_unit='m^2/s', to_unit='mm^2/s'),
+                inputs * 1e6
+            ))
+
+        with self.subTest(unit_conversion='kg*m/s^2 -> N'):
+            self.assertTrue(np.allclose(
+                self.unit_converter.convert(quantity=inputs, from_unit='kg*m/s^2', to_unit='N'),
+                inputs
+            ))
+
+        with self.subTest(unit_conversion='kg*m/s^2 -> kN'):
+            self.assertTrue(np.allclose(
+                self.unit_converter.convert(quantity=inputs, from_unit='kg*m/s^2', to_unit='kN'),
+                inputs / 1000
+            ))
+
+        with self.subTest(unit_conversion='kN -> kg*mm/s^2'):
+            self.assertTrue(np.allclose(
+                self.unit_converter.convert(quantity=inputs, from_unit='kN', to_unit='kg*mm/s^2'),
+                inputs * 1e6
+            ))
+
+    def test_convert_invalid(self):
+        # Verifies that an appropriate error is thrown if attempting to
+        # perform an invalid unit conversion
+        with self.subTest(issue='not_str'):
+            with self.assertRaises(TypeError):
+                self.unit_converter.convert(quantity=100, from_unit=self.m, to_unit='mm')
+
+            with self.assertRaises(TypeError):
+                self.unit_converter.convert(quantity=100, from_unit='m', to_unit=self.mm)
+
+            with self.assertRaises(TypeError):
+                self.unit_converter.convert(quantity=100, from_unit=self.m, to_unit=self.mm)
+
+        with self.subTest(issue='incompatible_units'):
+            with self.assertRaises(IncompatibleUnitsError):
+                self.unit_converter.convert(quantity=100, from_unit='kg', to_unit='mm')
+
+    def test_is_convertible(self):
+        # Verifies that incompatible units are recognized
+        test_cases = (
+            (('m', 'mm'),                       True),
+            (('m', 'mm', 'm'),                  True),
+            (('m', 'mm', 'mm', 'm'),            True),
+
+            (('N*m', 'N*mm'),                   True),
+            (('kN*m', 'N*mm', 'N*m'),           True),
+            (('N*m', 'N*mm', 'kN*mm', 'kN*m'),  True),
+
+            (('m', 's'),                        False),
+            (('s', 'm'),                        False),
+            (('s', 'm', 'm'),                   False),
+            (('m', 's', 'm'),                   False),
+            (('m', 'm', 's'),                   False),
+            (('s', 'mm', 'mm', 'm'),            False),
+            (('m', 's', 'mm', 'm'),             False),
+            (('m', 'mm', 's', 'm'),             False),
+            (('m', 'mm', 'mm', 's'),            False),
+        )
+
+        for inputs, outputs in test_cases:
+            with self.subTest(inputs=inputs, outputs=outputs):
+                self.assertIs(self.unit_converter.is_convertible(*inputs), outputs)
+
+    def test_is_simplified(self):
+        # Verifies that simple vs. compound units are distinguished correctly
+        test_cases = (
+            ('mm',        True),
+            ('s',         True),
+            ('kilogram',  True),
+            ('(kg)',      False),
+            ('m/s',       False),
+            (self.m,      False),
+        )
+
+        for inputs, outputs in test_cases:
+            with self.subTest(inputs=inputs, outputs=outputs):
+                self.assertIs(self.unit_converter.is_simplified_unit(inputs), outputs)
+
+    def test_str_to_unit(self):
+        # Verifies that strings are converted to units correctly
+        with self.subTest(unit='mm'):
+            unit = self.unit_converter.str_to_unit('mm')
+
+            self.assertListEqual(list(unit.base_unit_exps), [1, 0, 0, 0, 0, 0, 0])
+
+            inputs = 100 * np.random.randn(100)
+            self.assertTrue(np.allclose(unit.to_base(inputs), inputs / 1000))
+            self.assertTrue(np.allclose(unit.from_base(inputs), inputs * 1000))
+
+        with self.subTest(unit='kg*(mm/s)'):
+            unit = self.unit_converter.str_to_unit('kg*(mm/s)')
+
+            self.assertListEqual(list(unit.base_unit_exps), [1, -1, 0, 0, 0, 0, 1])
+
+            inputs = 100 * np.random.randn(100)
+            self.assertTrue(np.allclose(unit.to_base(inputs), inputs / 1000))
+            self.assertTrue(np.allclose(unit.from_base(inputs), inputs * 1000))
+
+        with self.subTest(unit='[empty]'):
+            unit = self.unit_converter.str_to_unit('')
+
+            self.assertListEqual(list(unit.base_unit_exps), [0, 0, 0, 0, 0, 0, 0])
+
+            inputs = 100 * np.random.randn(100)
+            self.assertTrue(np.allclose(unit.to_base(inputs), inputs))
+            self.assertTrue(np.allclose(unit.from_base(inputs), inputs))
