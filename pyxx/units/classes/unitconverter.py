@@ -37,6 +37,7 @@ class UnitConverterEntry:
                  tags: Optional[
                      Union[TypedList[str], List[str], Tuple[str, ...], str]
                  ] = None,
+                 name: Optional[str] = None,
                  description: Optional[str] = None) -> None:
         """Creates a :py:class:`UnitConverterEntry` to store data about a
         particular unit
@@ -49,10 +50,13 @@ class UnitConverterEntry:
             One or more strings containing brief, one-word descriptors to use
             to group similar units, such as "length" or "speed" (default is
             ``None``, meaning that no tags are associated with the unit)
+        name : str, optional
+            A name for the unit (default is ``None``)
         description : str, optional
             A written description of the unit (default is ``None``)
         """
         self.description = description
+        self.name = name
         self.tags = tags  # type: ignore
                           # (workaround for python/mypy#3004)  # noqa: E114, E116
         self.unit = unit
@@ -68,6 +72,18 @@ class UnitConverterEntry:
             self._description = None
         else:
             self._description = str(description)
+
+    @property
+    def name(self) -> Union[str, None]:
+        """A name by which to reference the unit"""
+        return self._name
+
+    @name.setter
+    def name(self, name: Optional[str]) -> None:
+        if name is None:
+            self._name = None
+        else:
+            self._name = str(name)
 
     @property
     def tags(self) -> TypedList[str]:

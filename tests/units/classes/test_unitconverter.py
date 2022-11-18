@@ -21,10 +21,11 @@ from pyxx.units.exceptions import (
 class Test_UnitConverterEntry(unittest.TestCase):
     def setUp(self):
         self.entry_all_args = UnitConverterEntry(
-            UnitLinearSI([0, -1, 0, 0, 0, 0, 1],
-                         1, 0, 'kg/s'),
-            ['flow_rate', 'Metric'],
-            'kilograms per second'
+            unit=UnitLinearSI([0, -1, 0, 0, 0, 0, 1],
+                              1, 0, 'kg/s'),
+            tags=['flow_rate', 'Metric'],
+            name='kilogram/sec',
+            description='kilograms per second'
         )
 
         self.entry_required_args = UnitConverterEntry(
@@ -55,6 +56,28 @@ class Test_UnitConverterEntry(unittest.TestCase):
         # Verifies that "description" attribute is retrieved correctly
         self.entry_required_args._description = 'myUnitDescription'
         self.assertEqual(self.entry_required_args.description, 'myUnitDescription')
+
+    def test_set_name(self):
+        # Verifies that "name" attribute is set correctly
+        with self.subTest(method='constructor'):
+            self.assertEqual(self.entry_all_args._name, 'kilogram/sec')
+
+        with self.subTest(method='attribute'):
+            self.assertIsNone(self.entry_required_args._name)
+
+            self.entry_required_args.name = 'kg / sec'
+            self.assertEqual(self.entry_required_args._name, 'kg / sec')
+
+            self.entry_required_args.name = 12345
+            self.assertEqual(self.entry_required_args._name, '12345')
+
+            self.entry_required_args.name = None
+            self.assertIsNone(self.entry_required_args._name)
+
+    def test_get_name(self):
+        # Verifies that "name" attribute is retrieved correctly
+        self.entry_required_args._name = 'myUnitName'
+        self.assertEqual(self.entry_required_args.name, 'myUnitName')
 
     def test_set_tags(self):
         # Verifies that "tags" attribute is set correctly
