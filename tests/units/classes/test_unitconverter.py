@@ -649,6 +649,15 @@ class Test_UnitConverter(unittest.TestCase):
             with self.subTest(inputs=inputs, outputs=outputs):
                 self.assertIs(self.unit_converter.is_simplified_unit(inputs), outputs)
 
+    def test_list_tags(self):
+        # Verifies that tags are extracted correctly
+        with self.subTest(unit_converter='filled'):
+            self.assertListEqual(self.unit_converter.list_tags(),
+                                 ['force', 'length', 'mass', 'time'])
+
+        with self.subTest(unit_converter='empty'):
+            self.assertListEqual(self.unit_converter_empty.list_tags(), [])
+
     def test_str_to_unit(self):
         # Verifies that strings are converted to units correctly
         with self.subTest(unit='mm'):

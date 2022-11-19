@@ -481,6 +481,22 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         return parse_unit(unit) == {unit: 1.0}
 
+    def list_tags(self) -> List[str]:
+        """Returns a list of all tags currently used in the
+        :py:class:`UnitConverter` instance
+
+        Returns
+        -------
+        list
+            List (in alphabetical order) of all tags used by any unit in the
+            unit converter
+        """
+        tags: List[str] = []
+        for entry in self.values():
+            tags = tags + list(entry.tags)
+
+        return sorted(list(set(tags)))
+
     def str_to_unit(self, unit: str) -> Unit:
         """Converts a string to a :py:class:`Unit` object using units
         defined in the :py:class:`UnitConverter`
