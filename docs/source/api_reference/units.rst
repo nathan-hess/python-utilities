@@ -18,6 +18,28 @@ pyxx.units
     page.
 
 
+Unit Converters
+---------------
+
+These classes handle unit conversions at the "highest" level, providing a
+simple-to-use interface to convert units, specified as strings.  Most of the
+lower-level details of parsing units and performing unit conversions are
+abstracted away from the user for simplicity.
+
+.. inheritance-diagram:: UnitConverter UnitConverterEntry
+    :top-classes: pyxx.units.classes.unitconverter.UnitConverter
+    :parts: 1
+
+|
+
+.. autosummary::
+    :toctree: ./api
+    :template: ../_templates/api_reference_class_template.rst
+
+    UnitConverter
+    UnitConverterEntry
+
+
 Systems of Units
 ----------------
 
