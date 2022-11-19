@@ -218,6 +218,7 @@ class Test_UnitConverter(unittest.TestCase):
         self.entry_m = UnitConverterEntry(
             unit        = UnitLinearSI([1,0,0,0,0,0,0], scale=1, offset=0),
             tags        = ['length'],
+            name        = 'meter',
             description = 'meters')
         self.entry_mm = UnitConverterEntry(
             unit        = UnitLinearSI([1,0,0,0,0,0,0], scale=0.001, offset=0),
@@ -234,7 +235,8 @@ class Test_UnitConverter(unittest.TestCase):
         self.entry_kg = UnitConverterEntry(
             unit        = UnitLinearSI([0,0,0,0,0,0,1], scale=1, offset=0),
             tags        = ['mass'],
-            description = 'kilograms')
+            name        = 'kilograms',
+            description = 'SI unit of mass')
         self.entry_N = UnitConverterEntry(
             unit        = UnitLinearSI([1,-2,0,0,0,0,1], scale=1, offset=0),
             tags        = ['force'],
@@ -244,7 +246,7 @@ class Test_UnitConverter(unittest.TestCase):
             tags        = ['force'],
             description = 'kilonewtons')
 
-        # Sample unit converter
+        # Sample unit converters
         self.unit_converter = UnitConverter(unit_system=UnitSystemSI())
         self.unit_converter['m'] = self.entry_m
         self.unit_converter['mm'] = self.entry_mm
@@ -252,6 +254,116 @@ class Test_UnitConverter(unittest.TestCase):
         self.unit_converter['kg'] = self.entry_kg
         self.unit_converter['N'] = self.entry_N
         self.unit_converter['kN'] = self.entry_kN
+
+        self.unit_converter_empty = UnitConverter(unit_system=UnitSystemSI())
+
+    def test_repr(self):
+        # Verifies that the printable string representation of a `UnitConverter`
+        # object is constructed correctly
+        self.assertEqual(
+            self.unit_converter.__repr__(),
+            ("<class 'pyxx.units.classes.unitconverter.UnitConverter'>\n"
+             "-- System of units: <class 'pyxx.units.classes.unitsystem.UnitSystemSI'> - SI - International System of Units\n"
+             "Key    Name         Tags          base_unit_exp                    Description    \n"
+             "----------------------------------------------------------------------------------\n"
+             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         \n"
+             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    \n"
+             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        \n"
+             "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass\n"
+             "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        \n"
+             "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    ")
+        )
+
+    def test_str(self):
+        # Verifies that the string representation of a `UnitConverter` object
+        # is constructed correctly
+        self.assertEqual(
+            str(self.unit_converter),
+            ("Key    Name         Tags          base_unit_exp                    Description    \n"
+             "----------------------------------------------------------------------------------\n"
+             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         \n"
+             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    \n"
+             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        \n"
+             "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass\n"
+             "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        \n"
+             "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    ")
+        )
+
+    def test_generate_table(self):
+        # Verifies that printable table of units is generated correctly
+        with self.subTest(unit_converter='filled'):
+            self.assertListEqual(
+                self.unit_converter._generate_unit_table(list(self.unit_converter.keys())),
+                ["Key    Name         Tags          base_unit_exp                    Description    ",
+                 "----------------------------------------------------------------------------------",
+                 "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         ",
+                 "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    ",
+                 "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        ",
+                 "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass",
+                 "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        ",
+                 "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    "]
+            )
+
+        with self.subTest(unit_converter='empty'):
+            self.assertListEqual(
+                self.unit_converter_empty._generate_unit_table(list(self.unit_converter_empty.keys())),
+                ["Key    Name    Tags    base_unit_exp    Description",
+                 "---------------------------------------------------"]
+            )
+
+    def test_generate_table_col_spacing(self):
+        # Verifies that printable table of units is generated correctly with
+        # non-default column spacing
+        with self.subTest(unit_converter='filled'):
+            self.assertListEqual(
+                self.unit_converter._generate_unit_table(
+                    list(self.unit_converter.keys()),
+                    col_spacing=1
+                ),
+                ["Key Name      Tags       base_unit_exp                 Description    ",
+                 "----------------------------------------------------------------------",
+                 "m   meter     ['length'] [1. 0. 0. 0. 0. 0. 0.]        meters         ",
+                 "mm  None      ['length'] [1. 0. 0. 0. 0. 0. 0.]        millimeters    ",
+                 "s   None      ['time']   [0. 1. 0. 0. 0. 0. 0.]        seconds        ",
+                 "kg  kilograms ['mass']   [0. 0. 0. 0. 0. 0. 1.]        SI unit of mass",
+                 "N   None      ['force']  [ 1. -2.  0.  0.  0.  0.  1.] Newtons        ",
+                 "kN  None      ['force']  [ 1. -2.  0.  0.  0.  0.  1.] kilonewtons    "]
+            )
+
+        with self.subTest(unit_converter='empty'):
+            self.assertListEqual(
+                self.unit_converter_empty._generate_unit_table(
+                    list(self.unit_converter_empty.keys()),
+                    col_spacing=1
+                ),
+                ["Key Name Tags base_unit_exp Description",
+                 "---------------------------------------"]
+            )
+
+    def test_generate_table_no_header(self):
+        # Verifies that printable table of units is generated correctly with no header
+        with self.subTest(unit_converter='filled'):
+            self.assertListEqual(
+                self.unit_converter._generate_unit_table(
+                    list(self.unit_converter.keys()),
+                    generate_header=False
+                ),
+                ["m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         ",
+                 "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    ",
+                 "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        ",
+                 "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass",
+                 "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        ",
+                 "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    "]
+            )
+
+        with self.subTest(unit_converter='empty'):
+            self.assertListEqual(
+                self.unit_converter_empty._generate_unit_table(
+                    list(self.unit_converter_empty.keys()),
+                    generate_header=False
+                ),
+                []
+            )
 
     def test_unit_system(self):
         # Verifies that "unit_system" attribute is stored correctly

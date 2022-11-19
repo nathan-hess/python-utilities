@@ -16,6 +16,10 @@ from pyxx.units.exceptions import (
     UnitAlreadyDefinedError,
     UnitNotFoundError,
 )
+from pyxx.arrays.functions.size import (
+    check_len_equal,
+    max_list_item_len,
+)
 from pyxx.units.functions.parser import parse_unit
 from .unit import Unit
 from .unitsystem import UnitSystem
@@ -197,6 +201,11 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         return super().__getitem__(key)
 
+    def __repr__(self) -> str:
+        return (f'{self.__class__}\n'
+                f'-- System of units: {self.unit_system}\n'
+                f'{str(self)}')
+
     def __setitem__(self, key: str, value: UnitConverterEntry):
         if not isinstance(value, UnitConverterEntry):
             raise TypeError(
@@ -222,6 +231,89 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                 f'while new unit uses {type(value.unit.unit_system)}')
 
         super().__setitem__(key, value)
+
+    def __str__(self) -> str:
+        return '\n'.join(self._generate_unit_table(list(self.keys())))
+
+    def _generate_unit_table(self, keys: Union[List[str], Tuple[str, ...]],
+                             col_spacing: int = 4,
+                             generate_header: bool = True) -> List[str]:
+        # Generate lists of data to return
+        def copy_tags_disable_multiline(tags: TypedList[str]):
+            tags_copy = copy.deepcopy(tags)
+            tags_copy.print_multiline = False
+            return tags_copy
+
+        unit_table_col_data = {
+            'Key': [str(key) for key in keys],
+            'Name': [str(self[key].name) for key in keys],
+            'Tags': [str(copy_tags_disable_multiline(self[key].tags))
+                     for key in keys],
+            'base_unit_exp': [str(self[key].unit.base_unit_exps)
+                              for key in keys],
+            'Description': [str(self[key].description) for key in keys],
+        }
+
+        # Verify that all lists are of the same length
+        is_equal, num_keys = check_len_equal(*unit_table_col_data.values())
+
+        if not is_equal:
+            # This error should never be raised (if it is, there was a
+            # significant issue with the structure of the data in the unit
+            # converter), but it is included as a backup check
+            raise ValueError(  # pragma: no cover
+                'Unit converter data appears to be corrupted. Please remove '
+                'and replace all units, or set up a new unit converter')
+
+        # Determine width of each column to return
+        unit_table_col_widths = {}
+        for key, value in unit_table_col_data.items():
+            if len(value) == 0:
+                unit_table_col_widths[key] = len(key)
+            else:
+                unit_table_col_widths[key] \
+                    = max(max_list_item_len(value), len(key))
+
+        # Generate table header
+        unit_table = []
+
+        if generate_header:
+            # Column names
+            line = ''
+            for i, column_name in enumerate(unit_table_col_data.keys()):
+                # Determine formatting settings
+                num_trailing_spaces = col_spacing \
+                    if i < len(unit_table_col_data) - 1 else 0
+                print_width = \
+                    unit_table_col_widths[column_name] + num_trailing_spaces
+
+                # Construct next line in table
+                line += f'{column_name:{print_width}s}'
+
+            unit_table.append(line)
+
+            # Header underline
+            underline_len = sum(unit_table_col_widths.values()) \
+                + (col_spacing * (len(unit_table_col_data) - 1))
+            unit_table.append('-' * underline_len)
+
+        # Add units to table
+        for j in range(num_keys):
+            line = ''
+            for i, (column_name, column_content) \
+                    in enumerate(unit_table_col_data.items()):
+                # Determine formatting settings
+                num_trailing_spaces = col_spacing \
+                    if i < len(unit_table_col_data) - 1 else 0
+                print_width = \
+                    unit_table_col_widths[column_name] + num_trailing_spaces
+
+                # Construct next line in table
+                line += f'{column_content[j]:{print_width}s}'
+
+            unit_table.append(line)
+
+        return unit_table
 
     @property
     def unit_system(self) -> UnitSystem:
