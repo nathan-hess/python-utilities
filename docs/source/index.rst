@@ -49,6 +49,16 @@ Quick Links
         
         Instructions for installing and running |PackageNameStylized|
 
+    .. grid-item-card:: Examples
+        :link: section-examples
+        :link-type: ref
+
+        .. figure:: ./_static/icon_examples.svg
+            :align: center
+            :width: 200px
+
+        Code samples illustrating how to use |PackageNameStylized|
+
     .. grid-item-card:: API Reference
         :link: section-api_reference
         :link-type: ref
@@ -57,14 +67,4 @@ Quick Links
             :align: center
             :width: 200px
 
-        Detailed documentation of all members in the |PackageNameStylized| package
-
-    .. grid-item-card:: Concepts
-        :link: section-concepts
-        :link-type: ref
-
-        .. figure:: ./_static/icon_abstract_concepts.svg
-            :align: center
-            :width: 200px
-
-        Discussion of important concepts behind |PackageNameStylized| objects and code
+        Detailed API reference documentation
