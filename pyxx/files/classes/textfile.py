@@ -20,7 +20,7 @@ class TextFile(File):
     """
 
     def __init__(self, path: Optional[Union[str, pathlib.Path]] = None,
-                 comment_chars: Optional[Union[tuple, str]] = None):
+                 comment_chars: Optional[Union[tuple, str]] = None) -> None:
         """Define a text file
 
         Creates an object that represents and can be used to process
@@ -73,7 +73,7 @@ class TextFile(File):
                     'Argument "comment_chars" must be either `None` or of '
                     'type "str" or "tuple"')
 
-    def _check_contents(self, contents: List[str]):
+    def _check_contents(self, contents: List[str]) -> None:
         # Verify that input is a list
         if not isinstance(contents, list):
             raise TypeError('Argument "contents" must be of type "list"')
@@ -85,12 +85,12 @@ class TextFile(File):
                     'All elements of "contents" must be of type "str"')
 
     @property
-    def comment_chars(self):
+    def comment_chars(self) -> Union[Tuple[str, ...], None]:
         """A tuple of all characters considered to denote comments"""
         return self._comment_chars
 
     @property
-    def contents(self):
+    def contents(self) -> List[str]:
         """A reference to a list containing the (potentially modified) file
         content of each line of the file
 
@@ -113,7 +113,7 @@ class TextFile(File):
         return self._contents
 
     @property
-    def raw_contents(self):
+    def raw_contents(self) -> Union[List[str], None]:
         """A copy of the raw file content
 
         If the file was read using the :py:meth:`read` method, this attribute
@@ -125,7 +125,7 @@ class TextFile(File):
         return copy.deepcopy(self._raw_contents)
 
     @property
-    def trailing_newline(self):
+    def trailing_newline(self) -> bool:
         """Whether the original file had a newline at the end
         of the file"""
         if self._trailing_newline is None:
@@ -203,7 +203,7 @@ class TextFile(File):
             i += 1
 
     def overwrite(self, prologue: str = '', epilogue: Optional[str] = None,
-                  line_ending: str = '\n'):
+                  line_ending: str = '\n') -> None:
         """Write data in :py:attr:`contents` to the file specified by
         :py:attr:`path`
 
@@ -241,7 +241,7 @@ class TextFile(File):
         )
 
     def populate_contents(self, contents: List[str], trailing_newline: bool,
-                          pass_by_reference: bool = False):
+                          pass_by_reference: bool = False) -> None:
         """Add data to the :py:attr:`contents` list
 
         Allows users to manually fill the :py:attr:`contents` list with
@@ -288,7 +288,7 @@ class TextFile(File):
 
         self._trailing_newline = trailing_newline
 
-    def read(self, path: Optional[Union[str, pathlib.Path]] = None):
+    def read(self, path: Optional[Union[str, pathlib.Path]] = None) -> None:
         """Read file from disk
 
         Calling this method reads the file specified by the :py:attr:`path`
@@ -334,7 +334,7 @@ class TextFile(File):
     def write(self, output_file: Union[str, pathlib.Path],
               write_mode: str = 'w', warn_before_overwrite: bool = True,
               prologue: str = '', epilogue: Optional[str] = None,
-              line_ending: str = '\n'):
+              line_ending: str = '\n') -> None:
         """Write file to disk
 
         Calling this method writes the file contents stored in
