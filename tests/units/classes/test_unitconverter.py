@@ -16,6 +16,7 @@ from pyxx.units.exceptions import (
     UnitAlreadyDefinedError,
     UnitNotFoundError,
 )
+from tests import CapturePrint
 
 
 class Test_UnitConverterEntry(unittest.TestCase):
@@ -657,6 +658,163 @@ class Test_UnitConverter(unittest.TestCase):
 
         with self.subTest(unit_converter='empty'):
             self.assertListEqual(self.unit_converter_empty.list_tags(), [])
+
+    def test_search_fields(self):
+        # Verifies that searching a `UnitConverter` returns the expected
+        # results
+        with self.subTest(search_term='*', search_fields=('key', 'name', 'tags', 'description')):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='*',
+                    search_fields=('key', 'name', 'tags', 'description'),
+                    filter_by_tags=None,
+                    print_results=False, return_results=True),
+                ['m', 'mm', 's', 'kg', 'N', 'kN']
+            )
+
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='**',
+                    search_fields=('key', 'name', 'tags', 'description'),
+                    filter_by_tags=None,
+                    print_results=False, return_results=True),
+                ['m', 'mm', 's', 'kg', 'N', 'kN']
+            )
+
+        with self.subTest(search_term='meter', search_fields=('key', 'name', 'tags', 'description')):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='meter',
+                    search_fields=('key', 'name', 'tags', 'description'),
+                    filter_by_tags=None,
+                    print_results=False, return_results=True),
+                ['m', 'mm']
+            )
+
+        with self.subTest(search_term='kilo', search_fields=('key', 'name', 'tags', 'description')):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='kilo',
+                    search_fields=('key', 'name', 'tags', 'description'),
+                    filter_by_tags=None,
+                    print_results=False, return_results=True),
+                ['kg', 'kN']
+            )
+
+        with self.subTest(search_term='kilo', search_fields=('description',)):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='kilo',
+                    search_fields=('description',),
+                    filter_by_tags=None,
+                    print_results=False, return_results=True),
+                ['kN']
+            )
+
+        with self.subTest(search_term='kilo', search_fields='description'):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='kilo',
+                    search_fields='description',
+                    filter_by_tags=None,
+                    print_results=False, return_results=True),
+                ['kN']
+            )
+
+        with self.subTest(search_term='len', search_fields=('key', 'name', 'tags', 'description')):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='len',
+                    search_fields=('key', 'name', 'tags', 'description'),
+                    filter_by_tags=None,
+                    print_results=False, return_results=True),
+                ['m', 'mm']
+            )
+
+        with self.subTest(search_term='kN', search_fields=('key', 'name', 'tags', 'description')):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='kN',
+                    search_fields=('key', 'name', 'tags', 'description'),
+                    filter_by_tags=None,
+                    print_results=False, return_results=True),
+                ['kN']
+            )
+
+    def test_search_filter_by_tags(self):
+        # Verifies that searching a `UnitConverter` returns the expected
+        # results
+        with self.subTest(search_term='*', filter_by_tags=('length', 'mass')):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='*',
+                    filter_by_tags=('length', 'mass'),
+                    print_results=False, return_results=True),
+                ['m', 'mm', 'kg']
+            )
+
+        with self.subTest(search_term='kilo', filter_by_tags=('mass', 'time')):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='kilo',
+                    filter_by_tags=('mass', 'time'),
+                    print_results=False, return_results=True),
+                ['kg']
+            )
+
+        with self.subTest(search_term='kilo', search_fields=('time',)):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='kilo',
+                    filter_by_tags=('time',),
+                    print_results=False, return_results=True),
+                []
+            )
+
+        with self.subTest(search_term='kilo', filter_by_tags='nonexistent'):
+            self.assertListEqual(
+                self.unit_converter.search(
+                    search_term='kilo',
+                    filter_by_tags='nonexistent',
+                    print_results=False, return_results=True),
+                []
+            )
+
+    def test_search_invalid(self):
+        # Verifies that attempting to perform a search of a `UnitConverter`
+        # with invalid inputs results in an appropriate error
+        with self.subTest(issue='search_term_not_str'):
+            with self.assertRaises(TypeError):
+                self.unit_converter.search(
+                    search_term=123,
+                    print_results=False, return_results=True)
+
+        with self.subTest(issue='invalid_search_fields'):
+            with self.assertRaises(ValueError):
+                self.unit_converter.search(
+                    search_term='*',
+                    search_fields=['key', 'nonexistent_field'],
+                    print_results=False, return_results=True)
+
+    def test_search_print(self):
+        # Verifies that output displayed to the terminal by searching a
+        # `UnitConverter` matches expectations
+        with CapturePrint() as terminal_stdout:
+            outputs = self.unit_converter.search(
+                search_term='m',
+                print_results=True, return_results=False)
+            text = terminal_stdout.getvalue()
+
+        self.assertIsNone(outputs)
+        self.assertEqual(
+            text,
+            ("Key    Name         Tags          base_unit_exp             Description    \n"
+             "---------------------------------------------------------------------------\n"
+             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]    meters         \n"
+             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]    millimeters    \n"
+             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]    seconds        \n"
+             "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]    SI unit of mass\n")
+        )
 
     def test_str_to_unit(self):
         # Verifies that strings are converted to units correctly

@@ -497,6 +497,122 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         return sorted(list(set(tags)))
 
+    def search(self, search_term: str,
+               search_fields: Union[List[str], Tuple[str, ...], str]
+                   = ('key', 'name', 'tags', 'description'),  # noqa: E127
+               filter_by_tags:
+                   Optional[Union[List[str], Tuple[str, ...], str]] = None,
+               print_results: bool = True, return_results: bool = False
+               ) -> Union[List[str], None]:
+        """Searches the :py:class:`UnitConverter` contents for a given term
+
+        Once a unit converter has a large number of units, it can be
+        challenging to remember all included units.  This method provides a
+        simple way to search the contents of a :py:class:`UnitConverter`,
+        either interactively (on the command line) or programmatically (in a
+        script).
+
+        Parameters
+        ----------
+        search_term : str
+            The term to search for.  Any units in which ``search_term`` is
+            found in the fields specified by ``search_fields`` will be
+            returned.  Set ``search_term`` to ``'*'`` or ``'**'`` to match
+            any string
+        search_fields : list or tuple or str, optional
+            The fields of each entry in the :py:class:`UnitConverter` to search.
+            Valid options are any of ``('key', 'name', 'tags', 'description')``
+            (default is to search all valid fields)
+        filter_by_tags : list or tuple or str, optional
+            Only units with tags specified by ``filter_by_tags`` will be
+            included in the search results.  Set to ``None`` disable filtering
+            by tags (default is ``None``)
+        print_results : bool, optional
+            Whether to print search results to the terminal (default is
+            ``True``)
+        return_results : bool, optional
+            Whether to return a list containing search results (default is
+            ``False``)
+
+        Returns
+        -------
+        list or None
+            Returns a list of strings containing the :py:class:`UnitConverter`
+            keys for any units matching the specified search criteria if
+            ``return_results`` is ``True``.  Otherwise, no outputs are
+            returned
+        """
+        # Validate and pre-process inputs
+        if not isinstance(search_term, str):
+            raise TypeError('Argument "search_term" must be a string')
+
+        if not isinstance(search_fields, (list, tuple)):
+            search_fields = (search_fields,)
+
+        allowed_search_fields = set(('key', 'name', 'tags', 'description'))
+        if not set(search_fields).issubset(allowed_search_fields):
+            raise ValueError(
+                'The following search fields are not valid: '
+                f'{set(search_fields) - allowed_search_fields}')
+
+        if not ((filter_by_tags is None)
+                or isinstance(filter_by_tags, (list, tuple))):
+            filter_by_tags = (filter_by_tags,)
+
+        # Search for matching unit converter entries
+        search_results = []
+        for key, entry in self.items():
+            # If filtering by tags and none of the tags corresponding to "key"
+            # are to be shown, skip unit
+            if filter_by_tags is not None:
+                filter_tags = set(list(filter_by_tags))
+                unit_tags = set(list(entry.tags))
+
+                if len(filter_tags.intersection(unit_tags)) <= 0:
+                    continue
+
+            if search_term in ('*', '**'):
+                search_results.append(key)
+                continue
+
+            if 'key' in search_fields:
+                if search_term in key:
+                    search_results.append(key)
+                    continue
+
+            if 'name' in search_fields:
+                if (entry.name is not None) and (search_term in entry.name):
+                    search_results.append(key)
+                    continue
+
+            if 'tags' in search_fields:
+                if len(entry.tags) > 0:
+                    results = []
+                    for tag in entry.tags:
+                        results.append(search_term in tag)
+
+                    if any(results):
+                        search_results.append(key)
+                        continue
+
+            # This "if" statement should never be false (it was already checked
+            # that the contents of "search_fields" were from an expected list),
+            # but this redundant check is retained as a backup
+            if 'description' in search_fields:  # pragma: no cover
+                if (entry.description is not None) \
+                        and (search_term in entry.description):
+                    search_results.append(key)
+                    continue
+
+        # Output search results
+        if print_results:
+            print('\n'.join(self._generate_unit_table(search_results)))
+
+        if return_results:
+            return search_results
+
+        return None
+
     def str_to_unit(self, unit: str) -> Unit:
         """Converts a string to a :py:class:`Unit` object using units
         defined in the :py:class:`UnitConverter`
