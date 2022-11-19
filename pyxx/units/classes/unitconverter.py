@@ -249,8 +249,8 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             'Name': [str(self[key].name) for key in keys],
             'Tags': [str(copy_tags_disable_multiline(self[key].tags))
                      for key in keys],
-            'base_unit_exp': [str(self[key].unit.base_unit_exps)
-                              for key in keys],
+            'base_unit_exps': [str(self[key].unit.base_unit_exps)
+                               for key in keys],
             'Description': [str(self[key].description) for key in keys],
         }
 

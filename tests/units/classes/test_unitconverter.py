@@ -265,7 +265,7 @@ class Test_UnitConverter(unittest.TestCase):
             self.unit_converter.__repr__(),
             ("<class 'pyxx.units.classes.unitconverter.UnitConverter'>\n"
              "-- System of units: <class 'pyxx.units.classes.unitsystem.UnitSystemSI'> - SI - International System of Units\n"
-             "Key    Name         Tags          base_unit_exp                    Description    \n"
+             "Key    Name         Tags          base_unit_exps                   Description    \n"
              "----------------------------------------------------------------------------------\n"
              "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         \n"
              "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    \n"
@@ -280,7 +280,7 @@ class Test_UnitConverter(unittest.TestCase):
         # is constructed correctly
         self.assertEqual(
             str(self.unit_converter),
-            ("Key    Name         Tags          base_unit_exp                    Description    \n"
+            ("Key    Name         Tags          base_unit_exps                   Description    \n"
              "----------------------------------------------------------------------------------\n"
              "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         \n"
              "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    \n"
@@ -295,7 +295,7 @@ class Test_UnitConverter(unittest.TestCase):
         with self.subTest(unit_converter='filled'):
             self.assertListEqual(
                 self.unit_converter._generate_unit_table(list(self.unit_converter.keys())),
-                ["Key    Name         Tags          base_unit_exp                    Description    ",
+                ["Key    Name         Tags          base_unit_exps                   Description    ",
                  "----------------------------------------------------------------------------------",
                  "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         ",
                  "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    ",
@@ -308,8 +308,8 @@ class Test_UnitConverter(unittest.TestCase):
         with self.subTest(unit_converter='empty'):
             self.assertListEqual(
                 self.unit_converter_empty._generate_unit_table(list(self.unit_converter_empty.keys())),
-                ["Key    Name    Tags    base_unit_exp    Description",
-                 "---------------------------------------------------"]
+                ["Key    Name    Tags    base_unit_exps    Description",
+                 "----------------------------------------------------"]
             )
 
     def test_generate_table_col_spacing(self):
@@ -321,7 +321,7 @@ class Test_UnitConverter(unittest.TestCase):
                     list(self.unit_converter.keys()),
                     col_spacing=1
                 ),
-                ["Key Name      Tags       base_unit_exp                 Description    ",
+                ["Key Name      Tags       base_unit_exps                Description    ",
                  "----------------------------------------------------------------------",
                  "m   meter     ['length'] [1. 0. 0. 0. 0. 0. 0.]        meters         ",
                  "mm  None      ['length'] [1. 0. 0. 0. 0. 0. 0.]        millimeters    ",
@@ -337,8 +337,8 @@ class Test_UnitConverter(unittest.TestCase):
                     list(self.unit_converter_empty.keys()),
                     col_spacing=1
                 ),
-                ["Key Name Tags base_unit_exp Description",
-                 "---------------------------------------"]
+                ["Key Name Tags base_unit_exps Description",
+                 "----------------------------------------"]
             )
 
     def test_generate_table_no_header(self):
@@ -808,7 +808,7 @@ class Test_UnitConverter(unittest.TestCase):
         self.assertIsNone(outputs)
         self.assertEqual(
             text,
-            ("Key    Name         Tags          base_unit_exp             Description    \n"
+            ("Key    Name         Tags          base_unit_exps            Description    \n"
              "---------------------------------------------------------------------------\n"
              "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]    meters         \n"
              "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]    millimeters    \n"
