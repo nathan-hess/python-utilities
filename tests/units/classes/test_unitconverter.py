@@ -35,6 +35,49 @@ class Test_UnitConverterEntry(unittest.TestCase):
 
         self.sample_unit = UnitLinearSI([0, -1, 0, 0, 0, 0, 1], 1, 0, 'kg/s')
 
+    def test_repr(self):
+        # Verifies that printable string representation of objects are
+        # created as expected
+        with self.subTest(unit_converter_entry='all_args'):
+            self.assertEqual(
+                self.entry_all_args.__repr__(),
+                ("<class 'pyxx.units.classes.unitconverter.UnitConverterEntry'>\n"
+                 "-- Name: kilogram/sec\n"
+                 "-- Description: kilograms per second\n"
+                 "-- Tags: ['flow_rate', 'Metric']\n"
+                 "-- Unit: kg/s - [ 0. -1.  0.  0.  0.  0.  1.] - scale: 1.0 - offset: 0.0"
+                )
+            )
+
+        with self.subTest(unit_converter_entry='minimal_args'):
+            self.assertEqual(
+                self.entry_required_args.__repr__(),
+                ("<class 'pyxx.units.classes.unitconverter.UnitConverterEntry'>\n"
+                 "-- Unit: m - [1. 0. 0. 0. 0. 0. 0.] - scale: 1.0 - offset: 0.0"
+                )
+            )
+
+    def test_str(self):
+        # Verifies that string representation of objects are created as expected
+        with self.subTest(unit_converter_entry='all_args'):
+            self.assertEqual(
+                str(self.entry_all_args),
+                ("<class 'pyxx.units.classes.unitconverter.UnitConverterEntry'>\n"
+                 "-- Name: kilogram/sec\n"
+                 "-- Description: kilograms per second\n"
+                 "-- Tags: ['flow_rate', 'Metric']\n"
+                 "-- Unit: kg/s - [ 0. -1.  0.  0.  0.  0.  1.] - scale: 1.0 - offset: 0.0"
+                )
+            )
+
+        with self.subTest(unit_converter_entry='minimal_args'):
+            self.assertEqual(
+                str(self.entry_required_args),
+                ("<class 'pyxx.units.classes.unitconverter.UnitConverterEntry'>\n"
+                 "-- Unit: m - [1. 0. 0. 0. 0. 0. 0.] - scale: 1.0 - offset: 0.0"
+                )
+            )
+
     def test_set_description(self):
         # Verifies that "description" attribute is set correctly
         with self.subTest(method='constructor'):

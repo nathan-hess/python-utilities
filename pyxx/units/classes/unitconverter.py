@@ -4,6 +4,7 @@ identifier.  This structure also allows metadata, such as tags and a
 description, to be stored.
 """
 
+import copy
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -60,6 +61,27 @@ class UnitConverterEntry:
         self.tags = tags  # type: ignore
                           # (workaround for python/mypy#3004)  # noqa: E114, E116
         self.unit = unit
+
+    def __repr__(self) -> str:
+        representation = f'{self.__class__}'
+
+        if self.name is not None:
+            representation += f'\n-- Name: {self.name}'
+
+        if self.description is not None:
+            representation += f'\n-- Description: {self.description}'
+
+        if len(self.tags) > 0:
+            tags = copy.deepcopy(self.tags)
+            tags.print_multiline = False
+            representation += f'\n-- Tags: {tags}'
+
+        representation += f'\n-- Unit: {self.unit}'
+
+        return representation
+
+    def __str__(self) -> str:
+        return self.__repr__()
 
     @property
     def description(self) -> Union[str, None]:
