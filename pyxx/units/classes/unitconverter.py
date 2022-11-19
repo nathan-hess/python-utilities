@@ -107,13 +107,15 @@ class UnitConverterEntry:
 
         elif isinstance(tags, (list, tuple)):
             try:
-                self._tags = TypedList(*tags, list_type=str, print_multiline=False)
+                self._tags = TypedList(*tags, list_type=str)
             except (TypeError, ValueError) as exception:
                 raise TypeError('Unable to set unit tags.  All tags must be of '
                                 'type "str"') from exception
 
         else:
             raise TypeError('Argument "tags" is not a valid type')
+
+        self._tags.print_multiline = False
 
     @property
     def unit(self) -> Unit:
