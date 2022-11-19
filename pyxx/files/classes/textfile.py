@@ -137,11 +137,12 @@ class TextFile(File):
         return self._trailing_newline
 
     def clean_contents(self,
-            remove_comments: bool = True,           # noqa : E128
-            skip_full_line_comments: bool = False,  # noqa : E128
-            strip: bool = True,                     # noqa : E128
-            concat_lines: bool = True,              # noqa : E128
-            remove_blank_lines: bool = True):       # noqa : E128
+                       remove_comments: bool = False,
+                       skip_full_line_comments: bool = False,
+                       strip: bool = False,
+                       concat_lines: bool = False,
+                       remove_blank_lines: bool = False
+                       ) -> None:
         """Clean :py:attr:`contents` in-place
 
         Cleans :py:attr:`contents` (removing comments, blank lines, etc.)
