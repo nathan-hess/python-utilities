@@ -15,7 +15,7 @@ the unit conversion tools in |PackageNameStylized|.
 
 
 Systems of Units
-^^^^^^^^^^^^^^^^
+----------------
 
 On a high level, the key concept behind unit conversions is there are **systems
 of units**, such as the `SI system <https://www.nist.gov/pml/owm/metric-si/si-units>`__.
@@ -51,7 +51,7 @@ the base units, and from there we can convert to any other unit as desired.
 
 
 Units
-^^^^^
+-----
 
 A **unit** is a measure of quantity that belongs to a system of units and can
 be related to the base units in two ways: (1) the unit can be written as a
@@ -76,11 +76,11 @@ For concrete examples of the syntax used to define units using the
 
 
 "Linear" Units
-""""""""""""""
+^^^^^^^^^^^^^^
 
 Many of the units encountered in everyday life permit a significant simplification
 to the previous definition of units.  These units, which are referred to as
-"linear" units in the |PackageNameStylized| package code and documentation, are
+**"linear" units** in the |PackageNameStylized| package code and documentation, are
 units in which the functions relating quantities in the given unit to quantities
 expressed exclusively in base units are linear functions.
 
@@ -102,7 +102,7 @@ was selected to be as general as possible and match these common use cases.
 
 
 Relationship Between Units and Systems of Units
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------
 
 One implication of the aforementioned definition of a unit is that it is
 possible to consider a unit a purely mathematical quantity, with no connection
@@ -163,3 +163,41 @@ correctly, |PackageNameStylized| will be able to handle (behind-the-scenes) the
 complications of unit arithmetic, dimensional analysis, and unit conversions.
 This provides a high degree of flexibility and ability for end users to
 customize the system to their needs.
+
+
+Unit Conversions
+----------------
+
+Based on the framework we have defined, unit conversions are relatively
+straightforward.
+
+To perform a unit conversion, we must first make sure that the units we are
+converting to and from are **"compatible"**.  Units must satisfy two criteria
+to be considered "compatible."  First, *the units must belong to the same
+system of units*.  This requirement implies that the units share the same
+base units, and the order of the base units in ``base_unit_exps`` is identical.
+Second, *the units must have the same* ``base_unit_exps``.  Based on the
+previously-discussed definition of units, two units with the same
+``base_unit_exps`` describe the same physical measure, so it should be possible
+to convert quantities between them.
+
+Note that there are some important physical exceptions to these rules; in
+particular, cases when the same units are used to describe two quantities which
+are different physically in some *conceptual* way.  For example, both energy
+and torque have the same ``base_unit_exps`` (since both can be described in
+units of :math:`N*m`), but it is not necessarily valid to convert quantities
+between energy and torque.  However, these are *conceptual* differences, so it
+is the responsibility of the user to understand such unit *interpretations* when
+using units.
+
+Regardless, after confirming that two units are compatible and a unit
+conversion can be performed between them, it is relatively easy to **perform
+the unit conversion**.  Suppose that we want to convert a quantity ``quantity``
+from a unit ``unitA`` to another unit ``unitB``.  Based on the framework
+defined, since any unit can be related to/from the base units in terms of
+deterministic functions, we simply need to follow these steps:
+
+1. First, convert ``quantity`` to be exclusively in terms of base units by
+   calling the ``to_base_function`` of ``unitA``.
+2. Next, convert the output from Step 1 to units of ``unitB`` by calling
+   the ``from_base_function`` of ``unitB``. 
