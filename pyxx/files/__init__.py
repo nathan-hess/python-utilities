@@ -30,4 +30,4 @@ from .classes import (
     File,
     TextFile,
 )
-from .functions.hash import compute_file_hash
+from .functions import compute_file_hash

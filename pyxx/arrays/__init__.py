@@ -8,9 +8,9 @@ from .classes import (
     TypedList,
     TypedListWithID,
 )
-from .functions.convert import convert_to_tuple
-from .functions.equality import is_array_equal
-from .functions.size import (
+from .functions import (
+    convert_to_tuple,
+    is_array_equal,
     check_len_equal,
     is_len_equal,
     max_list_item_len,
