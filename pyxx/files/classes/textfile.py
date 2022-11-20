@@ -20,7 +20,8 @@ class TextFile(File):
     """
 
     def __init__(self, path: Optional[Union[str, pathlib.Path]] = None,
-                 comment_chars: Optional[Union[tuple, str]] = None):
+                 comment_chars: Optional[Union[Tuple[str, ...], str]] = None
+                 ) -> None:
         """Define a text file
 
         Creates an object that represents and can be used to process
@@ -44,13 +45,39 @@ class TextFile(File):
         """
         super().__init__(path=path)
 
+        # Mypy exclusions in constructor were added as workarounds
+        # for python/mypy#3004
+
         # Initialize lists to store file content
         self._contents: List[str] = []
-        self._raw_contents: Optional[List[str]] = None
-        self._trailing_newline: Optional[bool] = None
+        self._raw_contents: Union[List[str], None] = None
+
+        # Initialize file properties
+        self._line_ending: Union[str, Tuple[str, ...], None] = None
+        self.trailing_newline = None  # type: ignore
 
         # Store comment character
-        self._comment_chars: Union[Tuple[str, ...], None]
+        self.comment_chars = comment_chars  # type: ignore
+
+    def _check_contents(self, contents: List[str]) -> None:
+        # Verify that input is a list
+        if not isinstance(contents, list):
+            raise TypeError('Argument "contents" must be of type "list"')
+
+        # Verify that all elements of the input are strings
+        for line in contents:
+            if not isinstance(line, str):
+                raise TypeError(
+                    'All elements of "contents" must be of type "str"')
+
+    @property
+    def comment_chars(self) -> Union[Tuple[str, ...], None]:
+        """A tuple of all characters considered to denote comments"""
+        return self._comment_chars
+
+    @comment_chars.setter
+    def comment_chars(self, comment_chars: Union[Tuple[str, ...], str, None]
+                      ) -> None:
         if comment_chars is None:
             self._comment_chars = None
         else:
@@ -73,24 +100,8 @@ class TextFile(File):
                     'Argument "comment_chars" must be either `None` or of '
                     'type "str" or "tuple"')
 
-    def _check_contents(self, contents: List[str]):
-        # Verify that input is a list
-        if not isinstance(contents, list):
-            raise TypeError('Argument "contents" must be of type "list"')
-
-        # Verify that all elements of the input are strings
-        for line in contents:
-            if not isinstance(line, str):
-                raise TypeError(
-                    'All elements of "contents" must be of type "str"')
-
     @property
-    def comment_chars(self):
-        """A tuple of all characters considered to denote comments"""
-        return self._comment_chars
-
-    @property
-    def contents(self):
+    def contents(self) -> List[str]:
         """A reference to a list containing the (potentially modified) file
         content of each line of the file
 
@@ -113,7 +124,29 @@ class TextFile(File):
         return self._contents
 
     @property
-    def raw_contents(self):
+    def line_ending(self) -> Union[str, Tuple[str, ...]]:
+        """The character(s) used to denote the end of lines in the text file
+
+        This property only applies to files that were read using the
+        :py:meth:`read` method.  After reading a file, this property stores
+        the line ending(s) used in the file.  Lines in text files can be
+        terminated with ``'\\n'`` (LF), ``'\\r\\n'`` (CRLF), ``'\\r'``, or a
+        combination of these characters (potentially with different line
+        endings on different lines).
+
+        After reading a file, this property stores either a string containing
+        the line endings on every line of the file, or a tuple containing all
+        line endings encountered throughout the file.
+        """
+        if self._line_ending is None:
+            raise AttributeError(
+                'Attribute "line_ending" has not been set. Please ensure '
+                'that either the `read()` method has been called')
+
+        return self._line_ending
+
+    @property
+    def raw_contents(self) -> Union[List[str], None]:
         """A copy of the raw file content
 
         If the file was read using the :py:meth:`read` method, this attribute
@@ -125,7 +158,7 @@ class TextFile(File):
         return copy.deepcopy(self._raw_contents)
 
     @property
-    def trailing_newline(self):
+    def trailing_newline(self) -> bool:
         """Whether the original file had a newline at the end
         of the file"""
         if self._trailing_newline is None:
@@ -136,12 +169,20 @@ class TextFile(File):
 
         return self._trailing_newline
 
+    @trailing_newline.setter
+    def trailing_newline(self, trailing_newline: Union[bool, None]) -> None:
+        if trailing_newline is None:
+            self._trailing_newline = None
+        else:
+            self._trailing_newline = bool(trailing_newline)
+
     def clean_contents(self,
-            remove_comments: bool = True,           # noqa : E128
-            skip_full_line_comments: bool = False,  # noqa : E128
-            strip: bool = True,                     # noqa : E128
-            concat_lines: bool = True,              # noqa : E128
-            remove_blank_lines: bool = True):       # noqa : E128
+                       remove_comments: bool = False,
+                       skip_full_line_comments: bool = False,
+                       strip: bool = False,
+                       concat_lines: bool = False,
+                       remove_blank_lines: bool = False
+                       ) -> None:
         """Clean :py:attr:`contents` in-place
 
         Cleans :py:attr:`contents` (removing comments, blank lines, etc.)
@@ -202,7 +243,7 @@ class TextFile(File):
             i += 1
 
     def overwrite(self, prologue: str = '', epilogue: Optional[str] = None,
-                  line_ending: str = '\n'):
+                  line_ending: str = '\n') -> None:
         """Write data in :py:attr:`contents` to the file specified by
         :py:attr:`path`
 
@@ -240,7 +281,7 @@ class TextFile(File):
         )
 
     def populate_contents(self, contents: List[str], trailing_newline: bool,
-                          pass_by_reference: bool = False):
+                          pass_by_reference: bool = False) -> None:
         """Add data to the :py:attr:`contents` list
 
         Allows users to manually fill the :py:attr:`contents` list with
@@ -285,9 +326,9 @@ class TextFile(File):
             raise TypeError(
                 'Argument "trailing_newline" must be of type "bool"')
 
-        self._trailing_newline = trailing_newline
+        self.trailing_newline = trailing_newline
 
-    def read(self, path: Optional[Union[str, pathlib.Path]] = None):
+    def read(self, path: Optional[Union[str, pathlib.Path]] = None) -> None:
         """Read file from disk
 
         Calling this method reads the file specified by the :py:attr:`path`
@@ -320,8 +361,11 @@ class TextFile(File):
         with open(self.path, 'r', encoding='utf_8') as fileID:
             self._raw_contents = fileID.readlines()
 
+            # Store line endings
+            self._line_ending = fileID.newlines
+
         # Store whether original file has a trailing newline
-        self._trailing_newline = self._raw_contents[-1].endswith('\n')
+        self.trailing_newline = self._raw_contents[-1].endswith('\n')
 
         # Remove trailing newlines.  This is beneficial because if the
         # file is later cleaned and, for example, comments are removed,
@@ -333,7 +377,7 @@ class TextFile(File):
     def write(self, output_file: Union[str, pathlib.Path],
               write_mode: str = 'w', warn_before_overwrite: bool = True,
               prologue: str = '', epilogue: Optional[str] = None,
-              line_ending: str = '\n'):
+              line_ending: str = '\n') -> None:
         """Write file to disk
 
         Calling this method writes the file contents stored in
@@ -375,7 +419,8 @@ class TextFile(File):
             epilogue = line_ending if self.trailing_newline else ''
 
         # Write output file
-        with open(output_file, write_mode, encoding='utf_8') as fileID:
+        with open(output_file, write_mode, encoding='utf_8', newline='') \
+                as fileID:
             fileID.write(prologue)
             fileID.write(line_ending.join(self.contents))
             fileID.write(epilogue)
