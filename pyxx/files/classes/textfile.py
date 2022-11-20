@@ -20,7 +20,8 @@ class TextFile(File):
     """
 
     def __init__(self, path: Optional[Union[str, pathlib.Path]] = None,
-                 comment_chars: Optional[Union[tuple, str]] = None) -> None:
+                 comment_chars: Optional[Union[Tuple[str, ...], str]] = None
+                 ) -> None:
         """Define a text file
 
         Creates an object that represents and can be used to process
@@ -44,16 +45,39 @@ class TextFile(File):
         """
         super().__init__(path=path)
 
+        # Mypy exclusions in constructor were added as workarounds
+        # for python/mypy#3004
+
         # Initialize lists to store file content
         self._contents: List[str] = []
         self._raw_contents: Union[List[str], None] = None
 
         # Initialize file properties
         self._line_ending: Union[str, Tuple[str, ...], None] = None
-        self._trailing_newline: Union[bool, None] = None
+        self.trailing_newline = None  # type: ignore
 
         # Store comment character
-        self._comment_chars: Union[Tuple[str, ...], None]
+        self.comment_chars = comment_chars  # type: ignore
+
+    def _check_contents(self, contents: List[str]) -> None:
+        # Verify that input is a list
+        if not isinstance(contents, list):
+            raise TypeError('Argument "contents" must be of type "list"')
+
+        # Verify that all elements of the input are strings
+        for line in contents:
+            if not isinstance(line, str):
+                raise TypeError(
+                    'All elements of "contents" must be of type "str"')
+
+    @property
+    def comment_chars(self) -> Union[Tuple[str, ...], None]:
+        """A tuple of all characters considered to denote comments"""
+        return self._comment_chars
+
+    @comment_chars.setter
+    def comment_chars(self, comment_chars: Union[Tuple[str, ...], str, None]
+                      ) -> None:
         if comment_chars is None:
             self._comment_chars = None
         else:
@@ -75,22 +99,6 @@ class TextFile(File):
                 raise TypeError(
                     'Argument "comment_chars" must be either `None` or of '
                     'type "str" or "tuple"')
-
-    def _check_contents(self, contents: List[str]) -> None:
-        # Verify that input is a list
-        if not isinstance(contents, list):
-            raise TypeError('Argument "contents" must be of type "list"')
-
-        # Verify that all elements of the input are strings
-        for line in contents:
-            if not isinstance(line, str):
-                raise TypeError(
-                    'All elements of "contents" must be of type "str"')
-
-    @property
-    def comment_chars(self) -> Union[Tuple[str, ...], None]:
-        """A tuple of all characters considered to denote comments"""
-        return self._comment_chars
 
     @property
     def contents(self) -> List[str]:
@@ -160,6 +168,13 @@ class TextFile(File):
                 'been called')
 
         return self._trailing_newline
+
+    @trailing_newline.setter
+    def trailing_newline(self, trailing_newline: Union[bool, None]) -> None:
+        if trailing_newline is None:
+            self._trailing_newline = None
+        else:
+            self._trailing_newline = bool(trailing_newline)
 
     def clean_contents(self,
                        remove_comments: bool = False,
@@ -311,7 +326,7 @@ class TextFile(File):
             raise TypeError(
                 'Argument "trailing_newline" must be of type "bool"')
 
-        self._trailing_newline = trailing_newline
+        self.trailing_newline = trailing_newline
 
     def read(self, path: Optional[Union[str, pathlib.Path]] = None) -> None:
         """Read file from disk
@@ -350,7 +365,7 @@ class TextFile(File):
             self._line_ending = fileID.newlines
 
         # Store whether original file has a trailing newline
-        self._trailing_newline = self._raw_contents[-1].endswith('\n')
+        self.trailing_newline = self._raw_contents[-1].endswith('\n')
 
         # Remove trailing newlines.  This is beneficial because if the
         # file is later cleaned and, for example, comments are removed,
