@@ -70,6 +70,16 @@ class Test_TextFile_Initialize(unittest.TestCase):
         with self.assertRaises(TypeError):
             TextFile(comment_chars=('#', '//', 3, ';'))
 
+    def test_initialize_line_ending(self):
+        # Verifies that if creating a `TextFile` object but not reading
+        # a file, the "line_ending" attribute is not defined
+        file = TextFile()
+
+        self.assertIsNone(file._line_ending)
+
+        with self.assertRaises(AttributeError):
+            file.line_ending
+
 
 class Test_TextFile_General(unittest.TestCase):
     def setUp(self):
@@ -630,6 +640,16 @@ class Test_TextFile_Read(unittest.TestCase):
             self.assertListEqual(
                 file._raw_contents,
                 ['Line1\n', '# commented line\n', 'line4  \n', '4595  # 9945'])
+
+    def test_read_line_endings(self):
+        # Verifies that files with different line endings are read correctly
+        with self.subTest(line_ending='LF'):
+            (file := TextFile(self.test_file)).read()
+            self.assertEqual(file.line_ending, '\n')
+
+        with self.subTest(line_ending='CRLF'):
+            (file := TextFile(SAMPLE_FILES_DIR / 'textfile_read_crlf.bat')).read()
+            self.assertEqual(file.line_ending, '\r\n')
 
 
 class Test_TextFile_Write(unittest.TestCase):
