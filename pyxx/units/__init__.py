@@ -15,4 +15,4 @@ from .classes import (
     UnitSystem,
     UnitSystemSI,
 )
-from .functions.parser import parse_unit
+from .functions import parse_unit
