@@ -46,8 +46,11 @@ class TextFile(File):
 
         # Initialize lists to store file content
         self._contents: List[str] = []
-        self._raw_contents: Optional[List[str]] = None
-        self._trailing_newline: Optional[bool] = None
+        self._raw_contents: Union[List[str], None] = None
+
+        # Initialize file properties
+        self._line_ending: Union[str, Tuple[str, ...], None] = None
+        self._trailing_newline: Union[bool, None] = None
 
         # Store comment character
         self._comment_chars: Union[Tuple[str, ...], None]
@@ -111,6 +114,28 @@ class TextFile(File):
         over whether the contents are passed by reference or value.
         """
         return self._contents
+
+    @property
+    def line_ending(self) -> Union[str, Tuple[str, ...]]:
+        """The character(s) used to denote the end of lines in the text file
+
+        This property only applies to files that were read using the
+        :py:meth:`read` method.  After reading a file, this property stores
+        the line ending(s) used in the file.  Lines in text files can be
+        terminated with ``'\\n'`` (LF), ``'\\r\\n'`` (CRLF), ``'\\r'``, or a
+        combination of these characters (potentially with different line
+        endings on different lines).
+
+        After reading a file, this property stores either a string containing
+        the line endings on every line of the file, or a tuple containing all
+        line endings encountered throughout the file.
+        """
+        if self._line_ending is None:
+            raise AttributeError(
+                'Attribute "line_ending" has not been set. Please ensure '
+                'that either the `read()` method has been called')
+
+        return self._line_ending
 
     @property
     def raw_contents(self) -> Union[List[str], None]:
@@ -321,6 +346,9 @@ class TextFile(File):
         with open(self.path, 'r', encoding='utf_8') as fileID:
             self._raw_contents = fileID.readlines()
 
+            # Store line endings
+            self._line_ending = fileID.newlines
+
         # Store whether original file has a trailing newline
         self._trailing_newline = self._raw_contents[-1].endswith('\n')
 
@@ -376,7 +404,8 @@ class TextFile(File):
             epilogue = line_ending if self.trailing_newline else ''
 
         # Write output file
-        with open(output_file, write_mode, encoding='utf_8') as fileID:
+        with open(output_file, write_mode, encoding='utf_8', newline='') \
+                as fileID:
             fileID.write(prologue)
             fileID.write(line_ending.join(self.contents))
             fileID.write(epilogue)
