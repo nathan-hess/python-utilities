@@ -21,8 +21,9 @@ from pyxx.arrays.functions.size import (
     max_list_item_len,
 )
 from pyxx.units.functions.parser import parse_unit
+from .constants import SAMPLE_SI_UNITS
 from .unit import Unit
-from .unitsystem import UnitSystem
+from .unitsystem import UnitSystem, UnitSystemSI
 
 
 class UnitConverterEntry:
@@ -679,3 +680,43 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             output_unit *= (self[unit_str].unit)**exp
 
         return output_unit
+
+
+class UnitConverterSI(UnitConverter):
+    """A unit converter using the SI system of units, pre-filled with
+    common units
+
+    This class is identical in function to a :py:class:`UnitConveter`, with
+    the exception that it has been initialized with a number of commonly-used
+    units.  All units in a :py:class:`UnitConveterSI` are defined in terms of
+    the SI system (https://www.nist.gov/pml/owm/metric-si/si-units), with the
+    following sequence of seven base units (used in the
+    :py:attr:`Unit.base_unit_exps` attribute of all units in the unit
+    converter):
+
+    1. Length: meter [:math:`m`]
+    2. Time: second [:math:`s`]
+    3. Amount of substance: mole [:math:`mol`]
+    4. Electric current: ampere [:math:`A`]
+    5. Temperature: Kelvin [:math:`K`]
+    6. Luminous intensity: candela [:math:`cd`]
+    7. Mass: kilogram [:math:`kg`]
+
+    For a list of units available in this unit converter, refer to the
+    :ref:`section-unitconverter_units` page.
+    """
+
+    def __init__(self):
+        """Creates a new unit converter using the SI system of units and
+        populated with commonly-used units.
+
+        Creates an new :py:class:`UnitConverterSI` instance.  This unit
+        converter uses the SI system (specifically, the system of units
+        referenced by :py:class:`UnitSystemSI`) and is pre-filled with a
+        set of commonly-used units, listed on the
+        :ref:`section-unitconverter_units` page.
+        """
+        super().__init__(unit_system=UnitSystemSI())
+
+        for key, unit_data in SAMPLE_SI_UNITS.items():
+            self.add_unit(key=key, **unit_data)

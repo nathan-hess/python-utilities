@@ -10,6 +10,7 @@ from .unit import (
 from .unitconverter import (
     UnitConverter,
     UnitConverterEntry,
+    UnitConverterSI,
 )
 from .unitsystem import (
     UnitSystem,
