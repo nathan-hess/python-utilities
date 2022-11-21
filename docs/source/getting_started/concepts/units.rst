@@ -1,9 +1,5 @@
 .. include:: ../../constants.rst
 
-.. spelling:word-list::
-
-    candela
-
 
 .. _section-units_concepts:
 
