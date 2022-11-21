@@ -13,8 +13,8 @@ from pyxx.units.classes.constants import SAMPLE_SI_UNITS
 DOCS_DIR = pathlib.Path(__file__).resolve().parents[2]
 
 
-def __list_entry(unit_data: dict, key: str, literal: bool = False,
-                 leading_spaces: int = 6) -> str:
+def __generate_entry(unit_data: dict, key: str, literal: bool = False,
+                     leading_spaces: int = 6) -> str:
     line = f'{" " * leading_spaces}-'
 
     if (key in unit_data) and (unit_data[key] is not None):
@@ -30,25 +30,15 @@ def __list_entry(unit_data: dict, key: str, literal: bool = False,
     return line
 
 
-def __single_entry(unit_data: dict, key: str, literal: bool = False,
-                   leading_spaces: int = 6) -> str:
-    line = f'{" " * leading_spaces}-'
-
-    if (key in unit_data) and (unit_data[key] is not None):
-        quote = '``' if literal else ''
-        line += f' {quote}{str(unit_data[key])}{quote}'
-
-    line += '\n'
-    return line
-
-
 def main():
     """Generates the units list reference page
 
     Copies the unit converter reference page, replacing the placeholder for
     the list of units with the list of units defined in the source code.
     """
-    print('Creating unit table...', end='')
+    PLAIN = '\033[0m'
+    PLAIN_BOLD = '\033[1m'
+    print(f'{PLAIN_BOLD}Creating unit table...{PLAIN}', end='')
 
     # Settings
     path_io = DOCS_DIR / 'source' / 'getting_started' / 'reference'
@@ -65,11 +55,11 @@ def main():
             if line.strip() == '[[INSERT_UNIT_TABLE]]':
                 for key, unit_data in SAMPLE_SI_UNITS.items():
                     fileID.write(f'    * - ``{key}``\n')
-                    fileID.write(__single_entry(unit_data, 'name'))
-                    fileID.write(__single_entry(unit_data, 'description'))
-                    fileID.write(__list_entry(unit_data, 'tags', literal=True))
-                    fileID.write(__list_entry(unit_data, 'aliases', literal=True))
+                    fileID.write(__generate_entry(unit_data, 'name'))
+                    fileID.write(__generate_entry(unit_data, 'description'))
+                    fileID.write(__generate_entry(unit_data, 'tags', True))
+                    fileID.write(__generate_entry(unit_data, 'aliases', True))
             else:
                 fileID.write(line)
 
-    print('Done')
+    print(' done')
