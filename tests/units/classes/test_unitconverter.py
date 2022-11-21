@@ -816,6 +816,24 @@ class Test_UnitConverter(unittest.TestCase):
              "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]    SI unit of mass\n")
         )
 
+    def test_search_hide_aliases(self):
+        # Verifies that "search()" method options to show/hide aliases
+        # function as expected
+        self.unit_converter_empty['m'] = self.entry_m
+        self.unit_converter_empty.add_alias('m', 'meter')
+
+        with self.subTest(hide_aliases=False):
+            self.assertListEqual(
+                self.unit_converter_empty.search('*', hide_aliases=False,
+                                                 print_results=False, return_results=True),
+                ['m', 'meter'])
+
+        with self.subTest(hide_aliases=True):
+            self.assertListEqual(
+                self.unit_converter_empty.search('*', hide_aliases=True,
+                                                 print_results=False, return_results=True),
+                ['m'])
+
     def test_str_to_unit(self):
         # Verifies that strings are converted to units correctly
         with self.subTest(unit='mm'):

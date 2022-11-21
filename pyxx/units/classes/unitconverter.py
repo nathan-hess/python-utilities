@@ -502,6 +502,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                    = ('key', 'name', 'tags', 'description'),  # noqa: E127
                filter_by_tags:
                    Optional[Union[List[str], Tuple[str, ...], str]] = None,
+               hide_aliases: bool = True,
                print_results: bool = True, return_results: bool = False
                ) -> Union[List[str], None]:
         """Searches the :py:class:`UnitConverter` contents for a given term
@@ -561,7 +562,13 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         # Search for matching unit converter entries
         search_results = []
+        search_results_ids = []
         for key, entry in self.items():
+            # If aliases are to be hidden and the unit has already been saved
+            # to the search results, skip unit
+            if hide_aliases and (id(entry) in search_results_ids):
+                continue
+
             # If filtering by tags and none of the tags corresponding to "key"
             # are to be shown, skip unit
             if filter_by_tags is not None:
@@ -573,16 +580,19 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
             if search_term in ('*', '**'):
                 search_results.append(key)
+                search_results_ids.append(id(entry))
                 continue
 
             if 'key' in search_fields:
                 if search_term in key:
                     search_results.append(key)
+                    search_results_ids.append(id(entry))
                     continue
 
             if 'name' in search_fields:
                 if (entry.name is not None) and (search_term in entry.name):
                     search_results.append(key)
+                    search_results_ids.append(id(entry))
                     continue
 
             if 'tags' in search_fields:
@@ -593,6 +603,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
                     if any(results):
                         search_results.append(key)
+                        search_results_ids.append(id(entry))
                         continue
 
             # This "if" statement should never be false (it was already checked
