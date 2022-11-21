@@ -537,6 +537,29 @@ class Test_UnitConverter(unittest.TestCase):
         self.assertIs(self.unit_converter['sec'], self.unit_converter['s'])
         self.assertIs(self.unit_converter['second'], self.unit_converter['s'])
 
+    def test_add_unit_alias(self):
+        # Verifies that unit aliases can be added at the same time as adding
+        # a unit to the unit converter
+        self.assertEqual(len(self.unit_converter), 6)
+        self.assertListEqual(
+            list(self.unit_converter.keys()),
+            ['m', 'mm', 's', 'kg', 'N', 'kN']
+        )
+
+        self.unit_converter.add_unit(
+            key='ms', unit=self.ms, tags=['time', 'milliseconds'],
+            name='Milliseconds', description='units of milliseconds',
+            aliases=('myUnit', 'millisec'),
+            overwrite=False)
+
+        self.assertEqual(len(self.unit_converter), 9)
+        self.assertListEqual(
+            list(self.unit_converter.keys()),
+            ['m', 'mm', 's', 'kg', 'N', 'kN', 'ms', 'myUnit', 'millisec'])
+
+        self.assertIs(self.unit_converter['ms'], self.unit_converter['myUnit'])
+        self.assertIs(self.unit_converter['ms'], self.unit_converter['millisec'])
+
     def test_convert_simple(self):
         # Verifies that unit converter performs unit conversions correctly
         # for simple units

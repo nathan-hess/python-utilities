@@ -325,6 +325,8 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                      Union[TypedList[str], List[str], Tuple[str, ...], str]
                  ] = None,
                  name: Optional[str] = None, description: Optional[str] = None,
+                 aliases:
+                     Optional[Union[str, List[str], Tuple[str, ...]]] = None,
                  overwrite: bool = False) -> None:
         """Adds a unit to the unit converter
 
@@ -357,6 +359,9 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         self[key] = UnitConverterEntry(unit=unit, tags=tags, name=name,
                                        description=description)
+
+        if aliases is not None:
+            self.add_alias(key, aliases)
 
     def add_alias(self, key: str,
                   aliases: Union[str, List[str], Tuple[str, ...]]) -> None:
