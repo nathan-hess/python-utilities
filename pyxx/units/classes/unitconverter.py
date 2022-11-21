@@ -324,7 +324,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                  tags: Optional[
                      Union[TypedList[str], List[str], Tuple[str, ...], str]
                  ] = None,
-                 description: Optional[str] = None,
+                 name: Optional[str] = None, description: Optional[str] = None,
                  overwrite: bool = False) -> None:
         """Adds a unit to the unit converter
 
@@ -342,6 +342,8 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             One or more strings containing brief, one-word descriptors to use
             to group similar units, such as "length" or "speed" (default is
             ``None``, meaning that no tags are associated with the unit)
+        name : str, optional
+            A name for the unit (default is ``None``)
         description : str, optional
             A written description of the unit (default is ``None``)
         overwrite : bool, optional
@@ -353,7 +355,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                 f'Key "{key}" already exists. To automatically overwrite, '
                 'call `.add_unit()` with `overwrite=True`')
 
-        self[key] = UnitConverterEntry(unit=unit, tags=tags,
+        self[key] = UnitConverterEntry(unit=unit, tags=tags, name=name,
                                        description=description)
 
     def add_alias(self, key: str,

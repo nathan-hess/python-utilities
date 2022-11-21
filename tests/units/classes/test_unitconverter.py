@@ -463,7 +463,8 @@ class Test_UnitConverter(unittest.TestCase):
 
             self.unit_converter.add_unit(
                 key='ms', unit=self.ms, tags=['time', 'milliseconds'],
-                description='units of milliseconds', overwrite=False)
+                name='Milliseconds', description='units of milliseconds',
+                overwrite=False)
 
             self.assertEqual(len(self.unit_converter), 7)
             self.assertListEqual(
@@ -471,6 +472,8 @@ class Test_UnitConverter(unittest.TestCase):
                 ['m', 'mm', 's', 'kg', 'N', 'kN', 'ms'])
             self.assertListEqual(
                 list(self.unit_converter['ms'].tags), ['time', 'milliseconds'])
+            self.assertEqual(
+                self.unit_converter['ms'].name, 'Milliseconds')
             self.assertEqual(
                 self.unit_converter['ms'].description, 'units of milliseconds')
 
