@@ -348,6 +348,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             A name for the unit (default is ``None``)
         description : str, optional
             A written description of the unit (default is ``None``)
+        aliases : str or list or tuple, optional
+            Alternate identifiers to add to unit converter (default is
+            ``None``).  Refer to the :py:meth:`add_alias` method documentation
+            for more detail about unit aliases
         overwrite : bool, optional
             Whether to overwrite units if they already exist in the unit
             dictionary (default is ``False``)
@@ -509,7 +513,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                    = ('key', 'name', 'tags', 'description'),  # noqa: E127
                filter_by_tags:
                    Optional[Union[List[str], Tuple[str, ...], str]] = None,
-               hide_aliases: bool = True,
+               hide_aliases: bool = False,
                print_results: bool = True, return_results: bool = False
                ) -> Union[List[str], None]:
         """Searches the :py:class:`UnitConverter` contents for a given term
@@ -535,6 +539,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             Only units with tags specified by ``filter_by_tags`` will be
             included in the search results.  Set to ``None`` disable filtering
             by tags (default is ``None``)
+        hide_aliases : bool, optional
+            Whether to hide unit aliases when outputting search results
+            (default is ``False``).  Refer to the :py:meth:`add_alias` method
+            documentation for more detail about unit aliases
         print_results : bool, optional
             Whether to print search results to the terminal (default is
             ``True``)
