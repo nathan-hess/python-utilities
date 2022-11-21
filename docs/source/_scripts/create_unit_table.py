@@ -12,7 +12,42 @@ from pyxx.units.classes.constants import SAMPLE_SI_UNITS
 
 DOCS_DIR = pathlib.Path(__file__).resolve().parents[2]
 
+
+def __list_entry(unit_data: dict, key: str, literal: bool = False,
+                 leading_spaces: int = 6) -> str:
+    line = f'{" " * leading_spaces}-'
+
+    if (key in unit_data) and (unit_data[key] is not None):
+        items = convert_to_tuple(unit_data[key])
+
+        quote = '``' if literal else ''
+
+        for i, item in enumerate(items):
+            leading_chars = ' ' if i == 0 else ', '
+            line += f'{leading_chars}{quote}{str(item)}{quote}'
+
+    line += '\n'
+    return line
+
+
+def __single_entry(unit_data: dict, key: str, literal: bool = False,
+                   leading_spaces: int = 6) -> str:
+    line = f'{" " * leading_spaces}-'
+
+    if (key in unit_data) and (unit_data[key] is not None):
+        quote = '``' if literal else ''
+        line += f' {quote}{str(unit_data[key])}{quote}'
+
+    line += '\n'
+    return line
+
+
 def main():
+    """Generates the units list reference page
+
+    Copies the unit converter reference page, replacing the placeholder for
+    the list of units with the list of units defined in the source code.
+    """
     print('Creating unit table...', end='')
 
     # Settings
@@ -30,43 +65,10 @@ def main():
             if line.strip() == '[[INSERT_UNIT_TABLE]]':
                 for key, unit_data in SAMPLE_SI_UNITS.items():
                     fileID.write(f'    * - ``{key}``\n')
-
-                    if 'name' in unit_data and (unit_data['name'] is not None):
-                        fileID.write(f'      - {unit_data["name"]}\n')
-                    else:
-                        fileID.write('      -\n')
-
-                    if 'description' in unit_data \
-                            and (unit_data['description'] is not None):
-                        fileID.write(f'      - {unit_data["description"]}\n')
-                    else:
-                        fileID.write('      -\n')
-
-                    if 'tags' in unit_data and (unit_data['tags'] is not None):
-                        unit_tags = convert_to_tuple(unit_data['tags'])
-
-                        if len(unit_tags) > 0:
-                            output_tags = ''
-                            for i, tag in enumerate(unit_tags):
-                                output_tags += f'{", " if i > 0 else ""}``{tag}``'
-                            fileID.write(f'      - {output_tags}\n')
-                        else:
-                            fileID.write('      -\n')
-                    else:
-                        fileID.write('      -\n')
-
-                    if 'aliases' in unit_data and (unit_data['aliases'] is not None):
-                        unit_aliases = convert_to_tuple(unit_data['aliases'])
-
-                        if len(unit_aliases) > 0:
-                            output_aliases = ''
-                            for i, alias in enumerate(unit_aliases):
-                                output_aliases += f'{", " if i > 0 else ""}``{alias}``'
-                            fileID.write(f'      - {output_aliases}\n')
-                        else:
-                            fileID.write('      -\n')
-                    else:
-                        fileID.write('      -\n')
+                    fileID.write(__single_entry(unit_data, 'name'))
+                    fileID.write(__single_entry(unit_data, 'description'))
+                    fileID.write(__list_entry(unit_data, 'tags', literal=True))
+                    fileID.write(__list_entry(unit_data, 'aliases', literal=True))
             else:
                 fileID.write(line)
 
