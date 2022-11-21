@@ -12,6 +12,9 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 import pyxx
 from pyxx.arrays.functions.equality import Array_or_Number_or_String
 
+sys.path.append(str(pathlib.Path(__file__).resolve().parent / '_scripts'))
+import create_unit_table
+
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -161,3 +164,11 @@ doctest_global_setup = 'import pyxx'
 # Source and download links to show with plots
 plot_html_show_source_link = False
 plot_html_show_formats = False
+
+
+# -- Custom scripts ----------------------------------------------------------
+# Scripts that run pre-processing tasks before building documentation
+
+# Generate table of units used by default in the unit converter CLI and
+# `UnitConverterSI` instances
+create_unit_table.main()

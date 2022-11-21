@@ -20,6 +20,7 @@ reducing the need to duplicate code between projects.
     getting_started/installation
     getting_started/examples/index
     getting_started/concepts/index
+    getting_started/reference/index
 
 
 .. toctree::
