@@ -11,9 +11,9 @@ from typing import Any, overload, Type, TypeVar
 from pyxx.arrays.functions.size import max_list_item_len
 
 if sys.version_info < (3, 9):
-    from typing import Iterable, MutableSequence
+    from typing import Iterable, MutableSequence  # pragma: no cover
 else:
-    from collections.abc import Iterable, MutableSequence
+    from collections.abc import Iterable, MutableSequence  # pragma: no cover
 
 
 T = TypeVar('T')
@@ -100,11 +100,11 @@ class TypedList(MutableSequence[T]):
 
     @overload
     def __getitem__(self, index: int) -> T:
-        ...
+        ...  # pragma: no cover
 
     @overload
     def __getitem__(self, index: slice) -> MutableSequence[T]:
-        ...
+        ...  # pragma: no cover
 
     def __getitem__(self, index):
         """Retrieves an item at a specified index from the list"""
@@ -139,11 +139,11 @@ class TypedList(MutableSequence[T]):
 
     @overload
     def __setitem__(self, index: int, value: T) -> None:
-        ...
+        ...  # pragma: no cover
 
     @overload
     def __setitem__(self, index: slice, value: Iterable[T]) -> None:
-        ...
+        ...  # pragma: no cover
 
     def __setitem__(self, index, value):
         """Sets the value of items at one or more indices in the list
