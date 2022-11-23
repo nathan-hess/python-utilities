@@ -451,7 +451,7 @@ class Unit:
                 'Cannot perform unit conversion: units are not compatible')
 
         # Convert inputs to NumPy array
-        inputs = np.array(value, dtype=np.float64)
+        inputs = np.array(value, dtype=np.longdouble)
 
         # Perform unit conversion
         if convert_type.lower() == 'from':
@@ -516,7 +516,7 @@ class Unit:
         power.  For instance, to convert square kilometers to base units
         (square meters), set ``exponent`` to 2.
         """
-        inputs = np.array(value)
+        inputs = np.array(value, np.longdouble)
 
         return self.from_base_function(inputs, exponent)
 
@@ -545,7 +545,7 @@ class Unit:
         power.  For instance, to convert to cubic kilometers from cubic
         meters (the base unit), set ``exponent`` to 3.
         """
-        inputs = np.array(value)
+        inputs = np.array(value, np.longdouble)
 
         return self.to_base_function(inputs, exponent)
 
