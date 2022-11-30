@@ -14,6 +14,7 @@ from pyxx.units.exceptions import (
     IncompatibleUnitsError,
     InvalidUnitMathError,
 )
+from tests import max_array_diff, TEST_FLOAT_TOLERANCE
 
 
 class Test_Unit(unittest.TestCase):
@@ -121,13 +122,19 @@ class Test_Unit(unittest.TestCase):
 
     def test_get_base_unit_exps(self):
         # Verifies that derived exponents can be retrieved correctly
-        self.assertTrue(np.array_equal(
-            self.unit01.base_unit_exps,
-            np.array([0, 0, 0, 0, 0, 0, 1])))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.base_unit_exps,
+                np.array([0, 0, 0, 0, 0, 0, 1])),
+            TEST_FLOAT_TOLERANCE
+        )
 
-        self.assertTrue(np.array_equal(
-            self.unit02.base_unit_exps,
-            np.array([0, 1, 0, 0, 0])))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit02.base_unit_exps,
+                np.array([0, 1, 0, 0, 0])),
+            TEST_FLOAT_TOLERANCE
+        )
 
     def test_invalid_base_unit_exps(self):
         # Verifies that an error is thrown if attempting to create
@@ -228,26 +235,20 @@ class Test_Unit(unittest.TestCase):
         inputs = [3.23, 1000, 5095.3, 1900]
 
         outputs = np.array([3.23, 1000, 5095.3, 1900])
-        self.assertTrue(np.array_equal(
-            self.unit01.to_base(np.array(inputs)),
-            outputs))
-        self.assertTrue(np.array_equal(
-            self.unit01.to_base(inputs),
-            outputs))
-        self.assertTrue(np.array_equal(
-            self.unit01.to_base(tuple(inputs)),
-            outputs))
+        self.assertLessEqual(max_array_diff(self.unit01.to_base(np.array(inputs)), outputs),
+                             TEST_FLOAT_TOLERANCE)
+        self.assertLessEqual(max_array_diff(self.unit01.to_base(inputs), outputs),
+                             TEST_FLOAT_TOLERANCE)
+        self.assertLessEqual(max_array_diff(self.unit01.to_base(tuple(inputs)), outputs),
+                             TEST_FLOAT_TOLERANCE)
 
         outputs = np.array([0.00323, 1, 5.0953, 1.9])
-        self.assertTrue(np.array_equal(
-            self.unit02.to_base(np.array(inputs)),
-            outputs))
-        self.assertTrue(np.array_equal(
-            self.unit02.to_base(inputs),
-            outputs))
-        self.assertTrue(np.array_equal(
-            self.unit02.to_base(tuple(inputs)),
-            outputs))
+        self.assertLessEqual(max_array_diff(self.unit02.to_base(np.array(inputs)), outputs),
+                             TEST_FLOAT_TOLERANCE)
+        self.assertLessEqual(max_array_diff(self.unit02.to_base(inputs), outputs),
+                             TEST_FLOAT_TOLERANCE)
+        self.assertLessEqual(max_array_diff(self.unit02.to_base(tuple(inputs)), outputs),
+                             TEST_FLOAT_TOLERANCE)
 
     def test_from_base_int(self):
         # Verifies that conversion of an integer value from
@@ -267,26 +268,20 @@ class Test_Unit(unittest.TestCase):
         inputs = [3.23, 1000, 5095.3, 1900]
 
         outputs = np.array([3.23, 1000, 5095.3, 1900])
-        self.assertTrue(np.array_equal(
-            self.unit01.from_base(np.array(inputs)),
-            outputs))
-        self.assertTrue(np.array_equal(
-            self.unit01.from_base(inputs),
-            outputs))
-        self.assertTrue(np.array_equal(
-            self.unit01.from_base(tuple(inputs)),
-            outputs))
+        self.assertLessEqual(max_array_diff(self.unit01.from_base(np.array(inputs)), outputs),
+                             TEST_FLOAT_TOLERANCE)
+        self.assertLessEqual(max_array_diff(self.unit01.from_base(inputs), outputs),
+                             TEST_FLOAT_TOLERANCE)
+        self.assertLessEqual(max_array_diff(self.unit01.from_base(tuple(inputs)), outputs),
+                             TEST_FLOAT_TOLERANCE)
 
         outputs = np.array([3230, 1e6, 5.0953e6, 1.9e6])
-        self.assertTrue(np.array_equal(
-            self.unit02.from_base(np.array(inputs)),
-            outputs))
-        self.assertTrue(np.array_equal(
-            self.unit02.from_base(inputs),
-            outputs))
-        self.assertTrue(np.array_equal(
-            self.unit02.from_base(tuple(inputs)),
-            outputs))
+        self.assertLessEqual(max_array_diff(self.unit02.from_base(np.array(inputs)), outputs),
+                             TEST_FLOAT_TOLERANCE)
+        self.assertLessEqual(max_array_diff(self.unit02.from_base(inputs), outputs),
+                             TEST_FLOAT_TOLERANCE)
+        self.assertLessEqual(max_array_diff(self.unit02.from_base(tuple(inputs)), outputs),
+                             TEST_FLOAT_TOLERANCE)
 
     def test_to_base_exponent(self):
         # Verifies that conversion of an array of values from
@@ -294,12 +289,18 @@ class Test_Unit(unittest.TestCase):
         self.assertAlmostEqual(self.unit05_exponent.to_base(7, 3), 332.5)
         self.assertAlmostEqual(self.unit05_exponent.to_base(7.4, 0.2), 0.7522663431747895)
         self.assertAlmostEqual(self.unit05_exponent.to_base(9, -0.5), 2.5833333333333335)
-        self.assertTrue(np.array_equal(
-            self.unit05_exponent.to_base((7, 7.4, 9), 0.2),
-            np.array((0.7757731615945521, 0.7522663431747895, 0.6518455739153598))))
-        self.assertTrue(np.array_equal(
-            self.unit05_exponent.to_base(np.array((7, 7.4, 9)), 0.2),
-            np.array((0.7757731615945521, 0.7522663431747895, 0.6518455739153598))))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit05_exponent.to_base((7, 7.4, 9), 0.2),
+                np.array((0.7757731615945521, 0.7522663431747895, 0.6518455739153598))),
+            TEST_FLOAT_TOLERANCE
+        )
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit05_exponent.to_base(np.array((7, 7.4, 9)), 0.2),
+                np.array((0.7757731615945521, 0.7522663431747895, 0.6518455739153598))),
+            TEST_FLOAT_TOLERANCE
+        )
 
     def test_from_base_exponent(self):
         # Verifies that conversion of an array of values from
@@ -307,12 +308,18 @@ class Test_Unit(unittest.TestCase):
         self.assertAlmostEqual(self.unit05_exponent.from_base(7, 3), 2422)
         self.assertAlmostEqual(self.unit05_exponent.from_base(7.4, 0.2), 12.522770939493443)
         self.assertAlmostEqual(self.unit05_exponent.from_base(9, -0.5), -1.5)
-        self.assertTrue(np.array_equal(
-            self.unit05_exponent.from_base((7, 7.4, 9), 0.2),
-            np.array((11.730412131161865, 12.522770939493443, 15.766610165238236))))
-        self.assertTrue(np.array_equal(
-            self.unit05_exponent.from_base(np.array((7, 7.4, 9)), 0.2),
-            np.array((11.730412131161865, 12.522770939493443, 15.766610165238236))))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit05_exponent.from_base((7, 7.4, 9), 0.2),
+                np.array((11.730412131161865, 12.522770939493443, 15.766610165238236))),
+            TEST_FLOAT_TOLERANCE
+        )
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit05_exponent.from_base(np.array((7, 7.4, 9)), 0.2),
+                np.array((11.730412131161865, 12.522770939493443, 15.766610165238236))),
+            TEST_FLOAT_TOLERANCE
+        )
 
     def test_multiply_single_unit(self):
         # Verifies that cases of multiplying units are performed correctly
@@ -946,9 +953,12 @@ class Test_LinearUnit(unittest.TestCase):
     def test_to_base(self):
         # Verifies that conversion of from base units to the given object's
         # units is performed correctly
-        self.assertTrue(np.array_equal(
-            self.unit01.to_base([2, 4.3, 930]),
-            np.array([0.002, 0.0043, 0.93])))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.to_base([2, 4.3, 930]),
+                np.array([0.002, 0.0043, 0.93])),
+            TEST_FLOAT_TOLERANCE
+        )
 
         diff = self.unit02.to_base([32, 9.332, 14, -40]) \
             - np.array([273.15, 273.15+(9.332-32)*(5/9), 263.15, 233.15])
@@ -957,9 +967,12 @@ class Test_LinearUnit(unittest.TestCase):
     def test_from_base(self):
         # Verifies that conversion of from the given object's
         # units to the base units is performed correctly
-        self.assertTrue(np.array_equal(
-            self.unit01.from_base([0.002, 0.0043, 0.93]),
-            np.array([2, 4.3, 930])))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.from_base([0.002, 0.0043, 0.93]),
+                np.array([2, 4.3, 930])),
+            TEST_FLOAT_TOLERANCE
+        )
 
         diff = self.unit02.from_base([273.15, 273.15+(9.332-32)*(5/9), 263.15, 233.15]) \
             - np.array([32, 9.332, 14, -40])
@@ -967,31 +980,49 @@ class Test_LinearUnit(unittest.TestCase):
 
     def test_to_base_exponent(self):
         # Checks conversion of value to base units with user-specified exponent
-        self.assertTrue(np.array_equal(
-            self.unit01.to_base((40, -5), 1),
-            np.array((0.04, -0.005))))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.to_base((40, -5), 1),
+                np.array((0.04, -0.005))),
+            TEST_FLOAT_TOLERANCE
+        )
 
-        self.assertTrue(all(np.isclose(
-            self.unit01.to_base((40, -5), 2),
-            np.array((40e-6, -5e-6)))))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.to_base((40, -5), 2),
+                np.array((40e-6, -5e-6))),
+            TEST_FLOAT_TOLERANCE
+        )
 
-        self.assertTrue(np.array_equal(
-            self.unit01.to_base((40, -5), 3),
-            np.array((40e-9, -5e-9))))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.to_base((40, -5), 3),
+                np.array((40e-9, -5e-9))),
+            TEST_FLOAT_TOLERANCE
+        )
 
     def test_from_base_exponent(self):
         # Checks conversion of value from base units with user-specified exponent
-        self.assertTrue(np.array_equal(
-            self.unit01.from_base((40, -5), 1),
-            np.array((40000, -5000))))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.from_base((40, -5), 1),
+                np.array((40000, -5000))),
+            TEST_FLOAT_TOLERANCE
+        )
 
-        self.assertTrue(np.array_equal(
-            self.unit01.from_base((40, -5), 2),
-            np.array((40e6, -5e6))))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.from_base((40, -5), 2),
+                np.array((40e6, -5e6))),
+            TEST_FLOAT_TOLERANCE
+        )
 
-        self.assertTrue(np.array_equal(
-            self.unit01.from_base((40, -5), 3),
-            np.array((40e9, -5e9))))
+        self.assertLessEqual(
+            max_array_diff(
+                self.unit01.from_base((40, -5), 3),
+                np.array((40e9, -5e9))),
+            TEST_FLOAT_TOLERANCE
+        )
 
 
 class Test_LinearUnitSI(unittest.TestCase):
