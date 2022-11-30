@@ -1,6 +1,7 @@
 # PyXX: Python Utilities Package
 
 [![CI/CD](https://github.com/nathan-hess/python-utilities/actions/workflows/cicd.yml/badge.svg)](https://github.com/nathan-hess/python-utilities/actions/workflows/cicd.yml)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/pyxx?label=PyPI%20downloads&logo=python&logoColor=yellow)](https://pypi.org/project/pyxx)
 
 ## Overview
 
@@ -18,15 +19,20 @@ A number of different general-purpose tools are provided.  Some of the tools pro
 
 ## Installation
 
-The recommended way to install PyXX is through [pip](https://pypi.org/project/pyxx/):
+The recommended way to install PyXX is through [pip](https://pypi.org/project/pyxx):
 
 ```
 pip install pyxx
 ```
 
-For more information about configuring Python and using packages, refer to the official Python documentation on [setting up Python](https://docs.python.org/3/using/index.html) and [installing packages](https://packaging.python.org/en/latest/tutorials/installing-packages/).
+For more information about configuring Python and using packages, refer to the official Python documentation on [setting up Python](https://docs.python.org/3/using/index.html) and [installing packages](https://packaging.python.org/en/latest/tutorials/installing-packages).
 
 
 ## Documentation
 
-Detailed documentation for the PyXX project can be found here: http://pyxx.readthedocs.io/.
+Detailed documentation for the PyXX project can be found here: http://pyxx.readthedocs.io.
+
+
+## Acknowledgments
+
+Project source code is hosted on [GitHub](https://github.com/nathan-hess/python-utilities), and releases are distributed through [PyPI](https://pypi.org/project/pyxx).  Some README badges were generated using [Shields.io](https://shields.io).
