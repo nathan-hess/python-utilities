@@ -28,7 +28,7 @@ SAMPLE_SI_UNITS: Dict[str, Dict[str, Any]] = {
         'unit': UnitLinearSI((0, 1, 0, 0, 0, 0, 0), scale=1, offset=0),
         'tags': ('time',),
         'name': 'second',
-        'aliases': ('sec', 'second'),
+        'aliases': ('sec', 'second', 'seconds'),
     },
     'mol': {
         'unit': UnitLinearSI((0, 0, 1, 0, 0, 0, 0), scale=1, offset=0),
@@ -57,5 +57,90 @@ SAMPLE_SI_UNITS: Dict[str, Dict[str, Any]] = {
         'name': 'kilogram',
         'description': 'Unit of measure of mass',
         'aliases': ('kilogram', 'kilograms'),
+    },
+
+    ## LENGTH ----------------------------------------------------------------
+    'mm': {
+        'unit': UnitLinearSI((1, 0, 0, 0, 0, 0, 0), scale=0.001, offset=0),
+        'tags': ('length',),
+        'name': 'millimeter',
+        'aliases': ('millimeter', 'millimeters'),
+    },
+    'cm': {
+        'unit': UnitLinearSI((1, 0, 0, 0, 0, 0, 0), scale=0.01, offset=0),
+        'tags': ('length',),
+        'name': 'centimeter',
+        'aliases': ('centimeter', 'centimeters'),
+    },
+    'km': {
+        'unit': UnitLinearSI((1, 0, 0, 0, 0, 0, 0), scale=1000, offset=0),
+        'tags': ('length',),
+        'name': 'kilometer',
+        'aliases': ('kilometer', 'kilometers'),
+    },
+    'in': {
+        'unit': UnitLinearSI((1, 0, 0, 0, 0, 0, 0), scale=0.0254, offset=0),
+        'tags': ('length',),
+        'name': 'inch',
+        'aliases': ('inch', 'inches'),
+    },
+    'ft': {
+        'unit': UnitLinearSI((1, 0, 0, 0, 0, 0, 0), scale=0.3048, offset=0),
+        'tags': ('length',),
+        'name': 'foot',
+        'aliases': ('foot', 'feet'),
+    },
+    'mi': {
+        'unit': UnitLinearSI((1, 0, 0, 0, 0, 0, 0), scale=1609.344, offset=0),
+        'tags': ('length',),
+        'name': 'mile',
+        'aliases': ('mile', 'miles'),
+    },
+    'yd': {
+        'unit': UnitLinearSI((1, 0, 0, 0, 0, 0, 0), scale=0.9144, offset=0),
+        'tags': ('length',),
+        'name': 'yard',
+        'aliases': ('yard', 'yards'),
+    },
+
+    ## TIME ------------------------------------------------------------------
+    'min': {
+        'unit': UnitLinearSI((0, 1, 0, 0, 0, 0, 0), scale=60, offset=0),
+        'tags': ('time',),
+        'name': 'minute',
+        'aliases': ('minute', 'minutes'),
+    },
+    'hr': {
+        'unit': UnitLinearSI((0, 1, 0, 0, 0, 0, 0), scale=3600, offset=0),
+        'tags': ('time',),
+        'name': 'hour',
+        'aliases': ('hour', 'hours'),
+    },
+    'day': {
+        'unit': UnitLinearSI((0, 1, 0, 0, 0, 0, 0), scale=86400, offset=0),
+        'tags': ('time',),
+        'name': 'day',
+        'aliases': ('days',),
+    },
+
+    ## SPEED -----------------------------------------------------------------
+    'mph': {
+        'unit': UnitLinearSI((1, -1, 0, 0, 0, 0, 0), scale=1609.344/3600, offset=0),
+        'tags': ('speed',),
+        'name': 'miles per hour',
+    },
+
+    ## FORCE -----------------------------------------------------------------
+    'N': {
+        'unit': UnitLinearSI((1, -2, 0, 0, 0, 0, 1), scale=1, offset=0),
+        'tags': ('force',),
+        'name': 'Newtons',
+        'aliases': ('Newton', 'Newtons'),
+    },
+    'kN': {
+        'unit': UnitLinearSI((1, -2, 0, 0, 0, 0, 1), scale=1000, offset=0),
+        'tags': ('force',),
+        'name': 'kilonewtons',
+        'aliases': ('kilonewton', 'kilonewtons'),
     },
 }
