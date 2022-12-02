@@ -463,7 +463,8 @@ class Test_UnitConverter(unittest.TestCase):
 
             self.unit_converter.add_unit(
                 key='ms', unit=self.ms, tags=['time', 'milliseconds'],
-                description='units of milliseconds', overwrite=False)
+                name='Milliseconds', description='units of milliseconds',
+                overwrite=False)
 
             self.assertEqual(len(self.unit_converter), 7)
             self.assertListEqual(
@@ -471,6 +472,8 @@ class Test_UnitConverter(unittest.TestCase):
                 ['m', 'mm', 's', 'kg', 'N', 'kN', 'ms'])
             self.assertListEqual(
                 list(self.unit_converter['ms'].tags), ['time', 'milliseconds'])
+            self.assertEqual(
+                self.unit_converter['ms'].name, 'Milliseconds')
             self.assertEqual(
                 self.unit_converter['ms'].description, 'units of milliseconds')
 
@@ -533,6 +536,29 @@ class Test_UnitConverter(unittest.TestCase):
         )
         self.assertIs(self.unit_converter['sec'], self.unit_converter['s'])
         self.assertIs(self.unit_converter['second'], self.unit_converter['s'])
+
+    def test_add_unit_alias(self):
+        # Verifies that unit aliases can be added at the same time as adding
+        # a unit to the unit converter
+        self.assertEqual(len(self.unit_converter), 6)
+        self.assertListEqual(
+            list(self.unit_converter.keys()),
+            ['m', 'mm', 's', 'kg', 'N', 'kN']
+        )
+
+        self.unit_converter.add_unit(
+            key='ms', unit=self.ms, tags=['time', 'milliseconds'],
+            name='Milliseconds', description='units of milliseconds',
+            aliases=('myUnit', 'millisec'),
+            overwrite=False)
+
+        self.assertEqual(len(self.unit_converter), 9)
+        self.assertListEqual(
+            list(self.unit_converter.keys()),
+            ['m', 'mm', 's', 'kg', 'N', 'kN', 'ms', 'myUnit', 'millisec'])
+
+        self.assertIs(self.unit_converter['ms'], self.unit_converter['myUnit'])
+        self.assertIs(self.unit_converter['ms'], self.unit_converter['millisec'])
 
     def test_convert_simple(self):
         # Verifies that unit converter performs unit conversions correctly
@@ -815,6 +841,24 @@ class Test_UnitConverter(unittest.TestCase):
              "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]    seconds        \n"
              "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]    SI unit of mass\n")
         )
+
+    def test_search_hide_aliases(self):
+        # Verifies that "search()" method options to show/hide aliases
+        # function as expected
+        self.unit_converter_empty['m'] = self.entry_m
+        self.unit_converter_empty.add_alias('m', 'meter')
+
+        with self.subTest(hide_aliases=False):
+            self.assertListEqual(
+                self.unit_converter_empty.search('*', hide_aliases=False,
+                                                 print_results=False, return_results=True),
+                ['m', 'meter'])
+
+        with self.subTest(hide_aliases=True):
+            self.assertListEqual(
+                self.unit_converter_empty.search('*', hide_aliases=True,
+                                                 print_results=False, return_results=True),
+                ['m'])
 
     def test_str_to_unit(self):
         # Verifies that strings are converted to units correctly

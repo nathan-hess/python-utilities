@@ -516,7 +516,7 @@ class Unit:
         power.  For instance, to convert square kilometers to base units
         (square meters), set ``exponent`` to 2.
         """
-        inputs = np.array(value)
+        inputs = np.array(value, dtype=np.float64)
 
         return self.from_base_function(inputs, exponent)
 
@@ -545,7 +545,7 @@ class Unit:
         power.  For instance, to convert to cubic kilometers from cubic
         meters (the base unit), set ``exponent`` to 3.
         """
-        inputs = np.array(value)
+        inputs = np.array(value, dtype=np.float64)
 
         return self.to_base_function(inputs, exponent)
 

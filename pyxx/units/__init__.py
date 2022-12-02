@@ -10,6 +10,7 @@ from .classes import (
     Unit,
     UnitConverter,
     UnitConverterEntry,
+    UnitConverterSI,
     UnitLinear,
     UnitLinearSI,
     UnitSystem,

@@ -22,6 +22,7 @@ Package Modules
 
 - :py:mod:`pyxx.arrays` -- Code for processing lists, tuples, or other array-formatted data
 - :py:mod:`pyxx.files` -- Code for reading, writing, and processing files
+- :py:mod:`pyxx.numbers` -- Code for processing and managing numerical types of data
 - :py:mod:`pyxx.strings` -- Code for processing, parsing, and modifying strings
 - :py:mod:`pyxx.units` -- Objects for performing unit conversions
 

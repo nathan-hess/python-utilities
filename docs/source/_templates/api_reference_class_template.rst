@@ -2,7 +2,6 @@
 
    args
    BinaryFile
-   candela
    ConstantUnitMathConventions
    exps
    ndarray
@@ -13,6 +12,7 @@
    TypedListWithID
    UnitConverter
    UnitConverterEntry
+   UnitConverterSI
    UnitLinear
    UnitLinearSI
    UnitSystem

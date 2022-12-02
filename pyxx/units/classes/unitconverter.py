@@ -21,8 +21,9 @@ from pyxx.arrays.functions.size import (
     max_list_item_len,
 )
 from pyxx.units.functions.parser import parse_unit
+from .constants import SAMPLE_SI_UNITS
 from .unit import Unit
-from .unitsystem import UnitSystem
+from .unitsystem import UnitSystem, UnitSystemSI
 
 
 class UnitConverterEntry:
@@ -324,7 +325,9 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                  tags: Optional[
                      Union[TypedList[str], List[str], Tuple[str, ...], str]
                  ] = None,
-                 description: Optional[str] = None,
+                 name: Optional[str] = None, description: Optional[str] = None,
+                 aliases:
+                     Optional[Union[str, List[str], Tuple[str, ...]]] = None,
                  overwrite: bool = False) -> None:
         """Adds a unit to the unit converter
 
@@ -342,8 +345,14 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             One or more strings containing brief, one-word descriptors to use
             to group similar units, such as "length" or "speed" (default is
             ``None``, meaning that no tags are associated with the unit)
+        name : str, optional
+            A name for the unit (default is ``None``)
         description : str, optional
             A written description of the unit (default is ``None``)
+        aliases : str or list or tuple, optional
+            Alternate identifiers to add to unit converter (default is
+            ``None``).  Refer to the :py:meth:`add_alias` method documentation
+            for more detail about unit aliases
         overwrite : bool, optional
             Whether to overwrite units if they already exist in the unit
             dictionary (default is ``False``)
@@ -353,8 +362,11 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                 f'Key "{key}" already exists. To automatically overwrite, '
                 'call `.add_unit()` with `overwrite=True`')
 
-        self[key] = UnitConverterEntry(unit=unit, tags=tags,
+        self[key] = UnitConverterEntry(unit=unit, tags=tags, name=name,
                                        description=description)
+
+        if aliases is not None:
+            self.add_alias(key, aliases)
 
     def add_alias(self, key: str,
                   aliases: Union[str, List[str], Tuple[str, ...]]) -> None:
@@ -502,6 +514,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                    = ('key', 'name', 'tags', 'description'),  # noqa: E127
                filter_by_tags:
                    Optional[Union[List[str], Tuple[str, ...], str]] = None,
+               hide_aliases: bool = False,
                print_results: bool = True, return_results: bool = False
                ) -> Union[List[str], None]:
         """Searches the :py:class:`UnitConverter` contents for a given term
@@ -527,6 +540,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             Only units with tags specified by ``filter_by_tags`` will be
             included in the search results.  Set to ``None`` disable filtering
             by tags (default is ``None``)
+        hide_aliases : bool, optional
+            Whether to hide unit aliases when outputting search results
+            (default is ``False``).  Refer to the :py:meth:`add_alias` method
+            documentation for more detail about unit aliases
         print_results : bool, optional
             Whether to print search results to the terminal (default is
             ``True``)
@@ -561,7 +578,13 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         # Search for matching unit converter entries
         search_results = []
+        search_results_ids = []
         for key, entry in self.items():
+            # If aliases are to be hidden and the unit has already been saved
+            # to the search results, skip unit
+            if hide_aliases and (id(entry) in search_results_ids):
+                continue
+
             # If filtering by tags and none of the tags corresponding to "key"
             # are to be shown, skip unit
             if filter_by_tags is not None:
@@ -573,16 +596,19 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
             if search_term in ('*', '**'):
                 search_results.append(key)
+                search_results_ids.append(id(entry))
                 continue
 
             if 'key' in search_fields:
                 if search_term in key:
                     search_results.append(key)
+                    search_results_ids.append(id(entry))
                     continue
 
             if 'name' in search_fields:
                 if (entry.name is not None) and (search_term in entry.name):
                     search_results.append(key)
+                    search_results_ids.append(id(entry))
                     continue
 
             if 'tags' in search_fields:
@@ -593,6 +619,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
                     if any(results):
                         search_results.append(key)
+                        search_results_ids.append(id(entry))
                         continue
 
             # This "if" statement should never be false (it was already checked
@@ -653,3 +680,43 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             output_unit *= (self[unit_str].unit)**exp
 
         return output_unit
+
+
+class UnitConverterSI(UnitConverter):
+    """A unit converter using the SI system of units, pre-filled with
+    common units
+
+    This class is identical in function to a :py:class:`UnitConveter`, with
+    the exception that it has been initialized with a number of commonly-used
+    units.  All units in a :py:class:`UnitConveterSI` are defined in terms of
+    the SI system (https://www.nist.gov/pml/owm/metric-si/si-units), with the
+    following sequence of seven base units (used in the
+    :py:attr:`Unit.base_unit_exps` attribute of all units in the unit
+    converter):
+
+    1. Length: meter [:math:`m`]
+    2. Time: second [:math:`s`]
+    3. Amount of substance: mole [:math:`mol`]
+    4. Electric current: ampere [:math:`A`]
+    5. Temperature: Kelvin [:math:`K`]
+    6. Luminous intensity: candela [:math:`cd`]
+    7. Mass: kilogram [:math:`kg`]
+
+    For a list of units available in this unit converter, refer to the
+    :ref:`section-unitconverter_units` page.
+    """
+
+    def __init__(self):
+        """Creates a new unit converter using the SI system of units and
+        populated with commonly-used units.
+
+        Creates an new :py:class:`UnitConverterSI` instance.  This unit
+        converter uses the SI system (specifically, the system of units
+        referenced by :py:class:`UnitSystemSI`) and is pre-filled with a
+        set of commonly-used units, listed on the
+        :ref:`section-unitconverter_units` page.
+        """
+        super().__init__(unit_system=UnitSystemSI())
+
+        for key, unit_data in SAMPLE_SI_UNITS.items():
+            self.add_unit(key=key, **unit_data)

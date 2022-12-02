@@ -1,3 +1,4 @@
+candela
 iterable
 iteratively
 Iteratively
@@ -5,6 +6,7 @@ kilonewton
 Kilonewtons
 multiline
 Multiline
+pre
 programmatically
 pyxx
 subclasses

@@ -1,0 +1,31 @@
+.. include:: ../../constants.rst
+
+
+.. _section-unitconverter_units:
+
+Unit Converter Default Units
+============================
+
+The units on this page are used in the |PackageNameStylized| unit converter
+CLI and are defined by default in :py:class:`pyxx.units.UnitConverterSI`
+instances.
+
+Want to suggest a unit to add to this list?  Submit a `feature request
+<https://github.com/nathan-hess/python-utilities/issues/new?assignees=
+&labels=enhancement,units&template=feature_request.md
+&title=Add%20new%20unit%20to%20unit%20converters
+&body=%23%23%23%20Issue%0AI%20would%20like%20to%20recommend%20new%20units
+%20be%20added%20to%20the%20PyXX%20unit%20converters.%0A%0A
+%23%23%23%20Suggested%20Units%0A-%20Add%20units%20and%20links%20to%20more
+%20information%20about%20the%20units>`__!
+
+.. list-table::
+    :header-rows: 1
+    :widths: auto
+
+    * - Key
+      - Name
+      - Description
+      - Tags
+      - Aliases
+[[INSERT_UNIT_TABLE]]
