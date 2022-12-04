@@ -113,6 +113,9 @@ class UnitConverterCLI:
             return self._exit_with_error(message='No command provided',
                                          print_help=True)
 
+        if command in ('convert', 'c'):
+            return self._convert(argv)
+
         if command in ('help', 'h', '--help', '-h'):
             return self.help()
 
@@ -132,6 +135,81 @@ class UnitConverterCLI:
         """
         print(self.VERSION)
 
+        return 0
+
+    def _convert(self, argv: List[str]) -> int:
+        # Process command-line arguments
+        parser = argparse.ArgumentParser(
+            prog=f'{self.PROGRAM_NAME} convert',
+            description=(
+                'Convert a quantity (either a single number or a comma-'
+                'separated list of numbers) from one unit to another. Refer '
+                'to the PyXX documentation (https://pyxx.readthedocs.io) or '
+                'use the "search" command to view a list of available units.'
+            )
+        )
+
+        required_args = parser.add_argument_group('required arguments')
+
+        required_args.add_argument(
+            'quantity',
+            action='store',
+            type=str,
+            help=('The quantity to be converted from one unit to another. '
+                  'Either formatted as a number or a comma-separated list '
+                  'of numbers')
+        )
+
+        required_args.add_argument(
+            '-f', '--from',
+            action='store',
+            type=str,
+            dest='from_unit',
+            help='The original unit in which the quantity was expressed',
+            required=True
+        )
+        required_args.add_argument(
+            '-t', '--to',
+            action='store',
+            type=str,
+            dest='to_unit',
+            help='The unit to which the quantity is to be converted',
+            required=True
+        )
+
+        args = parser.parse_args(argv)
+
+        # Validate inputs
+        from_unit = str(args.from_unit)
+        to_unit = str(args.to_unit)
+
+        for unit in (from_unit, to_unit):
+            if not UnitConverterSI().is_defined_unit(unit):
+                return self._exit_with_error(
+                    f'Cannot perform unit conversion. Unit "{unit}" has not '
+                    'been defined in the unit converter')
+
+        if not UnitConverterSI().is_convertible(from_unit, to_unit):
+            return self._exit_with_error(
+                f'Cannot perform unit conversion. Units "{from_unit}" '
+                f'and {to_unit} are not compatible')
+
+        try:
+            quantity = [float(x) for x in str(args.quantity).split(',')]
+        except (TypeError, ValueError):
+            return self._exit_with_error(
+                f'Invalid format "{args.quantity}" of quantity to convert. '
+                'Quantity must either be a number or a comma-separated list '
+                'of numbers')
+
+        # Perform unit conversion
+        converted_quantity: List[float] = list(UnitConverterSI().convert(
+            quantity  = quantity,
+            from_unit = from_unit,
+            to_unit   = to_unit
+        ))
+
+        print(','.join([str(x) for x in converted_quantity]))
         return 0
 
     def _exit_with_error(self, message: str, exit_code: int = 1,
