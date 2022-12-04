@@ -7,7 +7,10 @@ import difflib
 import sys
 from typing import List, Optional
 
-from pyxx import __version__ as PYXX_VERSION
+# Importing the package version is a cylic import, but because the
+# `__version__` variable is defined at the beginning of `pyxx/__init__.py`,
+# the variable is cached and cyclic import does not cause problems
+from pyxx import __version__ as PYXX_VERSION    # pylint: disable=R0401
 from pyxx.units.classes.unitconverter import UnitConverterSI
 
 
