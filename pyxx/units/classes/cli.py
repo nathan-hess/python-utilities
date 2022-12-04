@@ -56,14 +56,14 @@ class UnitConverterCLI:
             '      --version    Display PyXX unit converter version and exit',
             '',
             'Commands:',
-            '  c, convert    Perform a unit conversion',
+            '  c, convert    Perform a unit conversion*',
             '  h, help       Display this help message and exit',
-            '  i, info       Display information about a unit',
-            '  s, search     Search the units available in the unit converter',
+            '  i, info       Display information about a unit*',
+            '  s, search     Search the units available in the unit converter*',
             '  v, version    Display PyXX unit converter version and exit',
             '',
-            f'Run \'{self.PROGRAM_NAME} COMMAND --help\' for more information '
-            'about a given command',
+            f'*Run \'{self.PROGRAM_NAME} COMMAND --help\' for more information '
+            'about these commands',
         ]) + '\n'
 
         self.VERSION: str = PYXX_VERSION
@@ -164,8 +164,8 @@ class UnitConverterCLI:
 
         if print_help:
             self.help()
-            print(f'{"-" * self._LINE_LENGTH}')
+            print(f'{"-" * self._LINE_LENGTH}\n')
 
-        print(f'\n{self.PROGRAM_NAME}: error: {message}')
+        print(f'{self.PROGRAM_NAME}: error: {message}')
 
         return exit_code
