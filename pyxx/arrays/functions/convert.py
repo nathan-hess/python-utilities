@@ -9,7 +9,7 @@ def convert_to_tuple(value: Any) -> tuple:
     """Convert an input to a tuple
 
     Convert any input to a one-element tuple, or directly return
-    the input (if it is already a tuple).
+    the input (if it is already a tuple or list).
 
     Parameters
     ----------
@@ -19,8 +19,8 @@ def convert_to_tuple(value: Any) -> tuple:
     Returns
     -------
     tuple
-        Directly returns ``value`` if it is already a tuple; otherwise,
-        a one-element tuple containing ``value`` is returned
+        Directly returns ``value`` if it is already a tuple or list;
+        otherwise, a one-element tuple containing ``value`` is returned
 
     Notes
     -----
@@ -30,4 +30,4 @@ def convert_to_tuple(value: Any) -> tuple:
     it is in parentheses.  This function addresses this issue by
     converting any input to a tuple
     """
-    return value if isinstance(value, tuple) else (value,)
+    return tuple(value) if isinstance(value, (tuple, list)) else (value,)

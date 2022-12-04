@@ -15,6 +15,17 @@ class Test_ConvertToTuple(unittest.TestCase):
             convert_to_tuple(('value1', 3.4, print)),
             ('value1', 3.4, print)
         )
+    def test_pass_through_list(self):
+        # Verify that existing lists are returned as tuples
+        self.assertTupleEqual(
+            convert_to_tuple(['value1']),
+            ('value1',)
+        )
+
+        self.assertTupleEqual(
+            convert_to_tuple(['value1', 3.4, print]),
+            ('value1', 3.4, print)
+        )
 
     def test_convert_single_to_tuple(self):
         # Verify that inputs that are not already tuples are
