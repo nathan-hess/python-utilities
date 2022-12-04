@@ -436,7 +436,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         return from_unit_obj.convert(quantity, 'to', to_unit_obj)
 
-    def is_convertible(self, unit1: str, unit2: str, *args: str):
+    def is_convertible(self, unit1: str, unit2: str, *args: str) -> bool:
         """Checks whether units can be converted between each other
 
         Checks whether two or more units are compatible and can be directly
@@ -464,6 +464,33 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         for unit in units_to_check:
             if not unit1_unit.is_convertible(unit):
+                return False
+
+        return True
+
+    def is_defined_unit(self, unit: str) -> bool:
+        """Checks whether a simple or complex unit is composed exclusively of
+        units which have been defined in the unit converter
+
+        This method verifies that a simple unit or all component units of a
+        compound unit have been defined in the unit converter; if not, unit
+        conversions involving such a unit cannot be performed.
+
+        Parameters
+        ----------
+        unit : str
+            The simple or compound unit to analyze
+
+        Returns
+        -------
+        bool
+            Whether all component unit(s) in ``unit`` are defined in the
+            unit converter
+        """
+        component_units = parse_unit(str(unit)).keys()
+
+        for component in component_units:
+            if component not in self:
                 return False
 
         return True

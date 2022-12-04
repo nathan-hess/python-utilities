@@ -661,6 +661,25 @@ class Test_UnitConverter(unittest.TestCase):
             with self.subTest(inputs=inputs, outputs=outputs):
                 self.assertIs(self.unit_converter.is_convertible(*inputs), outputs)
 
+    def test_is_defined_unit(self):
+        # Verifies that it is possible to check whether a simple or compound
+        # unit contains exclusively component units defined in the unit converter
+        with self.subTest(unit_type='simple', defined=True):
+            for unit in ('kg', 'm', 'N'):
+                self.assertTrue(self.unit_converter.is_defined_unit(unit))
+
+        with self.subTest(unit_type='simple', defined=False):
+            for unit in ('miles', 'yd'):
+                self.assertFalse(self.unit_converter.is_defined_unit(unit))
+
+        with self.subTest(unit_type='compound', defined=True):
+            for unit in ('kg*m/s^2', 'mm/s', 'N*mm'):
+                self.assertTrue(self.unit_converter.is_defined_unit(unit))
+
+        with self.subTest(unit_type='compound', defined=False):
+            for unit in ('kg*in/s^2', 'in/s', 'in/hr'):
+                self.assertFalse(self.unit_converter.is_defined_unit(unit))
+
     def test_is_simplified(self):
         # Verifies that simple vs. compound units are distinguished correctly
         test_cases = (
