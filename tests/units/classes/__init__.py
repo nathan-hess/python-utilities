@@ -1,3 +1,4 @@
+from .test_cli import *
 from .test_unit import *
 from .test_unitconverter_si import *
 from .test_unitconverter import *
