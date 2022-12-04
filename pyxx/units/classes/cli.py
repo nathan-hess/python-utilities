@@ -3,6 +3,7 @@ interact with the :py:class:`UnitConverterSI` class.
 """
 
 import argparse
+import difflib
 import sys
 from typing import List, Optional
 
@@ -118,6 +119,9 @@ class UnitConverterCLI:
 
         if command in ('help', 'h', '--help', '-h'):
             return self.help()
+
+        if command in ('info', 'i'):
+            return self._info(argv)
 
         if command in ('version', 'v', '--version'):
             return self.version()
@@ -247,3 +251,56 @@ class UnitConverterCLI:
         print(f'{self.PROGRAM_NAME}: error: {message}')
 
         return exit_code
+
+    def _info(self, argv: List[str]) -> int:
+        # Process command-line arguments
+        parser = argparse.ArgumentParser(
+            prog=f'{self.PROGRAM_NAME} info',
+            description=(
+                'Display detailed information about a unit in the unit '
+                'converter. Refer to the PyXX documentation '
+                '(https://pyxx.readthedocs.io) or use the "search" command '
+                'to view a list of available units.'
+            )
+        )
+
+        required_args = parser.add_argument_group('required arguments')
+
+        required_args.add_argument(
+            'unit',
+            action='store',
+            type=str,
+            help='The unit about which to display detailed information'
+        )
+
+        args = parser.parse_args(argv)
+
+        # Validate inputs
+        unit = str(args.unit)
+
+        if not UnitConverterSI().is_simplified_unit(unit):
+            return self._exit_with_error(
+                f'Unit "{unit}" is a compound unit. Detailed information can '
+                'only be shown for simple units'
+            )
+
+        if not UnitConverterSI().is_defined_unit(unit):
+            close_matches = difflib.get_close_matches(
+                word=unit, possibilities=list(UnitConverterSI().keys()),
+                n=5, cutoff=0.6)
+
+            return self._exit_with_error(
+                f'Unit "{unit}" has not been defined in the unit converter. '
+                f'The most similar available units are: {close_matches}')
+
+        # Display unit details
+        unit_entry = UnitConverterSI()[unit]
+
+        print(f'Unit ID:          {unit}')
+        print(f'Name:             {unit_entry.name}')
+        print(f'Description:      {unit_entry.description}')
+        print(f'Tags:             {unit_entry.tags}')
+        print(f'Aliases:          {UnitConverterSI().get_aliases(unit)}')
+        print(f'Unit definition:  {unit_entry.unit}')
+
+        return 0
