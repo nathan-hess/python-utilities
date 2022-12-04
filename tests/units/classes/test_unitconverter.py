@@ -695,6 +695,26 @@ class Test_UnitConverter(unittest.TestCase):
             with self.subTest(inputs=inputs, outputs=outputs):
                 self.assertIs(self.unit_converter.is_simplified_unit(inputs), outputs)
 
+    def test_get_aliases(self):
+        # Verifies that aliases can be retrieved correctly
+        self.assertListEqual(self.unit_converter.get_aliases('s'), [])
+
+        self.unit_converter.add_alias(key='s', aliases=['sec', 'mySeconds'])
+        self.assertListEqual(self.unit_converter.get_aliases('s'), ['sec', 'mySeconds'])
+        self.assertListEqual(self.unit_converter.get_aliases('sec'), ['s', 'mySeconds'])
+        self.assertListEqual(self.unit_converter.get_aliases('mySeconds'), ['s', 'sec'])
+
+    def test_get_aliases_invalid(self):
+        # Verifies that an appropriate error is thrown if attemtping to retrieve
+        # aliases for a unit that has not been defined
+        with self.subTest(comment='invalid_unit'):
+            with self.assertRaises(UnitNotFoundError):
+                self.unit_converter.get_aliases('invalid_unit')
+
+        with self.subTest(comment='compound_unit'):
+            with self.assertRaises(UnitNotFoundError):
+                self.unit_converter.get_aliases('m/s')
+
     def test_list_tags(self):
         # Verifies that tags are extracted correctly
         with self.subTest(unit_converter='filled'):

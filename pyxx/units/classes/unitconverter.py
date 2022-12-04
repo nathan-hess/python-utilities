@@ -436,6 +436,37 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         return from_unit_obj.convert(quantity, 'to', to_unit_obj)
 
+    def get_aliases(self, unit: str) -> List[str]:
+        """Retrieves a list of aliases for a particular unit in the unit
+        converter
+
+        This method identifies all keys in the unit converter that are aliases
+        of a particular unit.
+
+        Parameters
+        ----------
+        unit : str
+            The identifier of the unit for which to search for aliases
+
+        Returns
+        -------
+        list
+            A list of strings containing all identifiers in the unit converter
+            which are aliases of ``unit``
+        """
+        if unit not in self:
+            raise UnitNotFoundError(
+                f'Unit "{unit}" is not defined in the unit converter')
+
+        unit_id = id(self[unit])
+
+        aliases = []
+        for key in self:
+            if (key != unit) and (id(self[key]) == unit_id):
+                aliases.append(key)
+
+        return aliases
+
     def is_convertible(self, unit1: str, unit2: str, *args: str) -> bool:
         """Checks whether units can be converted between each other
 
@@ -498,7 +529,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
     def is_simplified_unit(self, unit: str) -> bool:
         """Evaluates whether a unit is a fully-simplified unit
 
-        Returns whether a unit is NOT a complex unit.  Fully-simplified units
+        Returns whether a unit is NOT a compound unit.  Fully-simplified units
         can be added to the :py:class:`UnitConverter`, but compound units
         cannot.  Note that units that are not of type :py:class:`str` or which
         are enclosed in brackets (such as ``'(m)'``) are not considered
