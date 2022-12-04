@@ -1,7 +1,7 @@
 """This module contains functions for processing numeric data types
 """
 
-from .types import (
+from .datatypes import (
     is_float,
     is_integer,
 )
