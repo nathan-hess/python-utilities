@@ -153,10 +153,12 @@ class UnitConverterCLI:
                 'separated list of numbers) from one unit to another. Refer '
                 'to the PyXX documentation (https://pyxx.readthedocs.io) or '
                 'use the "search" command to view a list of available units.'
-            )
+            ),
+            add_help=False
         )
 
-        required_args = parser.add_argument_group('required arguments')
+        required_args = parser.add_argument_group('Required arguments')
+        optional_args = parser.add_argument_group('Optional arguments')
 
         required_args.add_argument(
             'quantity',
@@ -184,6 +186,12 @@ class UnitConverterCLI:
             required=True
         )
 
+        optional_args.add_argument(
+            '-h', '--help',
+            action='help',
+            help='Show this help message and exit'
+        )
+
         args = parser.parse_args(argv)
 
         # Validate inputs
@@ -202,7 +210,7 @@ class UnitConverterCLI:
                 f'and {to_unit} are not compatible')
 
         try:
-            quantity = [float(x) for x in str(args.quantity).split(',')]
+            quantity = [float(x.strip()) for x in str(args.quantity).split(',')]
         except (TypeError, ValueError):
             return self._exit_with_error(
                 f'Invalid format "{args.quantity}" of quantity to convert. '
@@ -264,16 +272,24 @@ class UnitConverterCLI:
                 'converter. Refer to the PyXX documentation '
                 '(https://pyxx.readthedocs.io) or use the "search" command '
                 'to view a list of available units.'
-            )
+            ),
+            add_help=False
         )
 
-        required_args = parser.add_argument_group('required arguments')
+        required_args = parser.add_argument_group('Required arguments')
+        optional_args = parser.add_argument_group('Optional arguments')
 
         required_args.add_argument(
             'unit',
             action='store',
             type=str,
             help='The unit about which to display detailed information'
+        )
+
+        optional_args.add_argument(
+            '-h', '--help',
+            action='help',
+            help='Show this help message and exit'
         )
 
         args = parser.parse_args(argv)
