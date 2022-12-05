@@ -13,6 +13,7 @@ from pyxx.arrays.classes.typedlist import TypedList
 from pyxx.arrays.functions.convert import convert_to_tuple
 from pyxx.units.exceptions import (
     IncompatibleUnitsError,
+    InvalidSearchFieldError,
     UnitAlreadyDefinedError,
     UnitNotFoundError,
 )
@@ -626,8 +627,8 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         allowed_search_fields = set(('key', 'name', 'tags', 'description'))
         if not set(search_fields).issubset(allowed_search_fields):
-            raise ValueError(
-                'The following search fields are not valid: '
+            raise InvalidSearchFieldError(
+                'Invalid search fields: '
                 f'{set(search_fields) - allowed_search_fields}')
 
         if not ((filter_by_tags is None)

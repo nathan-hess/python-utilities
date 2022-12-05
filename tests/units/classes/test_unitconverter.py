@@ -13,6 +13,7 @@ from pyxx.units import (
 )
 from pyxx.units.exceptions import (
     IncompatibleUnitsError,
+    InvalidSearchFieldError,
     UnitAlreadyDefinedError,
     UnitNotFoundError,
 )
@@ -855,7 +856,7 @@ class Test_UnitConverter(unittest.TestCase):
                     print_results=False, return_results=True)
 
         with self.subTest(issue='invalid_search_fields'):
-            with self.assertRaises(ValueError):
+            with self.assertRaises(InvalidSearchFieldError):
                 self.unit_converter.search(
                     search_term='*',
                     search_fields=['key', 'nonexistent_field'],

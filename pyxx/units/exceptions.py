@@ -40,6 +40,10 @@ class UnitConverterError(Exception):
     """General error for runtime issues related to :py:class:`UnitConverter`
     objects"""
 
+class InvalidSearchFieldError(UnitConverterError, ValueError):
+    """Error thrown when providing invalid search field(s) to the
+    :py:meth:`pyxx.units.UnitConverter.search` method"""
+
 class UnitNotFoundError(UnitConverterError, KeyError):
     """Error thrown when unable to retrieve a unit from a
     :py:class:`pyxx.units.UnitConverter` instance"""
