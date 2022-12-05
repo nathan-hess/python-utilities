@@ -13,6 +13,7 @@ from pyxx.arrays.classes.typedlist import TypedList
 from pyxx.arrays.functions.convert import convert_to_tuple
 from pyxx.units.exceptions import (
     IncompatibleUnitsError,
+    InvalidSearchFieldError,
     UnitAlreadyDefinedError,
     UnitNotFoundError,
 )
@@ -436,7 +437,38 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         return from_unit_obj.convert(quantity, 'to', to_unit_obj)
 
-    def is_convertible(self, unit1: str, unit2: str, *args: str):
+    def get_aliases(self, unit: str) -> List[str]:
+        """Retrieves a list of aliases for a particular unit in the unit
+        converter
+
+        This method identifies all keys in the unit converter that are aliases
+        of a particular unit.
+
+        Parameters
+        ----------
+        unit : str
+            The identifier of the unit for which to search for aliases
+
+        Returns
+        -------
+        list
+            A list of strings containing all identifiers in the unit converter
+            which are aliases of ``unit``
+        """
+        if unit not in self:
+            raise UnitNotFoundError(
+                f'Unit "{unit}" is not defined in the unit converter')
+
+        unit_id = id(self[unit])
+
+        aliases = []
+        for key in self:
+            if (key != unit) and (id(self[key]) == unit_id):
+                aliases.append(key)
+
+        return aliases
+
+    def is_convertible(self, unit1: str, unit2: str, *args: str) -> bool:
         """Checks whether units can be converted between each other
 
         Checks whether two or more units are compatible and can be directly
@@ -468,10 +500,37 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         return True
 
+    def is_defined_unit(self, unit: str) -> bool:
+        """Checks whether a simple or complex unit is composed exclusively of
+        units which have been defined in the unit converter
+
+        This method verifies that a simple unit or all component units of a
+        compound unit have been defined in the unit converter; if not, unit
+        conversions involving such a unit cannot be performed.
+
+        Parameters
+        ----------
+        unit : str
+            The simple or compound unit to analyze
+
+        Returns
+        -------
+        bool
+            Whether all component unit(s) in ``unit`` are defined in the
+            unit converter
+        """
+        component_units = parse_unit(str(unit)).keys()
+
+        for component in component_units:
+            if component not in self:
+                return False
+
+        return True
+
     def is_simplified_unit(self, unit: str) -> bool:
         """Evaluates whether a unit is a fully-simplified unit
 
-        Returns whether a unit is NOT a complex unit.  Fully-simplified units
+        Returns whether a unit is NOT a compound unit.  Fully-simplified units
         can be added to the :py:class:`UnitConverter`, but compound units
         cannot.  Note that units that are not of type :py:class:`str` or which
         are enclosed in brackets (such as ``'(m)'``) are not considered
@@ -568,8 +627,8 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         allowed_search_fields = set(('key', 'name', 'tags', 'description'))
         if not set(search_fields).issubset(allowed_search_fields):
-            raise ValueError(
-                'The following search fields are not valid: '
+            raise InvalidSearchFieldError(
+                'Invalid search fields: '
                 f'{set(search_fields) - allowed_search_fields}')
 
         if not ((filter_by_tags is None)

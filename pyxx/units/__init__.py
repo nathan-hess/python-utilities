@@ -16,4 +16,5 @@ from .classes import (
     UnitSystem,
     UnitSystemSI,
 )
+from .classes.cli import execute_from_command_line
 from .functions import parse_unit

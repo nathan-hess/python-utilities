@@ -13,6 +13,7 @@ from pyxx.units import (
 )
 from pyxx.units.exceptions import (
     IncompatibleUnitsError,
+    InvalidSearchFieldError,
     UnitAlreadyDefinedError,
     UnitNotFoundError,
 )
@@ -661,6 +662,25 @@ class Test_UnitConverter(unittest.TestCase):
             with self.subTest(inputs=inputs, outputs=outputs):
                 self.assertIs(self.unit_converter.is_convertible(*inputs), outputs)
 
+    def test_is_defined_unit(self):
+        # Verifies that it is possible to check whether a simple or compound
+        # unit contains exclusively component units defined in the unit converter
+        with self.subTest(unit_type='simple', defined=True):
+            for unit in ('kg', 'm', 'N'):
+                self.assertTrue(self.unit_converter.is_defined_unit(unit))
+
+        with self.subTest(unit_type='simple', defined=False):
+            for unit in ('miles', 'yd'):
+                self.assertFalse(self.unit_converter.is_defined_unit(unit))
+
+        with self.subTest(unit_type='compound', defined=True):
+            for unit in ('kg*m/s^2', 'mm/s', 'N*mm'):
+                self.assertTrue(self.unit_converter.is_defined_unit(unit))
+
+        with self.subTest(unit_type='compound', defined=False):
+            for unit in ('kg*in/s^2', 'in/s', 'in/hr'):
+                self.assertFalse(self.unit_converter.is_defined_unit(unit))
+
     def test_is_simplified(self):
         # Verifies that simple vs. compound units are distinguished correctly
         test_cases = (
@@ -675,6 +695,26 @@ class Test_UnitConverter(unittest.TestCase):
         for inputs, outputs in test_cases:
             with self.subTest(inputs=inputs, outputs=outputs):
                 self.assertIs(self.unit_converter.is_simplified_unit(inputs), outputs)
+
+    def test_get_aliases(self):
+        # Verifies that aliases can be retrieved correctly
+        self.assertListEqual(self.unit_converter.get_aliases('s'), [])
+
+        self.unit_converter.add_alias(key='s', aliases=['sec', 'mySeconds'])
+        self.assertListEqual(self.unit_converter.get_aliases('s'), ['sec', 'mySeconds'])
+        self.assertListEqual(self.unit_converter.get_aliases('sec'), ['s', 'mySeconds'])
+        self.assertListEqual(self.unit_converter.get_aliases('mySeconds'), ['s', 'sec'])
+
+    def test_get_aliases_invalid(self):
+        # Verifies that an appropriate error is thrown if attemtping to retrieve
+        # aliases for a unit that has not been defined
+        with self.subTest(comment='invalid_unit'):
+            with self.assertRaises(UnitNotFoundError):
+                self.unit_converter.get_aliases('invalid_unit')
+
+        with self.subTest(comment='compound_unit'):
+            with self.assertRaises(UnitNotFoundError):
+                self.unit_converter.get_aliases('m/s')
 
     def test_list_tags(self):
         # Verifies that tags are extracted correctly
@@ -816,7 +856,7 @@ class Test_UnitConverter(unittest.TestCase):
                     print_results=False, return_results=True)
 
         with self.subTest(issue='invalid_search_fields'):
-            with self.assertRaises(ValueError):
+            with self.assertRaises(InvalidSearchFieldError):
                 self.unit_converter.search(
                     search_term='*',
                     search_fields=['key', 'nonexistent_field'],
