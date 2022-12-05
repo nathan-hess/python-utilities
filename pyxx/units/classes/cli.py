@@ -110,6 +110,13 @@ class UnitConverterCLI:
         -------
         int
             Exit code
+
+        Notes
+        -----
+        The first item in :py:attr:`sys.argv` is the script name, but this
+        item should be omitted when calling :py:meth:`execute`.  In other
+        words, :py:meth:`execute` should be passed an input argument ``argv``
+        similar to ``sys.argv[1:]``.
         """
         try:
             command = argv[0]
