@@ -12,6 +12,7 @@ from typing import List, Optional
 # the variable is cached and cyclic import does not cause problems
 from pyxx import __version__ as PYXX_VERSION    # pylint: disable=R0401
 from pyxx.units.classes.unitconverter import UnitConverterSI
+from pyxx.units.exceptions import InvalidSearchFieldError
 
 
 def execute_from_command_line(argv: Optional[List[str]] = None) -> None:
@@ -125,6 +126,9 @@ class UnitConverterCLI:
 
         if command in ('info', 'i'):
             return self._info(argv)
+
+        if command in ('search', 's'):
+            return self._search(argv)
 
         if command in ('version', 'v', '--version'):
             return self.version()
@@ -321,5 +325,94 @@ class UnitConverterCLI:
         print(f'Tags:             {unit_entry.tags}')
         print(f'Aliases:          {UnitConverterSI().get_aliases(unit)}')
         print(f'Unit definition:  {unit_entry.unit}')
+
+        return 0
+
+    def _search(self, argv: List[str]) -> int:
+        # Process command-line arguments
+        parser = argparse.ArgumentParser(
+            prog=f'{self.PROGRAM_NAME} search',
+            description=(
+                'Search the list of units and associated metadata for units '
+                'defined in the unit converter. Refer to the PyXX '
+                'documentation (https://pyxx.readthedocs.io) to view a list '
+                'of available units.'
+            ),
+            add_help=False
+        )
+
+        required_args = parser.add_argument_group('Required arguments')
+        optional_args = parser.add_argument_group('Optional arguments')
+
+        required_args.add_argument(
+            'search_term',
+            action='store',
+            type=str,
+            help=('Search term. Use a wildcard (\'*\' or \'**\') to match '
+                  'any string')
+        )
+
+        optional_args.add_argument(
+            '-h', '--help',
+            action='help',
+            help='Show this help message and exit'
+        )
+        optional_args.add_argument(
+            '--search-fields',
+            action='store',
+            type=str,
+            default='key,name,tags,description',
+            help=(
+                'If provided, only the specified fields in the unit converter '
+                'will be searched. Available search fields are: (\'key\', '
+                '\'name\', \'tags\', \'description\'). Multiple fields can be '
+                'provided as a comma-separated list. The default behavior is '
+                'to search all available fields'
+            )
+        )
+        optional_args.add_argument(
+            '--filter-by-tags',
+            action='store',
+            type=str,
+            default=None,
+            help=(
+                'If provided, only search results with the given tag(s) will '
+                'be displayed. Use a comma-separated list to filter by '
+                'multiple tags'
+            )
+        )
+        optional_args.add_argument(
+            '--hide-aliases',
+            action='store_true',
+            help=(
+                'If this flag is provided, units with multiple aliases will '
+                'be shown only once in the search results (only the first '
+                'alias defined will be shown)'
+            )
+        )
+
+        args = parser.parse_args(argv)
+
+        if args.filter_by_tags is None:
+            filter_by_tags = None
+        else:
+            filter_by_tags = str(args.filter_by_tags).split(',')
+
+        hide_aliases = bool(args.hide_aliases)
+        search_fields = str(args.search_fields).split(',')
+        search_term = str(args.search_term)
+
+        # Display search results
+        try:
+            UnitConverterSI().search(
+                search_term    = search_term,
+                search_fields  = search_fields,
+                filter_by_tags = filter_by_tags,
+                hide_aliases   = hide_aliases,
+                print_results  = True,
+                return_results = False
+            )
+        except InvalidSearchFieldError as exception:
+            return self._exit_with_error(str(exception))
 
         return 0
