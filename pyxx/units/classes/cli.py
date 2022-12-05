@@ -256,8 +256,8 @@ class UnitConverterCLI:
         if not isinstance(exit_code, int):
             raise TypeError('Exit code must be an integer')
 
-        if exit_code == 0:
-            raise ValueError('Exit code should be nonzero')
+        if not (0 < exit_code <= 255):
+            raise ValueError('Exit code must be in the range (0, 255]')
 
         if print_help:
             self.help()
@@ -396,10 +396,11 @@ class UnitConverterCLI:
         if args.filter_by_tags is None:
             filter_by_tags = None
         else:
-            filter_by_tags = str(args.filter_by_tags).split(',')
+            filter_by_tags \
+                = [x.strip() for x in str(args.filter_by_tags).split(',')]
 
         hide_aliases = bool(args.hide_aliases)
-        search_fields = str(args.search_fields).split(',')
+        search_fields = [x.strip() for x in str(args.search_fields).split(',')]
         search_term = str(args.search_term)
 
         # Display search results
