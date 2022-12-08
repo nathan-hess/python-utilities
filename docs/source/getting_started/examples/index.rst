@@ -17,3 +17,4 @@ section.
     :maxdepth: 1
 
     units
+    unitconverters

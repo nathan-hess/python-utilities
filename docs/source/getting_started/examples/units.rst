@@ -3,14 +3,24 @@
 
 .. _section-examples_units:
 
-Unit Examples
-=============
+Units 1: Basics
+===============
 
 Overview
 --------
 
 This section explains how to use the :py:mod:`pyxx.units` module to define
 units, and perform unit conversions and related operations.
+
+.. note::
+
+    If you're already familiar with the basics of units and unit conversions
+    in the |PackageNameStylized| package and just need to use the unit
+    converters, head over to the :ref:`section-examples_unitconverters` page.
+
+
+Setup
+-----
 
 To follow along with these examples, begin by opening a Python terminal and
 importing the |PackageNameStylized| package:
@@ -202,3 +212,7 @@ More complex unit conversions can be performed using unit arithmetic:
 
 >>> print( (m/s).convert([3.14, 6.28], 'to', mm/s) )
 [3140. 6280.]
+
+An even more most streamlined way to perform unit conversions is using the
+:py:class:`pyxx.units.UnitConverter` class or the unit converter CLI.  Refer
+to the :ref:`section-examples_unitconverters` page for more detail.
