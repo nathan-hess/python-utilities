@@ -239,7 +239,9 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
     def _generate_unit_table(self, keys: Union[List[str], Tuple[str, ...]],
                              col_spacing: int = 4,
-                             generate_header: bool = True) -> List[str]:
+                             generate_header: bool = True,
+                             trim_trailing_whitespace: bool = True
+                             ) -> List[str]:
         # Generate lists of data to return
         def copy_tags_disable_multiline(tags: TypedList[str]):
             tags_copy = copy.deepcopy(tags)
@@ -277,7 +279,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                     = max(max_list_item_len(value), len(key))
 
         # Generate table header
-        unit_table = []
+        unit_table: List[str] = []
 
         if generate_header:
             # Column names
@@ -314,6 +316,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                 line += f'{column_content[j]:{print_width}s}'
 
             unit_table.append(line)
+
+        # If requested, remove trailing whitespace from each line
+        if trim_trailing_whitespace:
+            unit_table = [line.rstrip() for line in unit_table]
 
         return unit_table
 
