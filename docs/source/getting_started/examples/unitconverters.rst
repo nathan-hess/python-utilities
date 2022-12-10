@@ -277,3 +277,116 @@ units to see whether the unit(s) you need are available.
         m              meter         ['length']    [1. 0. 0. 0. 0. 0. 0.]    None       
         meter          meter         ['length']    [1. 0. 0. 0. 0. 0. 0.]    None
         ...
+
+
+Viewing Detailed Information about a Unit
+-----------------------------------------
+
+.. tab-set::
+
+    .. tab-item:: CLI
+        :sync: unitconverter_example_cli
+
+        The ``unit-converter info`` command (or ``unit-converter i`` for
+        short) displays detailed information about a unit in the unit converter.
+        Units should be referenced by their "key", the unique identifier for
+        the unit.
+        
+        For example, to view detailed information about the unit of seconds (key
+        "s"), run:
+
+        .. code-block:: text
+
+            $ unit-converter info s
+            Unit ID:          s
+            Name:             second
+            Description:      None
+            Tags:             ['time']
+            Aliases:          ['sec', 'second', 'seconds']
+            Unit definition:  [0. 1. 0. 0. 0. 0. 0.] - scale: 1.0 - offset: 0.0
+
+        For more information and options for searching units with the CLI, run:
+
+        .. code-block:: text
+
+            $ unit-converter info --help
+
+    .. tab-item:: UnitConverter Class
+        :sync: unitconverter_example_class
+
+        The simplest way to view information about a unit is to simply print that
+        unit's entry in the :py:class:`pyxx.units.UnitConverter` instance.  For
+        example, to view information about units of seconds, run:
+
+        >>> print( unit_converter['s'] )
+        <class 'pyxx.units.classes.unitconverter.UnitConverterEntry'>
+        -- Name: second
+        -- Tags: ['time']
+        -- Unit: [0. 1. 0. 0. 0. 0. 0.] - scale: 1.0 - offset: 0.0
+
+        Additionally, the list of aliases for a unit can be obtained using the
+        :py:meth:`pyxx.units.UnitConverter.get_aliases` method:
+
+        >>> print( unit_converter.get_aliases('s') )
+        ['sec', 'second', 'seconds']
+
+
+Adding and Removing Units
+-------------------------
+
+.. tab-set::
+
+    .. tab-item:: CLI
+        :sync: unitconverter_example_cli
+
+        Adding and removing units is not supported for the unit converter CLI.
+        If custom units need to be defined in the unit converter, use the
+        :py:class:`pyxx.units.UnitConverter` class.
+
+    .. tab-item:: UnitConverter Class
+        :sync: unitconverter_example_class
+
+        Suppose that we want to add a new unit to the unit converter:
+
+        >>> newUnit = pyxx.units.UnitLinearSI(
+        ...     base_unit_exps=[1, 0, 1, 0, 1, 0, 1],
+        ...     scale=1000, offset=0
+        ... )
+
+        For questions about how to define units, refer to the
+        :ref:`section-examples_units` page.
+
+        Every item in a :py:class:`pyxx.units.UnitConverter` must be an instance
+        of :py:class:`pyxx.units.UnitConverterEntry`.  We can create such an
+        object using:
+
+        >>> newUnit_entry = pyxx.units.UnitConverterEntry(
+        ...    unit=newUnit, name='newUnit', description='A demo unit')
+
+        The :py:class:`pyxx.units.UnitConverter` class inherits from Python's
+        built-in :py:class:`dict` class, so any of the methods that for
+        managing items in a Python dictionary can be used for the
+        |PackageNameStylized| unit converters.
+        
+        First, verify that our new unit is not already in the unit converter:
+
+        >>> print( 'newUnit' in unit_converter )
+        False
+
+        Next, add the new unit to the unit converter:
+
+        >>> unit_converter['newUnit'] = newUnit_entry
+
+        Again, verify that the unit has been added:
+
+        >>> print( 'newUnit' in unit_converter )
+        True
+
+        The unit can be removed from the unit converter using:
+
+        >>> del unit_converter['newUnit']
+
+        Finally, verify that the unit has been removed successfully:
+
+        >>> print( 'newUnit' in unit_converter )
+        False
