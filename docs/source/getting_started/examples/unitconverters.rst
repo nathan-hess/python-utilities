@@ -173,9 +173,9 @@ units to see whether the unit(s) you need are available.
         .. code-block:: text
 
             $ unit-converter search --hide-aliases millimeter
-            Key            Name          Tags          base_unit_exps            Description
-            --------------------------------------------------------------------------------
-            mm             millimeter    ['length']    [1. 0. 0. 0. 0. 0. 0.]    None
+            Key    Name          Tags          base_unit_exps            Description
+            ------------------------------------------------------------------------
+            mm     millimeter    ['length']    [1. 0. 0. 0. 0. 0. 0.]    None
 
         We might also want to search only certain fields, which can be done using the
         ``--search-fields`` flag, providing either a single field or a comma-separated
@@ -243,9 +243,9 @@ units to see whether the unit(s) you need are available.
         showing duplicates, we can use the ``hide_aliases`` argument:
 
         >>> unit_converter.search('millimeter', hide_aliases=True)
-        Key            Name          Tags          base_unit_exps            Description
-        --------------------------------------------------------------------------------
-        mm             millimeter    ['length']    [1. 0. 0. 0. 0. 0. 0.]    None
+        Key    Name          Tags          base_unit_exps            Description
+        ------------------------------------------------------------------------
+        mm     millimeter    ['length']    [1. 0. 0. 0. 0. 0. 0.]    None
 
         We might also want to search only certain fields, which can be done using the
         ``search_fields`` argument, providing either a single field or a list of fields to

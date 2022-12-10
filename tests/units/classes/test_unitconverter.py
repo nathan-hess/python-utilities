@@ -266,14 +266,14 @@ class Test_UnitConverter(unittest.TestCase):
             self.unit_converter.__repr__(),
             ("<class 'pyxx.units.classes.unitconverter.UnitConverter'>\n"
              "-- System of units: <class 'pyxx.units.classes.unitsystem.UnitSystemSI'> - SI - International System of Units\n"
-             "Key    Name         Tags          base_unit_exps                   Description    \n"
+             "Key    Name         Tags          base_unit_exps                   Description\n"
              "----------------------------------------------------------------------------------\n"
-             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         \n"
-             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    \n"
-             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        \n"
+             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters\n"
+             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters\n"
+             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds\n"
              "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass\n"
-             "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        \n"
-             "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    ")
+             "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons\n"
+             "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons")
         )
 
     def test_str(self):
@@ -281,14 +281,14 @@ class Test_UnitConverter(unittest.TestCase):
         # is constructed correctly
         self.assertEqual(
             str(self.unit_converter),
-            ("Key    Name         Tags          base_unit_exps                   Description    \n"
+            ("Key    Name         Tags          base_unit_exps                   Description\n"
              "----------------------------------------------------------------------------------\n"
-             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         \n"
-             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    \n"
-             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        \n"
+             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters\n"
+             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters\n"
+             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds\n"
              "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass\n"
-             "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        \n"
-             "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    ")
+             "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons\n"
+             "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons")
         )
 
     def test_generate_table(self):
@@ -296,14 +296,14 @@ class Test_UnitConverter(unittest.TestCase):
         with self.subTest(unit_converter='filled'):
             self.assertListEqual(
                 self.unit_converter._generate_unit_table(list(self.unit_converter.keys())),
-                ["Key    Name         Tags          base_unit_exps                   Description    ",
+                ["Key    Name         Tags          base_unit_exps                   Description",
                  "----------------------------------------------------------------------------------",
-                 "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         ",
-                 "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    ",
-                 "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        ",
+                 "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters",
+                 "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters",
+                 "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds",
                  "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass",
-                 "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        ",
-                 "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    "]
+                 "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons",
+                 "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons"]
             )
 
         with self.subTest(unit_converter='empty'):
@@ -322,14 +322,14 @@ class Test_UnitConverter(unittest.TestCase):
                     list(self.unit_converter.keys()),
                     col_spacing=1
                 ),
-                ["Key Name      Tags       base_unit_exps                Description    ",
+                ["Key Name      Tags       base_unit_exps                Description",
                  "----------------------------------------------------------------------",
-                 "m   meter     ['length'] [1. 0. 0. 0. 0. 0. 0.]        meters         ",
-                 "mm  None      ['length'] [1. 0. 0. 0. 0. 0. 0.]        millimeters    ",
-                 "s   None      ['time']   [0. 1. 0. 0. 0. 0. 0.]        seconds        ",
+                 "m   meter     ['length'] [1. 0. 0. 0. 0. 0. 0.]        meters",
+                 "mm  None      ['length'] [1. 0. 0. 0. 0. 0. 0.]        millimeters",
+                 "s   None      ['time']   [0. 1. 0. 0. 0. 0. 0.]        seconds",
                  "kg  kilograms ['mass']   [0. 0. 0. 0. 0. 0. 1.]        SI unit of mass",
-                 "N   None      ['force']  [ 1. -2.  0.  0.  0.  0.  1.] Newtons        ",
-                 "kN  None      ['force']  [ 1. -2.  0.  0.  0.  0.  1.] kilonewtons    "]
+                 "N   None      ['force']  [ 1. -2.  0.  0.  0.  0.  1.] Newtons",
+                 "kN  None      ['force']  [ 1. -2.  0.  0.  0.  0.  1.] kilonewtons"]
             )
 
         with self.subTest(unit_converter='empty'):
@@ -350,12 +350,12 @@ class Test_UnitConverter(unittest.TestCase):
                     list(self.unit_converter.keys()),
                     generate_header=False
                 ),
-                ["m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         ",
-                 "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    ",
-                 "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        ",
+                ["m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters",
+                 "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters",
+                 "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds",
                  "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass",
-                 "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        ",
-                 "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    "]
+                 "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons",
+                 "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons"]
             )
 
         with self.subTest(unit_converter='empty'):
@@ -365,6 +365,28 @@ class Test_UnitConverter(unittest.TestCase):
                     generate_header=False
                 ),
                 []
+            )
+
+    def test_generate_table_trailing_whitespace(self):
+        # Verifies that printable table of units is generated correctly
+        with self.subTest(unit_converter='filled'):
+            self.assertListEqual(
+                self.unit_converter._generate_unit_table(list(self.unit_converter.keys()), trim_trailing_whitespace=False),
+                ["Key    Name         Tags          base_unit_exps                   Description    ",
+                 "----------------------------------------------------------------------------------",
+                 "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]           meters         ",
+                 "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]           millimeters    ",
+                 "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]           seconds        ",
+                 "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]           SI unit of mass",
+                 "N      None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    Newtons        ",
+                 "kN     None         ['force']     [ 1. -2.  0.  0.  0.  0.  1.]    kilonewtons    "]
+            )
+
+        with self.subTest(unit_converter='empty'):
+            self.assertListEqual(
+                self.unit_converter_empty._generate_unit_table(list(self.unit_converter_empty.keys()), trim_trailing_whitespace=False),
+                ["Key    Name    Tags    base_unit_exps    Description",
+                 "----------------------------------------------------"]
             )
 
     def test_unit_system(self):
@@ -874,11 +896,11 @@ class Test_UnitConverter(unittest.TestCase):
         self.assertIsNone(outputs)
         self.assertEqual(
             text,
-            ("Key    Name         Tags          base_unit_exps            Description    \n"
+            ("Key    Name         Tags          base_unit_exps            Description\n"
              "---------------------------------------------------------------------------\n"
-             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]    meters         \n"
-             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]    millimeters    \n"
-             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]    seconds        \n"
+             "m      meter        ['length']    [1. 0. 0. 0. 0. 0. 0.]    meters\n"
+             "mm     None         ['length']    [1. 0. 0. 0. 0. 0. 0.]    millimeters\n"
+             "s      None         ['time']      [0. 1. 0. 0. 0. 0. 0.]    seconds\n"
              "kg     kilograms    ['mass']      [0. 0. 0. 0. 0. 0. 1.]    SI unit of mass\n")
         )
 
