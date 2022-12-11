@@ -90,6 +90,9 @@ First, clone the source repository to a location of your choice:
 
             C:\>git clone https://github.com/nathan-hess/python-utilities.git
 
+        Note that it is not recommended that you download the source code to
+        your ``C:\`` directory; this is merely shown as a general example.
+
 Then, add the root directory of the repository to your ``PYTHONPATH`` environment
 variable:
 
@@ -108,9 +111,6 @@ variable:
         .. code-block:: powershell
 
             C:\>set PYTHONPATH=%PYTHONPATH%;%CD%\python-utilities
-
-        Note that it is not recommended that you download the source code to
-        your ``C:\`` directory; this is merely shown as a general example.
 
 Finally, make sure to install required dependencies through pip:
 
