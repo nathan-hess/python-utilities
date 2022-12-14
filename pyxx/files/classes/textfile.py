@@ -280,6 +280,52 @@ class TextFile(File):
             line_ending = line_ending
         )
 
+    def read(self, path: Optional[Union[str, pathlib.Path]] = None) -> None:
+        """Read file from disk
+
+        Calling this method reads the file specified by the :py:attr:`path`
+        attribute from the disk, populating :py:attr:`contents` and
+        :py:attr:`raw_contents`.  Additionally, the file hashes stored in
+        the :py:attr:`hashes` attribute are updated (to make it easier to
+        check if the file has been modified later).
+        """
+        # Identify file to read, and store in "path" attribute
+        if path is not None:
+            # First priority: use "path" argument if provided
+            self.path = path
+        else:
+            # Second priority: use "path" attribute.  If it isn't yet
+            # defined, throw an error
+            if self.path is None:
+                raise AttributeError(
+                    'Neither the "path" argument was provided nor is the '
+                    '"path" attribute defined.  At least one of these must '
+                    'be provided to read the file')
+
+        # Check that file exists
+        if not self.path.is_file():
+            raise FileNotFoundError(f'Cannot find file "{self.path}"')
+
+        # Compute and store file hashes
+        self.store_file_hashes()
+
+        # Read file
+        with open(self.path, 'r', encoding='utf_8') as fileID:
+            self._raw_contents = fileID.readlines()
+
+            # Store line endings
+            self._line_ending = fileID.newlines
+
+        # Store whether original file has a trailing newline
+        self.trailing_newline = self._raw_contents[-1].endswith('\n')
+
+        # Remove trailing newlines.  This is beneficial because if the
+        # file is later cleaned and, for example, comments are removed,
+        # this can result in an unpredictable mix of lines with trailing
+        # newlines and lines without, so it's simpler to remove them all
+        # at the beginning and add them when writing the file
+        self._contents = [line.rstrip('\r\n') for line in self._raw_contents]
+
     def set_contents(self, contents: List[str], trailing_newline: bool,
                      pass_by_reference: bool = False) -> None:
         """Add data to the :py:attr:`contents` list
@@ -327,52 +373,6 @@ class TextFile(File):
                 'Argument "trailing_newline" must be of type "bool"')
 
         self.trailing_newline = trailing_newline
-
-    def read(self, path: Optional[Union[str, pathlib.Path]] = None) -> None:
-        """Read file from disk
-
-        Calling this method reads the file specified by the :py:attr:`path`
-        attribute from the disk, populating :py:attr:`contents` and
-        :py:attr:`raw_contents`.  Additionally, the file hashes stored in
-        the :py:attr:`hashes` attribute are updated (to make it easier to
-        check if the file has been modified later).
-        """
-        # Identify file to read, and store in "path" attribute
-        if path is not None:
-            # First priority: use "path" argument if provided
-            self.path = path
-        else:
-            # Second priority: use "path" attribute.  If it isn't yet
-            # defined, throw an error
-            if self.path is None:
-                raise AttributeError(
-                    'Neither the "path" argument was provided nor is the '
-                    '"path" attribute defined.  At least one of these must '
-                    'be provided to read the file')
-
-        # Check that file exists
-        if not self.path.is_file():
-            raise FileNotFoundError(f'Cannot find file "{self.path}"')
-
-        # Compute and store file hashes
-        self.store_file_hashes()
-
-        # Read file
-        with open(self.path, 'r', encoding='utf_8') as fileID:
-            self._raw_contents = fileID.readlines()
-
-            # Store line endings
-            self._line_ending = fileID.newlines
-
-        # Store whether original file has a trailing newline
-        self.trailing_newline = self._raw_contents[-1].endswith('\n')
-
-        # Remove trailing newlines.  This is beneficial because if the
-        # file is later cleaned and, for example, comments are removed,
-        # this can result in an unpredictable mix of lines with trailing
-        # newlines and lines without, so it's simpler to remove them all
-        # at the beginning and add them when writing the file
-        self._contents = [line.rstrip('\r\n') for line in self._raw_contents]
 
     def write(self, output_file: Union[str, pathlib.Path],
               write_mode: str = 'w', warn_before_overwrite: bool = True,
