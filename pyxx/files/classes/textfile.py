@@ -118,7 +118,7 @@ class TextFile(File):
         If trying to set the :py:attr:`contents` attribute, do not try to set
         this attribute directly (i.e., don't use code similar to
         ``MyTextFile.contents = ['line1', 'line2', 'line3']``).  Instead, use
-        the :py:meth:`populate_contents` method, as it offers greater control
+        the :py:meth:`set_contents` method, as it offers greater control
         over whether the contents are passed by reference or value.
         """
         return self._contents
@@ -164,7 +164,7 @@ class TextFile(File):
         if self._trailing_newline is None:
             raise AttributeError(
                 'Attribute "trailing_newline" has not been set. Please ensure '
-                'that either the `read()` or `populate_contents()` method has '
+                'that either the `read()` or `set_contents()` method has '
                 'been called')
 
         return self._trailing_newline
@@ -280,54 +280,6 @@ class TextFile(File):
             line_ending = line_ending
         )
 
-    def populate_contents(self, contents: List[str], trailing_newline: bool,
-                          pass_by_reference: bool = False) -> None:
-        """Add data to the :py:attr:`contents` list
-
-        Allows users to manually fill the :py:attr:`contents` list with
-        user-defined content.  The input list must be a list of strings,
-        and the user can optionally choose whether to pass the input by
-        reference or value.
-
-        Parameters
-        ----------
-        contents : list
-            List of strings which are to be assigned to the
-            :py:attr:`contents` list
-        trailing_newline : bool
-            Whether the contents being added represent a file with a trailing
-            newline (because the file wasn't read, the object has no way to
-            determine whether the file has a trailing newline, so users must
-            provide this information)
-        pass_by_reference : bool, optional
-            Whether to pass the ``contents`` argument by reference (default
-            is ``False``)
-
-        Notes
-        -----
-        If passing ``contents`` by reference, this means that if subsequent
-        changes are made to the original ``contents`` object, they will be
-        reflected in the :py:attr:`contents` attribute.  If passing by value,
-        then a *copy* of the ``contents`` argument will be made, so changing
-        the object outside the class instance will not affect the
-        :py:attr:`contents` attribute.
-        """
-        # Verify that input matches required format
-        self._check_contents(contents)
-
-        # Store contents
-        if pass_by_reference:
-            self._contents = contents
-        else:
-            self._contents = copy.deepcopy(contents)
-
-        # Store whether file has a trailing newline
-        if not isinstance(trailing_newline, bool):
-            raise TypeError(
-                'Argument "trailing_newline" must be of type "bool"')
-
-        self.trailing_newline = trailing_newline
-
     def read(self, path: Optional[Union[str, pathlib.Path]] = None) -> None:
         """Read file from disk
 
@@ -373,6 +325,54 @@ class TextFile(File):
         # newlines and lines without, so it's simpler to remove them all
         # at the beginning and add them when writing the file
         self._contents = [line.rstrip('\r\n') for line in self._raw_contents]
+
+    def set_contents(self, contents: List[str], trailing_newline: bool,
+                     pass_by_reference: bool = False) -> None:
+        """Add data to the :py:attr:`contents` list
+
+        Allows users to manually fill the :py:attr:`contents` list with
+        user-defined content.  The input list must be a list of strings,
+        and the user can optionally choose whether to pass the input by
+        reference or value.
+
+        Parameters
+        ----------
+        contents : list
+            List of strings which are to be assigned to the
+            :py:attr:`contents` list
+        trailing_newline : bool
+            Whether the contents being added represent a file with a trailing
+            newline (because the file wasn't read, the object has no way to
+            determine whether the file has a trailing newline, so users must
+            provide this information)
+        pass_by_reference : bool, optional
+            Whether to pass the ``contents`` argument by reference (default
+            is ``False``)
+
+        Notes
+        -----
+        If passing ``contents`` by reference, this means that if subsequent
+        changes are made to the original ``contents`` object, they will be
+        reflected in the :py:attr:`contents` attribute.  If passing by value,
+        then a *copy* of the ``contents`` argument will be made, so changing
+        the object outside the class instance will not affect the
+        :py:attr:`contents` attribute.
+        """
+        # Verify that input matches required format
+        self._check_contents(contents)
+
+        # Store contents
+        if pass_by_reference:
+            self._contents = contents
+        else:
+            self._contents = copy.deepcopy(contents)
+
+        # Store whether file has a trailing newline
+        if not isinstance(trailing_newline, bool):
+            raise TypeError(
+                'Argument "trailing_newline" must be of type "bool"')
+
+        self.trailing_newline = trailing_newline
 
     def write(self, output_file: Union[str, pathlib.Path],
               write_mode: str = 'w', warn_before_overwrite: bool = True,

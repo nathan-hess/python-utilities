@@ -487,36 +487,36 @@ class Test_TextFile_Populate(unittest.TestCase):
         # match required format
         with self.subTest(issue='not_list'):
             with self.assertRaises(TypeError):
-                self.file.populate_contents('myContents', True)
+                self.file.set_contents('myContents', True)
 
         with self.subTest(issue='items_not_str'):
             with self.assertRaises(TypeError):
-                self.file.populate_contents(['myContents', 4], True)
+                self.file.set_contents(['myContents', 4], True)
 
     def test_invalid_trailing_newline(self):
         # Verifies that errors are thrown if the `trailing_newline` argument
         # is not valid
         with self.assertRaises(TypeError):
-            self.file.populate_contents(['line1', 'line2'], '\n')
+            self.file.set_contents(['line1', 'line2'], '\n')
 
     def test_populate_trailing_newline(self):
-        # Verifies that `populate_contents()` stores "trailing_newline"
+        # Verifies that `set_contents()` stores "trailing_newline"
         # attribute correctly
         with self.subTest(trailing_newline=True):
-            self.file.populate_contents(['line1', 'line2'], True)
+            self.file.set_contents(['line1', 'line2'], True)
             self.assertTrue(self.file._trailing_newline)
 
         with self.subTest(trailing_newline=False):
-            self.file.populate_contents(['line1', 'line2'], False)
+            self.file.set_contents(['line1', 'line2'], False)
             self.assertFalse(self.file._trailing_newline)
 
-    def test_populate_contents_reference(self):
-        # Verifies that `populate_contents()` stores data correctly
+    def test_set_contents_reference(self):
+        # Verifies that `set_contents()` stores data correctly
         # when passing argument by reference
         contents = ['line1', 'line2', '', '# data']
 
         with self.subTest(time='before_edit'):
-            self.file.populate_contents(
+            self.file.set_contents(
                 contents=contents,
                 trailing_newline=True,
                 pass_by_reference=True)
@@ -532,13 +532,13 @@ class Test_TextFile_Populate(unittest.TestCase):
                 self.file._contents,
                 ['line1', 'line2', 'myModification', '# data'])
 
-    def test_populate_contents_value(self):
-        # Verifies that `populate_contents()` stores data correctly
+    def test_set_contents_value(self):
+        # Verifies that `set_contents()` stores data correctly
         # when passing argument by value
         contents = ['line1', 'line2', '', '# data']
 
         with self.subTest(time='before_edit'):
-            self.file.populate_contents(
+            self.file.set_contents(
                 contents=contents,
                 trailing_newline=True,
                 pass_by_reference=False)
