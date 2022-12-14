@@ -118,7 +118,7 @@ class TextFile(File):
         If trying to set the :py:attr:`contents` attribute, do not try to set
         this attribute directly (i.e., don't use code similar to
         ``MyTextFile.contents = ['line1', 'line2', 'line3']``).  Instead, use
-        the :py:meth:`populate_contents` method, as it offers greater control
+        the :py:meth:`set_contents` method, as it offers greater control
         over whether the contents are passed by reference or value.
         """
         return self._contents
@@ -164,7 +164,7 @@ class TextFile(File):
         if self._trailing_newline is None:
             raise AttributeError(
                 'Attribute "trailing_newline" has not been set. Please ensure '
-                'that either the `read()` or `populate_contents()` method has '
+                'that either the `read()` or `set_contents()` method has '
                 'been called')
 
         return self._trailing_newline
@@ -280,8 +280,8 @@ class TextFile(File):
             line_ending = line_ending
         )
 
-    def populate_contents(self, contents: List[str], trailing_newline: bool,
-                          pass_by_reference: bool = False) -> None:
+    def set_contents(self, contents: List[str], trailing_newline: bool,
+                     pass_by_reference: bool = False) -> None:
         """Add data to the :py:attr:`contents` list
 
         Allows users to manually fill the :py:attr:`contents` list with
