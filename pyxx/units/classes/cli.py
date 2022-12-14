@@ -16,17 +16,18 @@ from pyxx.units.exceptions import InvalidSearchFieldError
 
 
 def execute_from_command_line(argv: Optional[List[str]] = None) -> None:
-    """Calls the ScaleUtil CLI
+    """Calls the PyXX unit converter CLI
 
-    Runs the ScaleUtil CLI, allowing users to perform actions such as running
-    a scaling analysis or post-processing results.
+    Runs the PyXX unit converter CLI, allowing users to perform actions such
+    as converting quantities from one unit to another or viewing information
+    about units.
 
     Parameters
     ----------
     argv : list, optional
-        List of arguments to pass to the ScaleUtil CLI.  If not provided or
-        ``None``, arguments are obtained from ``sys.argv`` (default is
-        ``None``)
+        List of arguments to pass to the PyXX unit converter CLI.  If not
+        provided or ``None``, arguments are obtained from ``sys.argv``
+        (default is ``None``)
     """
     if argv is None:
         argv = sys.argv[1:]
