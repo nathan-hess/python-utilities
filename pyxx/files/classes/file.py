@@ -185,6 +185,58 @@ class File:
 
         return False
 
+    def set_read_metadata(self,
+                          path: Optional[Union[str, pathlib.Path]] = None
+                          ) -> None:
+        """Configures metadata related to file to be read from disk
+
+        This method performs several pre-processing steps to prepare to read
+        a file from the disk:
+
+        1. Sets the :py:attr:`path` attribute.  If the ``path`` argument was
+           provided, the attribute is set to this value; otherwise, the
+           existing value stored in the :py:attr:`path` attribute is used (or
+           an error is thrown if not defined).
+        2. Verifies that the file specified by the :py:attr:`path` attribute
+           exists.
+        3. Stores the hashes for the file.
+
+        It is advised that this method be called prior to reading any file.
+
+        Parameters
+        ----------
+        path : str or pathlib.Path, optional
+            Location of the file in the file system (default is ``None``)
+
+        Raises
+        ------
+        AttributeError
+            If the both the ``path`` argument and the existing :py:attr:`path`
+            attribute are ``None``
+        FileNotFoundError
+            If the file specified by :py:attr:`path` (after completing Step 1
+            above) does not exist
+        """
+        # Identify file to read, and store in "path" attribute
+        if path is not None:
+            # First priority: use "path" argument if provided
+            self.path = path
+        else:
+            # Second priority: use "path" attribute.  If it isn't yet
+            # defined, throw an error
+            if self.path is None:
+                raise AttributeError(
+                    'Neither the "path" argument was provided nor is the '
+                    '"path" attribute defined.  At least one of these must '
+                    'be provided to read the file')
+
+        # Check that file exists
+        if not self.path.is_file():
+            raise FileNotFoundError(f'Cannot find file "{self.path}"')
+
+        # Compute and store file hashes
+        self.store_file_hashes()
+
     def store_file_hashes(self,
             hash_functions: Union[tuple, str] = ('md5', 'sha256')):  # noqa : E128
         """Computes and stores hashes of the file specified by the
