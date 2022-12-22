@@ -433,10 +433,6 @@ class Unit:
         np.ndarray
             NumPy array of the same shape as ``value`` containing the
             quantities after performing the specified unit conversion
-
-        Examples
-        --------
-        For examples, refer to the :ref:`section-examples_units` page.
         """
         # Validate input argument types
         if not isinstance(convert_type, str):
