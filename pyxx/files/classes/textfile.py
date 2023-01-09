@@ -29,8 +29,8 @@ class TextFile(File):
 
         Parameters
         ----------
-        path : str or pathlib.Path
-            Location of the text file in the file system
+        path : str or pathlib.Path, optional
+            Location of the text file in the file system  (default is ``None``)
         comment_chars : tuple or str, optional
             Character(s) considered to represent comments in the text file
             (default is ``None``, which considers no characters to denote
@@ -288,26 +288,18 @@ class TextFile(File):
         :py:attr:`raw_contents`.  Additionally, the file hashes stored in
         the :py:attr:`hashes` attribute are updated (to make it easier to
         check if the file has been modified later).
+
+        Parameters
+        ----------
+        path : str or pathlib.Path, optional
+            Location of the text file in the file system  (default is ``None``)
         """
-        # Identify file to read, and store in "path" attribute
-        if path is not None:
-            # First priority: use "path" argument if provided
-            self.path = path
-        else:
-            # Second priority: use "path" attribute.  If it isn't yet
-            # defined, throw an error
-            if self.path is None:
-                raise AttributeError(
-                    'Neither the "path" argument was provided nor is the '
-                    '"path" attribute defined.  At least one of these must '
-                    'be provided to read the file')
-
-        # Check that file exists
-        if not self.path.is_file():
-            raise FileNotFoundError(f'Cannot find file "{self.path}"')
-
-        # Compute and store file hashes
-        self.store_file_hashes()
+        # Set "path" attribute, verify file exists, and store file hashes
+        #   Mypy type annotation added because mmediately after calling
+        #   `set_read_metadata()`, the "path" attribute cannot be `None`
+        #   or else an error would have been thrown
+        self.set_read_metadata(path)
+        self.path: pathlib.Path
 
         # Read file
         with open(self.path, 'r', encoding='utf_8') as fileID:
