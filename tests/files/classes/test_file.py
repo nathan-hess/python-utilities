@@ -9,9 +9,10 @@ from tests import CreateTempTestDir, SAMPLE_FILES_DIR
 
 class Test_File(unittest.TestCase):
     def setUp(self):
-        self.file_str = str(SAMPLE_FILES_DIR / 'hashes.txt')
+        self.file_pathlib = SAMPLE_FILES_DIR / 'hashes.txt'
+        self.file_str = str(self.file_pathlib)
 
-        self.file_from_pathlib = File(SAMPLE_FILES_DIR / 'hashes.txt')
+        self.file_from_pathlib = File(self.file_pathlib)
         self.file_from_str = File(self.file_str)
         self.file_empty = File()
 
@@ -225,6 +226,71 @@ class Test_File(unittest.TestCase):
             # Compute hashes again
             file.store_file_hashes()
             self.assertFalse(file.has_changed())
+
+    def test_set_read_metadata_path_none(self):
+        # Verifies that `set_read_metadata()` throws an error if no path
+        # is provided
+        with self.assertRaises(AttributeError):
+            self.file_empty.set_read_metadata()
+
+    def test_set_read_metadata_path_attr(self):
+        # Verifies that `set_read_metadata()` correctly reads a file and
+        # stores file hashes if the path is provided as an attribute
+        self.assertDictEqual(self.file_empty.hashes, {})
+
+        self.file_empty._path = self.file_pathlib
+        self.file_empty.set_read_metadata()
+
+        with self.subTest(check='path'):
+            self.assertEqual(self.file_empty.path, self.file_pathlib)
+
+        with self.subTest(check='hashes'):
+            self.assertDictEqual(
+                self.file_empty.hashes,
+                {
+                    'md5': self.hashes['md5'],
+                    'sha256': self.hashes['sha256'],
+                }
+            )
+
+    def test_set_read_metadata_path_arg(self):
+        # Verifies that `set_read_metadata()` correctly reads a file and
+        # stores file hashes if the path is provided as an argument
+        self.assertDictEqual(self.file_empty.hashes, {})
+
+        self.file_empty.set_read_metadata(self.file_pathlib)
+
+        with self.subTest(check='path'):
+            self.assertEqual(self.file_empty.path, self.file_pathlib)
+
+        with self.subTest(check='hashes'):
+            self.assertDictEqual(
+                self.file_empty.hashes,
+                {
+                    'md5': self.hashes['md5'],
+                    'sha256': self.hashes['sha256'],
+                }
+            )
+
+    def test_set_read_metadata_path_arg_attr(self):
+        # Verifies that `set_read_metadata()` correctly gives priority to
+        # a path provided as an argument (over stored attribute)
+        self.assertDictEqual(self.file_empty.hashes, {})
+
+        self.file_empty._path = SAMPLE_FILES_DIR / 'textfile_write.txt'
+        self.file_empty.set_read_metadata(self.file_pathlib)
+
+        with self.subTest(check='path'):
+            self.assertEqual(self.file_empty.path, self.file_pathlib)
+
+        with self.subTest(check='hashes'):
+            self.assertDictEqual(
+                self.file_empty.hashes,
+                {
+                    'md5': self.hashes['md5'],
+                    'sha256': self.hashes['sha256'],
+                }
+            )
 
     def test_store_hashes(self):
         # Verifies that file hashes are stored correctly
