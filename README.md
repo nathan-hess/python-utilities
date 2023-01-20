@@ -30,7 +30,7 @@ For more information about configuring Python and using packages, refer to the o
 
 ## Documentation
 
-Detailed documentation for the PyXX project can be found here: http://pyxx.readthedocs.io.
+Detailed documentation for the PyXX project can be found here: https://pyxx.readthedocs.io.
 
 
 ## Acknowledgments
