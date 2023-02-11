@@ -35,7 +35,8 @@ class File:
         self._hashes: Dict[str, str] = {}
 
         # Store file path
-        self.path = path
+        self.path = path  # type: ignore
+                          # (workaround for python/mypy#3004)  # noqa: E114, E116
 
     def __repr__(self):
         # Display class
@@ -65,13 +66,13 @@ class File:
         return file_hash_str
 
     @property
-    def hashes(self):
+    def hashes(self) -> Dict[str, str]:
         """A copy of the dictionary containing any file hashes previously
         computed for the file specified by the :py:attr:`path` attribute"""
         return copy.deepcopy(self._hashes)
 
     @property
-    def path(self):
+    def path(self) -> Union[pathlib.Path, None]:
         """Path describing the location of the file on the disk
 
         Assigning a value to this attribute (regardless whether it matches the
@@ -89,13 +90,13 @@ class File:
         # Store file path
         self._path = None if path is None else pathlib.Path(path)
 
-    def clear_file_hashes(self):
+    def clear_file_hashes(self) -> None:
         """Clears any stored file hashes"""
         self._hashes.clear()
 
     def compute_file_hashes(self,
             hash_functions: Union[tuple, str] = ('md5', 'sha256'),  # noqa : E128
-            store: bool = False):                                   # noqa : E128
+            store: bool = False) -> Dict[str, str]:                 # noqa : E128
         """Computes hashes of the file specified by the :py:attr:`path`
         attribute
 
@@ -159,7 +160,7 @@ class File:
 
         return output
 
-    def has_changed(self):
+    def has_changed(self) -> bool:
         """Returns whether the file specified by the :py:attr:`path`
         attribute has changed since the last time file hashes were computed
 
@@ -220,7 +221,8 @@ class File:
         # Identify file to read, and store in "path" attribute
         if path is not None:
             # First priority: use "path" argument if provided
-            self.path = path
+            #   Mypy exclusion is a workaround for python/mypy#3004
+            self.path = path  # type: ignore
         else:
             # Second priority: use "path" attribute.  If it isn't yet
             # defined, throw an error
@@ -231,14 +233,16 @@ class File:
                     'be provided to read the file')
 
         # Check that file exists
-        if not self.path.is_file():
+        #   Mypy exclusion is a workaround for python/mypy#3004
+        if not self.path.is_file():  # type: ignore
             raise FileNotFoundError(f'Cannot find file "{self.path}"')
 
         # Compute and store file hashes
         self.store_file_hashes()
 
     def store_file_hashes(self,
-            hash_functions: Union[tuple, str] = ('md5', 'sha256')):  # noqa : E128
+            hash_functions: Union[tuple, str] = ('md5', 'sha256')  # noqa : E128
+            ) -> None:                                             # noqa : E128
         """Computes and stores hashes of the file specified by the
         :py:attr:`path` attribute
 
@@ -270,7 +274,8 @@ class File:
         _ = self.compute_file_hashes(hash_functions, store=True)
 
     def track_new_file(self, path: Union[str, pathlib.Path],
-            hash_functions: Union[tuple, str] = ('md5', 'sha256')):  # noqa : E128
+            hash_functions: Union[tuple, str] = ('md5', 'sha256')  # noqa : E128
+            ) -> None:                                             # noqa : E128
         """Shortcut for simultaneously modifying the :py:attr:`path` attribute
         and storing file hashes
 
@@ -301,7 +306,8 @@ class File:
             raise TypeError('Argument "path" cannot be "None" when calling '
                             '"track_file()" method')
 
-        self.path = path
+        self.path = path  # type: ignore
+                          # (workaround for python/mypy#3004)  # noqa: E114, E116
 
         # Compute and store file hashes
         self.store_file_hashes(hash_functions)

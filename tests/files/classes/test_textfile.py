@@ -2,6 +2,7 @@ import filecmp
 import pathlib
 import shutil
 import unittest
+from unittest.mock import Mock
 
 from pyxx.files import TextFile
 from tests import CreateTempTestDir, SAMPLE_FILES_DIR
@@ -651,6 +652,21 @@ class Test_TextFile_Read(unittest.TestCase):
             (file := TextFile(SAMPLE_FILES_DIR / 'textfile_read_crlf.bat')).read()
             self.assertEqual(file.line_ending, '\r\n')
 
+    def test_parse(self):
+        # Verifies that the "parse()" method is called (or not called) appropriately
+        file = TextFile(self.test_file)
+        file.parse = Mock()
+
+        file.parse.reset_mock()
+        with self.subTest(parse=True):
+            file.read(parse=True)
+            file.parse.assert_called_once()
+
+        file.parse.reset_mock()
+        with self.subTest(parse=False):
+            file.read(parse=False)
+            file.parse.assert_not_called()
+
 
 class Test_TextFile_Write(unittest.TestCase):
     def setUp(self):
@@ -787,6 +803,26 @@ class Test_TextFile_Write(unittest.TestCase):
 
             with self.assertRaises(AttributeError):
                 self.file.overwrite()
+
+    def test_update_contents(self):
+        # Verifies that the "update_contents()" method is called (or
+        # not called) appropriately
+        self.file.update_contents = Mock()
+
+        with CreateTempTestDir() as TEST_DIR:
+            self.file.update_contents.reset_mock()
+            with self.subTest(update_contents=True):
+                self.file.write(
+                    output_file=TEST_DIR / 'output1.txt',
+                    update_contents=True)
+                self.file.update_contents.assert_called_once()
+
+            self.file.update_contents.reset_mock()
+            with self.subTest(update_contents=False):
+                self.file.write(
+                    output_file=TEST_DIR / 'output2.txt',
+                    update_contents=False)
+                self.file.update_contents.assert_not_called()
 
 
 class Test_TextFile_Integration(unittest.TestCase):
