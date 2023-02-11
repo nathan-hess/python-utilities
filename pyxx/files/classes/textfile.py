@@ -280,7 +280,22 @@ class TextFile(File):
             line_ending = line_ending
         )
 
-    def read(self, path: Optional[Union[str, pathlib.Path]] = None) -> None:
+    def parse(self) -> None:
+        """Parses the data in :py:attr:`contents` and stores it in class
+        attributes
+
+        This method by default does nothing.  However, it is intended that
+        subclasses of :py:class:`TextFile` should override this method and
+        define file-specific behavior in this method for extracting data from
+        the file and storing it in custom object attributes.
+
+        For example, if defining a CSV-parser, the :py:meth:`parse` method
+        might parse data from the file and store it as a NumPy array.
+        """
+        return None
+
+    def read(self, path: Optional[Union[str, pathlib.Path]] = None,
+             parse: bool = True) -> None:
         """Read file from disk
 
         Calling this method reads the file specified by the :py:attr:`path`
@@ -293,6 +308,9 @@ class TextFile(File):
         ----------
         path : str or pathlib.Path, optional
             Location of the text file in the file system  (default is ``None``)
+        parse : bool, optional
+            Whether to call the :py:meth:`parse` method after reading the
+            file (default is ``True``)
         """
         # Set "path" attribute, verify file exists, and store file hashes
         #   Mypy type annotation added because mmediately after calling
@@ -317,6 +335,10 @@ class TextFile(File):
         # newlines and lines without, so it's simpler to remove them all
         # at the beginning and add them when writing the file
         self._contents = [line.rstrip('\r\n') for line in self._raw_contents]
+
+        # Optionally parse file contents
+        if parse:
+            self.parse()
 
     def set_contents(self, contents: List[str], trailing_newline: bool,
                      pass_by_reference: bool = False) -> None:
@@ -366,10 +388,27 @@ class TextFile(File):
 
         self.trailing_newline = trailing_newline
 
+    def update_contents(self) -> None:
+        """Updates the :py:attr:`contents` list based on object attributes
+
+        This method by default does nothing.  However, it is intended that
+        subclasses of :py:class:`TextFile` should override this method and
+        define file-specific behavior in this method for converting custom
+        object attributes to lines of text in the file, and storing these
+        data in :py:attr:`contents`.
+
+        For example, if defining a CSV-parser, the class might have an
+        attribute that stores numerical data in a NumPy array, and the
+        :py:meth:`update_contents` method might convert the data in this array
+        to comma-separated strings and store them in :py:attr:`contents`.
+        """
+        return None
+
     def write(self, output_file: Union[str, pathlib.Path],
               write_mode: str = 'w', warn_before_overwrite: bool = True,
               prologue: str = '', epilogue: Optional[str] = None,
-              line_ending: str = '\n') -> None:
+              line_ending: str = '\n', update_contents: bool = True,
+              ) -> None:
         """Write file to disk
 
         Calling this method writes the file contents stored in
@@ -394,7 +433,14 @@ class TextFile(File):
         line_ending : str, optional
             String written at the end of each line when writing file content
             (default is ``'\\n'``)
+        update_contents : bool, optional
+            Whether to call the :py:meth:`update_contents` method before
+            writing the file (default is ``True``)
         """
+        # Update contents from file attributes
+        if update_contents:
+            self.update_contents()
+
         # Confirm that "contents" attribute hasn't been modified improperly
         self._check_contents(self.contents)
 
