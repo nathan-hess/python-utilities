@@ -437,6 +437,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
                 f'Unable to convert quantity: units "{from_unit}" and '
                 f'"{to_unit}" are not compatible')
 
+        # If input and output units are identical, directly return quantity
+        if from_unit == to_unit:
+            return np.array(quantity)
+
         # Convert to `Unit` objects
         from_unit_obj = self.str_to_unit(from_unit)
         to_unit_obj = self.str_to_unit(to_unit)
