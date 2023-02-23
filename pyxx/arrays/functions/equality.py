@@ -65,19 +65,23 @@ def is_array_equal(item1: Array_or_Number_or_String,
 
     Notes
     -----
-    **Recursion Limit:** Internally, :py:func:`is_array_equal` is a recursive
-    function.  It is possible that for extremely large nested arrays, Python's
-    recursion limit may be reached.  If this occurs and it is necessary to
-    compare such a large array, consider increasing the recursion limit using
+    **Recursion Limit**
+
+    Internally, :py:func:`is_array_equal` is a recursive function.  It is
+    possible that for extremely large nested arrays, Python's recursion limit
+    may be reached.  If this occurs and it is necessary to compare such a
+    large array, consider increasing the recursion limit using
     the `sys.setrecursionlimit() <https://docs.python.org/3/library/sys.html
     #sys.setrecursionlimit>`__ function.
 
-    **Purpose:** One question that may arise is, *why is this function
-    necessary?*  NumPy already offers functions like `numpy.array_equal()
-    <https://numpy.org/doc/stable/reference/generated
-    /numpy.array_equal.html>`__, `numpy.isclose() <https://numpy.org/doc
-    /stable/reference/generated/numpy.isclose.html>`__, and `numpy.allclose()
-    <https://numpy.org/doc/stable/reference/generated/numpy.allclose.html>`__.
+    **Purpose**
+
+    One question that may arise is, *why is this function necessary?*  NumPy
+    already offers functions like `numpy.array_equal() <https://numpy.org/doc
+    /stable/reference/generated/numpy.array_equal.html>`__, `numpy.isclose()
+    <https://numpy.org/doc/stable/reference/generated/numpy.isclose.html>`__,
+    and `numpy.allclose() <https://numpy.org/doc/stable/reference/generated
+    /numpy.allclose.html>`__.
 
     There are several main advantages of :py:func:`is_array_equal`:
 
