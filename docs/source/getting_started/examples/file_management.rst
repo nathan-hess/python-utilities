@@ -1,5 +1,12 @@
 .. include:: ../../constants.rst
 
+.. spelling:word-list::
+
+    aren
+    ini
+    txt
+    ve
+
 
 .. _section-examples_files_basic:
 
@@ -96,8 +103,8 @@ accomplished using:
 {'sha224': 'bdab73e6764007235911384ca047daf20e708478c367964f21e965af'}
 
 
-Checking Whether Files are Idential
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Checking Whether Files are Identical
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 File hashes are often used to identify whether two files are identical.
 |PackageNameStylized| provides convenient methods for performing such analysis.
@@ -228,7 +235,7 @@ each line of the text file.  It is considered to reflect the "current" state
 of the data in the file.
 
 When calling :py:meth:`pyxx.files.TextFile.read` as done above, this attribute
-is automatically populated with the contents of the textfile.  We can see
+is automatically populated with the contents of the text file.  We can see
 this using:
 
 >>> print(*text_file.contents, sep='\n')
