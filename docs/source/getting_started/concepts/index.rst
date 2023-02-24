@@ -12,9 +12,12 @@ code is described directly in the corresponding object's API reference page;
 this section merely expands upon higher-level concepts needed to understand
 the reference pages.
 
+|
+
 .. toctree::
-    :caption: Concepts Pages
+    :caption: Topics
     :maxdepth: 2
 
+    files
     units
     brackets
