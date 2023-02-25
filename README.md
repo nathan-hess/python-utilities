@@ -1,6 +1,7 @@
 # PyXX: Python Utilities Package
 
 [![CI/CD](https://github.com/nathan-hess/python-utilities/actions/workflows/cicd.yml/badge.svg)](https://github.com/nathan-hess/python-utilities/actions/workflows/cicd.yml)
+[![Documentation Status](https://readthedocs.org/projects/pyxx/badge/?version=latest)](https://pyxx.readthedocs.io)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/pyxx?label=PyPI%20downloads&logo=python&logoColor=yellow)](https://pypi.org/project/pyxx)
 
 
