@@ -25,7 +25,7 @@ reducing the need to duplicate code between projects.
     :hidden:
 
     usage/concepts/index
-    usage/examples/index
+    usage/tutorials/index
     usage/reference/index
 
 
@@ -62,8 +62,8 @@ Quick Links
 
         Instructions for installing and running |PackageNameStylized|
 
-    .. grid-item-card:: Examples
-        :link: section-examples
+    .. grid-item-card:: Tutorials
+        :link: section-tutorials
         :link-type: ref
 
         .. figure:: ./_static/icon_examples.svg

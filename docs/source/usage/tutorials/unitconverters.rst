@@ -5,7 +5,7 @@
     UnitConverter
 
 
-.. _section-examples_unitconverters:
+.. _section-tutorials_unitconverters:
 
 Units 2: Unit Converters
 ========================
@@ -19,7 +19,7 @@ unit converters.
 .. note::
 
     Prior to using the unit converters, it is recommended that you review the
-    :ref:`section-examples_units` page.
+    :ref:`section-tutorials_units` page.
 
 There are two primary ways to use the unit converters: with the terminal-based
 command-line interface (CLI), or by directly accessing the
@@ -354,7 +354,7 @@ Adding and Removing Units
         ... )
 
         For questions about how to define units, refer to the
-        :ref:`section-examples_units` page.
+        :ref:`section-tutorials_units` page.
 
         Every item in a :py:class:`pyxx.units.UnitConverter` must be an instance
         of :py:class:`pyxx.units.UnitConverterEntry`.  We can create such an

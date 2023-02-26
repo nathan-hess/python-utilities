@@ -64,7 +64,7 @@ Data Model: :py:class:`pyxx.files.File`
 .. note::
 
     For examples of how to use the features in this section, refer to the
-    :ref:`Basic File Examples <section-examples_files_basic>` page.
+    :ref:`Basic File Examples <section-tutorials_files_basic>` page.
 
 |PackageNameStylized| considers files in a relatively abstract sense -- simply
 as a structured means for storing data on the disk.  Thus, the key objective of
@@ -106,7 +106,7 @@ Data Model: :py:class:`pyxx.files.TextFile`
 
     To see an example of how to create a custom class for reading,
     parsing, and writing text files, refer to the
-    :ref:`Custom File Class Example <section-examples_files_custom_class>` page.
+    :ref:`Custom File Class Example <section-tutorials_files_custom_class>` page.
 
 A text file stores data as lines of readable text, and |PackageNameStylized|
 provides a greater range of "out-of-the-box" functionality for interacting
@@ -238,7 +238,7 @@ Customizing ``TextFile`` Subclasses
 
     To see an example of how to create a custom class for reading,
     parsing, and writing text files, refer to the
-    :ref:`Custom File Class Example <section-examples_files_custom_class>` page.
+    :ref:`Custom File Class Example <section-tutorials_files_custom_class>` page.
 
 Based on the data model for the :py:class:`pyxx.files.TextFile` class
 introduced in the previous section, it should be fairly straightforward to see
@@ -267,4 +267,4 @@ interacting with data in the file, you'll need to override the
 :py:meth:`pyxx.files.TextFile.update_contents` methods to determine how to
 translate the data in the custom attributes to and from the lines of text in
 the file.  For an example of how to do this, take a look at the
-:ref:`Custom File Class Example <section-examples_files_custom_class>`.
+:ref:`Custom File Class Example <section-tutorials_files_custom_class>`.

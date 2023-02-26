@@ -99,7 +99,7 @@ class Unit:
 
     Examples
     --------
-    For examples, refer to the :ref:`section-examples_units` page.
+    For examples, refer to the :ref:`section-tutorials_units` page.
     """
 
     # Characters expected in unit names
@@ -567,7 +567,7 @@ class UnitLinear(Unit):
 
     Examples
     --------
-    For examples, refer to the :ref:`section-examples_units` page.
+    For examples, refer to the :ref:`section-tutorials_units` page.
     """
 
     def __init__(
@@ -647,7 +647,7 @@ class UnitLinearSI(UnitLinear):
 
     Examples
     --------
-    For examples, refer to the :ref:`section-examples_units` page.
+    For examples, refer to the :ref:`section-tutorials_units` page.
 
     See Also
     --------
