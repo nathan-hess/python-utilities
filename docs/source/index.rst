@@ -87,3 +87,10 @@ Quick Links
             :width: 200px
 
         Detailed API reference documentation
+
+
+Source Code
+-----------
+
+|PackageNameStylized| is an open source project.  All source code is available
+through `GitHub <https://github.com/nathan-hess/python-utilities>`__.
