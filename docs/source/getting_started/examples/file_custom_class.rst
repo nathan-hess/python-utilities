@@ -104,7 +104,7 @@ To process this file, create a class similar to below.
                 self.variables[key] = (value, units)
 
         def update_contents(self):
-            """This method needs to translate content from class attributes (e.g.,
+            """This method needs to translate content from custom attributes (e.g.,
             the "variables" dictionary) to the "self.contents" attribute"""
 
             # Remove any existing content in "self.contents"
@@ -152,7 +152,7 @@ To process this file, create a class similar to below.
                 self.variables[key] = (value, units)
 
         def update_contents(self):
-            """This method needs to translate content from class attributes (e.g.,
+            """This method needs to translate content from custom attributes (e.g.,
             the "variables" dictionary) to the "self.contents" attribute"""
 
             # Remove any existing content in "self.contents"
