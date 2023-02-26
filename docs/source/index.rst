@@ -18,9 +18,15 @@ reducing the need to duplicate code between projects.
     :hidden:
 
     getting_started/installation
-    getting_started/concepts/index
-    getting_started/examples/index
-    getting_started/reference/index
+
+
+.. toctree::
+    :caption: Fundamentals and Usage
+    :hidden:
+
+    usage/concepts/index
+    usage/examples/index
+    usage/reference/index
 
 
 .. toctree::

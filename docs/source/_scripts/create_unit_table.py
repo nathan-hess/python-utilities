@@ -41,7 +41,7 @@ def main():
     print(f'{PLAIN_BOLD}Creating unit table...{PLAIN}', end='')
 
     # Settings
-    path_io = DOCS_DIR / 'source' / 'getting_started' / 'reference'
+    path_io = DOCS_DIR / 'source' / 'usage' / 'reference'
     input_file = path_io / 'unitconverter_units.rst.template'
     output_file = path_io / 'unitconverter_units.rst'
 
