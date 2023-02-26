@@ -2,9 +2,12 @@
 
 .. spelling:word-list::
 
+    aren
     getter
     getters
     Getters
+    isn
+    ve
 
 
 .. _section-file_concepts:

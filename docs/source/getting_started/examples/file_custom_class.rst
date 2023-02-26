@@ -3,6 +3,7 @@
 .. spelling:word-list::
 
     txt
+    ve
 
 
 .. _section-examples_files_custom_class:
