@@ -1,7 +1,7 @@
 .. include:: ../../constants.rst
 
 
-.. _section-examples_units:
+.. _section-tutorials_units:
 
 Units 1: Basics
 ===============
@@ -16,7 +16,7 @@ units, and perform unit conversions and related operations.
 
     If you're already familiar with the basics of units and unit conversions
     in the |PackageNameStylized| package and just need to use the unit
-    converters, head over to the :ref:`section-examples_unitconverters` page.
+    converters, head over to the :ref:`section-tutorials_unitconverters` page.
 
 
 Setup
@@ -215,4 +215,4 @@ More complex unit conversions can be performed using unit arithmetic:
 
 An even more most streamlined way to perform unit conversions is using the
 :py:class:`pyxx.units.UnitConverter` class or the unit converter CLI.  Refer
-to the :ref:`section-examples_unitconverters` page for more detail.
+to the :ref:`section-tutorials_unitconverters` page for more detail.

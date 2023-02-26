@@ -18,9 +18,15 @@ reducing the need to duplicate code between projects.
     :hidden:
 
     getting_started/installation
-    getting_started/concepts/index
-    getting_started/examples/index
-    getting_started/reference/index
+
+
+.. toctree::
+    :caption: Fundamentals and Usage
+    :hidden:
+
+    usage/concepts/index
+    usage/tutorials/index
+    usage/reference/index
 
 
 .. toctree::
@@ -56,8 +62,8 @@ Quick Links
 
         Instructions for installing and running |PackageNameStylized|
 
-    .. grid-item-card:: Examples
-        :link: section-examples
+    .. grid-item-card:: Tutorials
+        :link: section-tutorials
         :link-type: ref
 
         .. figure:: ./_static/icon_examples.svg
@@ -87,3 +93,10 @@ Quick Links
             :width: 200px
 
         Detailed API reference documentation
+
+
+Source Code
+-----------
+
+|PackageNameStylized| is an open source project.  All source code is available
+through `GitHub <https://github.com/nathan-hess/python-utilities>`__.

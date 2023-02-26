@@ -68,7 +68,7 @@ unit in the system of units is either a base unit or is related to the base
 units in a deterministic way, satisfying the requirements of a system of units.
 
 For concrete examples of the syntax used to define units using the
-|PackageNameStylized| package, refer to the :ref:`section-examples_units` page.
+|PackageNameStylized| package, refer to the :ref:`section-tutorials_units` page.
 
 
 "Linear" Units

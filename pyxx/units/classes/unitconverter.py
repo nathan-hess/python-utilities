@@ -173,7 +173,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
     Examples
     --------
-    For examples, refer to the :ref:`section-examples_units` page.
+    For examples, refer to the :ref:`section-tutorials_units` page.
     """
 
     def __init__(self, unit_system: UnitSystem):
