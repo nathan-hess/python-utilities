@@ -312,10 +312,9 @@ class TextFile(File):
             Whether to call the :py:meth:`parse` method after reading the
             file (default is ``True``)
         """
-        # Set "path" attribute, verify file exists, and store file hashes
-        #   Mypy type annotation added because mmediately after calling
-        #   `set_read_metadata()`, the "path" attribute cannot be `None`
-        #   or else an error would have been thrown
+        # Mypy type annotation added because immediately after calling
+        # `set_read_metadata()`, the "path" attribute cannot be `None`
+        # or else an error would have been thrown
         self.set_read_metadata(path)
         self.path: pathlib.Path
 

@@ -155,6 +155,14 @@ plot_html_show_source_link = False
 plot_html_show_formats = False
 
 
+# -- Code snippet copy button settings ---------------------------------------
+# https://sphinx-copybutton.readthedocs.io/en/latest/
+
+# Prevent copying Python prompt (">>>") and continuation ("...") characters
+copybutton_prompt_text = r'>>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: '
+copybutton_prompt_is_regexp = True
+
+
 # -- Custom scripts ----------------------------------------------------------
 # Scripts that run pre-processing tasks before building documentation
 
