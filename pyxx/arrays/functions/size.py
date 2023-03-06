@@ -1,7 +1,7 @@
 """Functions for evaluating or comparing sizes of array-like objects
 """
 
-from typing import Any, Union
+from typing import Any, Iterable
 
 
 def check_len_equal(item1: Any, item2: Any, *args: Any):
@@ -85,7 +85,7 @@ def is_len_equal(item1: Any, item2: Any, *args: Any) -> bool:
     return True
 
 
-def max_list_item_len(input_list: Union[list, tuple]) -> int:
+def max_list_item_len(input_list: Iterable) -> int:
     """Finds the maximum length of any item in a list or tuple
 
     Parameters
