@@ -303,6 +303,8 @@ class Test_TypedList(unittest.TestCase):
         }
 
         for dtype in self.test_types:
+            self.test_lists[dtype].print_multiline = True
+
             with self.subTest(type=str(dtype), output='str'):
                 self.assertEqual(str(self.test_lists[dtype]), str_rep[dtype])
 
@@ -342,7 +344,7 @@ class Test_TypedList(unittest.TestCase):
     def test_multiline_pad(self):
         # Verifies that padding of multiline string representation is
         # displayed correctly
-        typed_list = TypedList(list_type=float)
+        typed_list = TypedList(list_type=float, print_multiline=True)
         typed_list._data = [3.445, 6, 'string', -0.5343]
 
         with self.subTest(padding=0):

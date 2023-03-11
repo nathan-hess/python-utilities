@@ -30,7 +30,7 @@ class TypedList(MutableSequence[T]):
     """
 
     def __init__(self, *values: T, list_type: Type[T],
-                 print_multiline: bool = True,
+                 print_multiline: bool = False,
                  multiline_padding: int = 1) -> None:
         """Creates a :py:class:`TypedList` list instance
 
