@@ -27,6 +27,33 @@ class TypedList(MutableSequence[T]):
     specify a type, and all items added to the list must be of this type.
     Most of the attributes and methods of the built-in :py:class:`list` object
     can be used to manage data in a :py:class:`TypedList` instance.
+
+    Examples
+    --------
+    Create an empty list of integers and add items to it using typical
+    :py:class:`int` methods:
+
+    >>> list_of_int = pyxx.arrays.TypedList(list_type=int)
+    >>> list_of_int.append(0)
+    >>> list_of_int.append(2)
+    >>> list_of_int.extend([4, 6, 8])
+    >>> print(list_of_int)
+    [0, 2, 4, 6, 8]
+
+    However, if we try to add items that aren't of type :py:class:`int`, an
+    exception is thrown:
+
+    >>> list_of_int.append(1.23)
+    Traceback (most recent call last):
+    ...
+    TypeError: Item 1.23 is not of type <class 'int'>
+
+    It's also possible to convert an existing list into a :py:class:`TypedList`:
+
+    >>> current_list = [1, 2, 3, 4, 5]
+    >>> typed_list = pyxx.arrays.TypedList(*current_list, list_type=int)
+    >>> print(typed_list)
+    [1, 2, 3, 4, 5]
     """
 
     def __init__(self, *values: T, list_type: Type[T],
