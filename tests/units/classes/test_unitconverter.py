@@ -560,6 +560,17 @@ class Test_UnitConverter(unittest.TestCase):
         self.assertIs(self.unit_converter['sec'], self.unit_converter['s'])
         self.assertIs(self.unit_converter['second'], self.unit_converter['s'])
 
+    def test_add_duplicate_alias(self):
+        # Verifies that an error is thrown if attempting to add a duplicate alias
+        with self.assertRaises(UnitAlreadyDefinedError):
+            self.unit_converter.add_alias('s', 'm', overwrite=False)
+
+    def test_add_duplicate_alias_overwrite(self):
+        # Verifies that an error is not thrown if attempting to add a duplicate
+        # alias and the "overwrite" argument is provided
+        self.unit_converter.add_alias('s', 'm', overwrite=True)
+        self.assertIs(self.unit_converter['m'], self.unit_converter['s'])
+
     def test_add_unit_alias(self):
         # Verifies that unit aliases can be added at the same time as adding
         # a unit to the unit converter

@@ -199,7 +199,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
 
         if key not in self:
             raise UnitNotFoundError(
-                f'Unit "{key}" was not found in unit dictionary')
+                f'Unit "{key}" was not found in unit converter')
 
         return super().__getitem__(key)
 
@@ -223,7 +223,7 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             raise ValueError(
                 f'Unit identifier key "{key}" is not a fully-simplified unit')
 
-        # Verify that system of units of `value` matches unit dictionary
+        # Verify that system of units of `value` matches unit converter
         #   This does not use `isinstance()` or else units with system of units
         #   `UnitSystem` could be converted to any other system of units
         if type(value.unit.unit_system) is not type(self.unit_system):  # noqa: E721
@@ -362,9 +362,9 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             for more detail about unit aliases
         overwrite : bool, optional
             Whether to overwrite units if they already exist in the unit
-            dictionary (default is ``False``)
+            converter (default is ``False``)
         """
-        if key in self.keys() and not overwrite:
+        if key in self and not overwrite:
             raise UnitAlreadyDefinedError(
                 f'Key "{key}" already exists. To automatically overwrite, '
                 'call `.add_unit()` with `overwrite=True`')
@@ -376,7 +376,8 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             self.add_alias(key, aliases)
 
     def add_alias(self, key: str,
-                  aliases: Union[str, List[str], Tuple[str, ...]]) -> None:
+                  aliases: Union[str, List[str], Tuple[str, ...]],
+                  overwrite: bool = False) -> None:
         """Add one or more aliases for a unit
 
         Adds alternate identifiers (keys) that may be used to identify a unit in
@@ -391,6 +392,9 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             which to add an alias
         aliases : str or list or tuple
             Alternate identifiers to add to unit converter
+        overwrite : bool, optional
+            Whether to overwrite units if they already exist in the unit
+            converter (default is ``False``)
 
         Warnings
         --------
@@ -399,6 +403,11 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
         other aliased units will also be updated.
         """
         for alias in convert_to_tuple(aliases):
+            if alias in self and not overwrite:
+                raise UnitAlreadyDefinedError(
+                    f'Key "{alias}" already exists. To automatically '
+                    'overwrite, set `overwrite=True`')
+
             self[alias] = self[key]
 
     def convert(self, quantity: Union[np.ndarray, list, tuple, float],
