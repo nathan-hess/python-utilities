@@ -13,6 +13,28 @@ pyxx.arrays
 .. currentmodule:: pyxx.arrays
 
 
+Type-Specific Lists
+-------------------
+
+These classes provide nearly identical functionality as a Python :py:class:`list`
+but, similar to C++ ``std::vector`` objects, they additionally enforce the
+requirement (albeit not as strictly as C++) that all items in the list be of
+a specific type.
+
+.. inheritance-diagram:: TypedList TypedListWithID
+    :top-classes: pyxx.arrays.classes.typedlist.TypedList
+    :parts: 1
+
+|
+
+.. autosummary::
+    :toctree: ./api
+    :template: ../_templates/api_reference_class_template.rst
+
+    TypedList
+    TypedListWithID
+
+
 Array Conversion
 ----------------
 
@@ -51,25 +73,3 @@ array-like objects.
     check_len_equal
     is_len_equal
     max_list_item_len
-
-
-Type-Specific Lists
--------------------
-
-These classes provide nearly identical functionality as a Python :py:class:`list`
-but, similar to C++ ``std::vector`` objects, they additionally enforce the
-requirement (albeit not as strictly as C++) that all items in the list be of
-a specific type.
-
-.. inheritance-diagram:: TypedList TypedListWithID
-    :top-classes: pyxx.arrays.classes.typedlist.TypedList
-    :parts: 1
-
-|
-
-.. autosummary::
-    :toctree: ./api
-    :template: ../_templates/api_reference_class_template.rst
-
-    TypedList
-    TypedListWithID
