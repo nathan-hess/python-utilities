@@ -284,7 +284,7 @@ def parse_unit(unit: str, max_iterations: int = 10000):
             if (i := find_skip_brackets(unit_string, target_chars='^',
                                         begin=-1, direction='reverse')) != -1:
                 # Throw error if unit begins or ends with "^"
-                if not (1 <= i  <= len(unit_string) - 2):
+                if not (1 <= i <= len(unit_string) - 2):
                     raise InvalidUnitError(
                         f'Invalid unit string "{unit_string}" encountered '
                         f'when parsing unit "{original_unit}" (unit strings '
