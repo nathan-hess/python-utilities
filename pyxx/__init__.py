@@ -1,7 +1,7 @@
 """Collection of useful Python utilities and tools"""
 
 # PROGRAM VERSION ------------------------------------------------------------
-__version__ = '1.0.0'
+__version__ = '0.1.0'
 
 
 # PACKAGE MODULES ------------------------------------------------------------
