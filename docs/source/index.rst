@@ -4,7 +4,7 @@
 |PackageNameStylized| Documentation
 ===================================
 
-**Collection of Useful Python Utilities**
+**Collection of Utilities for Python Code**
 
 |PackageNameStylized| is a Python package that bundles a collection of Python
 utilities useful for a variety of projects.  It is intended to accelerate

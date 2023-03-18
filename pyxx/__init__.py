@@ -1,4 +1,4 @@
-"""Collection of useful Python utilities and tools"""
+"""Collection of utilities for Python code"""
 
 # PROGRAM VERSION ------------------------------------------------------------
 __version__ = '0.1.0'
