@@ -540,6 +540,9 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
         """
         component_units = parse_unit(str(unit)).keys()
 
+        if len(component_units) == 0:
+            return False
+
         for component in component_units:
             if component not in self:
                 return False

@@ -714,6 +714,9 @@ class Test_UnitConverter(unittest.TestCase):
             for unit in ('kg*in/s^2', 'in/s', 'in/hr'):
                 self.assertFalse(self.unit_converter.is_defined_unit(unit))
 
+        with self.subTest(unit_type='blank', defined=False):
+            self.assertFalse(self.unit_converter.is_defined_unit(''))
+
     def test_is_simplified(self):
         # Verifies that simple vs. compound units are distinguished correctly
         test_cases = (
