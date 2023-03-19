@@ -73,7 +73,7 @@ class TypedList(MutableSequence[T]):
             The required type of all items in the list
         print_multiline : bool, optional
             Whether to return a printable string representation of the list in
-            multiline format (default is ``True``).  Multiline format places
+            multiline format (default is ``False``).  Multiline format places
             each item in the list on its own line
         multiline_padding : int, optional
             The amount of horizontal padding to place between brackets and
