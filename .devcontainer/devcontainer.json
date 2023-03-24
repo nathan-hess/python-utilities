@@ -1,0 +1,8 @@
+{
+    // General properties
+    "name": "PyXX",
+    "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
+
+    // Lifecycle scripts
+    "postCreateCommand": "pip install -r .vscode/requirements.txt"
+}
