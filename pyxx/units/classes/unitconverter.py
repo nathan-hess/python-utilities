@@ -741,6 +741,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             A :py:class:`Unit` object representation of the unit specified
             by ``unit``
         """
+        if unit.strip() == '':
+            raise UnitNotFoundError(
+                f'Unit "{unit}" consists only of whitespace and is not valid')
+
         parsed_unit = parse_unit(unit)
 
         # For special case of dimensionless units, output a constant unit

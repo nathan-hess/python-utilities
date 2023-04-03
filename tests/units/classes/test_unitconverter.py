@@ -674,6 +674,17 @@ class Test_UnitConverter(unittest.TestCase):
             with self.assertRaises(IncompatibleUnitsError):
                 self.unit_converter.convert(quantity=100, from_unit='kg', to_unit='mm')
 
+    def test_convert_dimensionless(self):
+        # Verifies that for an edge case of converting between a blank unit ""
+        # and a dimensionless unit, an exception is thrown
+        self.unit_converter_empty['dimensionless'] = self.entry_dimensionless
+
+        with self.assertRaises(UnitNotFoundError):
+            self.unit_converter_empty.convert(10, from_unit='dimensionless', to_unit='')
+
+        with self.assertRaises(UnitNotFoundError):
+            self.unit_converter_empty.convert(10, from_unit='', to_unit='dimensionless')
+
     def test_is_convertible(self):
         # Verifies that incompatible units are recognized
         test_cases = (
@@ -964,12 +975,3 @@ class Test_UnitConverter(unittest.TestCase):
             inputs = 100 * np.random.randn(100)
             self.assertTrue(np.allclose(unit.to_base(inputs), inputs / 1000))
             self.assertTrue(np.allclose(unit.from_base(inputs), inputs * 1000))
-
-        with self.subTest(unit='[empty]'):
-            unit = self.unit_converter.str_to_unit('')
-
-            self.assertListEqual(list(unit.base_unit_exps), [0, 0, 0, 0, 0, 0, 0])
-
-            inputs = 100 * np.random.randn(100)
-            self.assertTrue(np.allclose(unit.to_base(inputs), inputs))
-            self.assertTrue(np.allclose(unit.from_base(inputs), inputs))
