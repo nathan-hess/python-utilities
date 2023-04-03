@@ -538,10 +538,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             Whether all component unit(s) in ``unit`` are defined in the
             unit converter
         """
-        component_units = parse_unit(str(unit)).keys()
-
-        if len(component_units) == 0:
+        if unit.strip() == '':
             return False
+
+        component_units = parse_unit(str(unit)).keys()
 
         for component in component_units:
             if component not in self:
@@ -741,6 +741,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             A :py:class:`Unit` object representation of the unit specified
             by ``unit``
         """
+        if unit.strip() == '':
+            raise UnitNotFoundError(
+                f'Unit "{unit}" consists only of whitespace and is not valid')
+
         parsed_unit = parse_unit(unit)
 
         # For special case of dimensionless units, output a constant unit

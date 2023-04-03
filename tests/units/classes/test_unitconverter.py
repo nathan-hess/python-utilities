@@ -215,6 +215,7 @@ class Test_UnitConverter(unittest.TestCase):
         self.kg = UnitLinearSI([0,0,0,0,0,0,1], scale=1, offset=0)
         self.N = UnitLinearSI([1,-2,0,0,0,0,1], scale=1, offset=0)
         self.kN = UnitLinearSI([1,-2,0,0,0,0,1], scale=1000, offset=0)
+        self.dimensionless = UnitLinearSI([0,0,0,0,0,0,0], scale=1, offset=0)
 
         # Sample unit converter entries
         self.entry_m = UnitConverterEntry(
@@ -247,6 +248,10 @@ class Test_UnitConverter(unittest.TestCase):
             unit        = UnitLinearSI([1,-2,0,0,0,0,1], scale=1000, offset=0),
             tags        = ['force'],
             description = 'kilonewtons')
+        self.entry_dimensionless = UnitConverterEntry(
+            unit        = self.dimensionless,
+            tags        = ['dimensionless'],
+            description = 'dimensionless')
 
         # Sample unit converters
         self.unit_converter = UnitConverter(unit_system=UnitSystemSI())
@@ -669,6 +674,17 @@ class Test_UnitConverter(unittest.TestCase):
             with self.assertRaises(IncompatibleUnitsError):
                 self.unit_converter.convert(quantity=100, from_unit='kg', to_unit='mm')
 
+    def test_convert_dimensionless(self):
+        # Verifies that for an edge case of converting between a blank unit ""
+        # and a dimensionless unit, an exception is thrown
+        self.unit_converter_empty['dimensionless'] = self.entry_dimensionless
+
+        with self.assertRaises(UnitNotFoundError):
+            self.unit_converter_empty.convert(10, from_unit='dimensionless', to_unit='')
+
+        with self.assertRaises(UnitNotFoundError):
+            self.unit_converter_empty.convert(10, from_unit='', to_unit='dimensionless')
+
     def test_is_convertible(self):
         # Verifies that incompatible units are recognized
         test_cases = (
@@ -716,6 +732,10 @@ class Test_UnitConverter(unittest.TestCase):
 
         with self.subTest(unit_type='blank', defined=False):
             self.assertFalse(self.unit_converter.is_defined_unit(''))
+
+        with self.subTest(unit_type='dimensionless', defined=True):
+            self.unit_converter_empty['dimensionless'] = self.entry_dimensionless
+            self.assertTrue(self.unit_converter_empty.is_defined_unit('m/m'))
 
     def test_is_simplified(self):
         # Verifies that simple vs. compound units are distinguished correctly
@@ -955,12 +975,3 @@ class Test_UnitConverter(unittest.TestCase):
             inputs = 100 * np.random.randn(100)
             self.assertTrue(np.allclose(unit.to_base(inputs), inputs / 1000))
             self.assertTrue(np.allclose(unit.from_base(inputs), inputs * 1000))
-
-        with self.subTest(unit='[empty]'):
-            unit = self.unit_converter.str_to_unit('')
-
-            self.assertListEqual(list(unit.base_unit_exps), [0, 0, 0, 0, 0, 0, 0])
-
-            inputs = 100 * np.random.randn(100)
-            self.assertTrue(np.allclose(unit.to_base(inputs), inputs))
-            self.assertTrue(np.allclose(unit.from_base(inputs), inputs))
