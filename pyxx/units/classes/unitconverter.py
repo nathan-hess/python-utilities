@@ -538,10 +538,10 @@ class UnitConverter(Dict[str, UnitConverterEntry]):
             Whether all component unit(s) in ``unit`` are defined in the
             unit converter
         """
-        component_units = parse_unit(str(unit)).keys()
-
-        if len(component_units) == 0:
+        if unit.strip() == '':
             return False
+
+        component_units = parse_unit(str(unit)).keys()
 
         for component in component_units:
             if component not in self:

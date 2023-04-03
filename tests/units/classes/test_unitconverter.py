@@ -215,6 +215,7 @@ class Test_UnitConverter(unittest.TestCase):
         self.kg = UnitLinearSI([0,0,0,0,0,0,1], scale=1, offset=0)
         self.N = UnitLinearSI([1,-2,0,0,0,0,1], scale=1, offset=0)
         self.kN = UnitLinearSI([1,-2,0,0,0,0,1], scale=1000, offset=0)
+        self.dimensionless = UnitLinearSI([0,0,0,0,0,0,0], scale=1, offset=0)
 
         # Sample unit converter entries
         self.entry_m = UnitConverterEntry(
@@ -247,6 +248,10 @@ class Test_UnitConverter(unittest.TestCase):
             unit        = UnitLinearSI([1,-2,0,0,0,0,1], scale=1000, offset=0),
             tags        = ['force'],
             description = 'kilonewtons')
+        self.entry_dimensionless = UnitConverterEntry(
+            unit        = self.dimensionless,
+            tags        = ['dimensionless'],
+            description = 'dimensionless')
 
         # Sample unit converters
         self.unit_converter = UnitConverter(unit_system=UnitSystemSI())
@@ -716,6 +721,10 @@ class Test_UnitConverter(unittest.TestCase):
 
         with self.subTest(unit_type='blank', defined=False):
             self.assertFalse(self.unit_converter.is_defined_unit(''))
+
+        with self.subTest(unit_type='dimensionless', defined=True):
+            self.unit_converter_empty['dimensionless'] = self.entry_dimensionless
+            self.assertTrue(self.unit_converter_empty.is_defined_unit('m/m'))
 
     def test_is_simplified(self):
         # Verifies that simple vs. compound units are distinguished correctly
