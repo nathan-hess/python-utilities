@@ -975,3 +975,12 @@ class Test_UnitConverter(unittest.TestCase):
             inputs = 100 * np.random.randn(100)
             self.assertTrue(np.allclose(unit.to_base(inputs), inputs / 1000))
             self.assertTrue(np.allclose(unit.from_base(inputs), inputs * 1000))
+
+        with self.subTest(unit='m/m'):
+            unit = self.unit_converter.str_to_unit('m/m')
+
+            self.assertListEqual(list(unit.base_unit_exps), [0, 0, 0, 0, 0, 0, 0])
+
+            inputs = 100 * np.random.randn(100)
+            self.assertTrue(np.allclose(unit.to_base(inputs), inputs))
+            self.assertTrue(np.allclose(unit.from_base(inputs), inputs))
