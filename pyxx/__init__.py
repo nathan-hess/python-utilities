@@ -1,7 +1,7 @@
 """Collection of utilities for Python code"""
 
 # PROGRAM VERSION ------------------------------------------------------------
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 
 # PACKAGE MODULES ------------------------------------------------------------
