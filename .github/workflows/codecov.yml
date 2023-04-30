@@ -18,12 +18,13 @@ jobs:
       - name: Run Python Tests
         run: |
           coverage run
+          coverage json
           coverage report
 
       - name: Upload Code Coverage Report to Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: .coverage
+          file: coverage.json
           fail_ci_if_error: true
           verbose: true
