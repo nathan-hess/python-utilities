@@ -41,7 +41,15 @@ jobs:
           pip-requirements-file: requirements.txt
 
       - name: Run Python Tests
-        run: python3 run_tests.py
+        run: coverage run
+
+      - name: Upload Code Coverage Report to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: .coverage
+          fail_ci_if_error: true
+          verbose: true
 
   test-success:
     name: Determine Python Test Success
