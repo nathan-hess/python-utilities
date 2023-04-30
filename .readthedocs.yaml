@@ -8,3 +8,8 @@ build:
 python:
   install:
     - requirements: docs/requirements.txt
+
+sphinx:
+  builder: html
+  configuration: docs/source/conf.py
+  fail_on_warning: true
