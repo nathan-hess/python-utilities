@@ -25,7 +25,17 @@
 
 .. autoclass:: {{ objname }}
 
-   {% block methods %}
+   {%- set attributes_non_inherited = [] %}
+   {%- set attributes_inherited = [] %}
+
+   {%- for item in attributes %}
+      {%- if item not in inherited_members %}
+         {{- attributes_non_inherited.append(item) or '' }}
+      {%- else %}
+         {{- attributes_inherited.append(item) or '' }}
+      {%- endif %}
+   {%- endfor %}
+
 
    {%- set methods_non_inherited = [] %}
    {%- set methods_inherited = [] %}
@@ -38,39 +48,6 @@
       {%- endif %}
    {%- endfor %}
 
-   {% if methods_non_inherited %}
-   .. rubric:: {{ _('Methods') }}
-
-   .. autosummary::
-   {% for item in methods_non_inherited %}
-      ~{{ name }}.{{ item }}
-   {%- endfor %}
-   {% endif %}
-
-   {% if methods_inherited %}
-   .. rubric:: {{ _('Inherited Methods') }}
-
-   .. autosummary::
-   {% for item in methods_inherited %}
-      ~{{ name }}.{{ item }}
-   {%- endfor %}
-   {% endif %}
-
-   {% endblock %}
-
-
-   {% block attributes %}
-
-   {%- set attributes_non_inherited = [] %}
-   {%- set attributes_inherited = [] %}
-
-   {%- for item in attributes %}
-      {%- if item not in inherited_members %}
-         {{- attributes_non_inherited.append(item) or '' }}
-      {%- else %}
-         {{- attributes_inherited.append(item) or '' }}
-      {%- endif %}
-   {%- endfor %}
 
    {% if attributes_non_inherited %}
    .. rubric:: {{ _('Attributes') }}
@@ -81,6 +58,17 @@
    {%- endfor %}
    {% endif %}
 
+
+   {% if methods_non_inherited %}
+   .. rubric:: {{ _('Methods') }}
+
+   .. autosummary::
+   {% for item in methods_non_inherited %}
+      ~{{ name }}.{{ item }}
+   {%- endfor %}
+   {% endif %}
+
+
    {% if attributes_inherited %}
    .. rubric:: {{ _('Inherited Attributes') }}
 
@@ -90,4 +78,12 @@
    {%- endfor %}
    {% endif %}
 
-   {% endblock %}
+
+   {% if methods_inherited %}
+   .. rubric:: {{ _('Inherited Methods') }}
+
+   .. autosummary::
+   {% for item in methods_inherited %}
+      ~{{ name }}.{{ item }}
+   {%- endfor %}
+   {% endif %}
