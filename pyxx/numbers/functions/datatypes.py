@@ -77,7 +77,7 @@ def is_integer(value: Any):
     This function checks if values *can be converted to* integers, so string
     inputs may also be classified as valid integers:
 
-    >>> pyxx.numbers.is_float('6.0')
+    >>> pyxx.numbers.is_integer('6.0')
     True
 
     However, floating-point numbers with a nonzero fractional part are not

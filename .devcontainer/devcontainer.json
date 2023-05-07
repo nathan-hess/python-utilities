@@ -4,5 +4,6 @@
     "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
 
     // Lifecycle scripts
+    "onCreateCommand": "sudo apt update && sudo apt -y install graphviz libenchant-2-2",
     "postCreateCommand": "pip install -r .vscode/requirements.txt"
 }
