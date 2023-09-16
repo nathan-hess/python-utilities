@@ -22,14 +22,14 @@ install the latest package release is through pip:
 
         .. code-block:: shell
 
-            $ pip install pyxx
+            pip install pyxx
 
     .. tab-item:: Windows
         :sync: windows
 
         .. code-block:: powershell
 
-            C:\>pip install pyxx
+            pip install pyxx
 
 As with any Python project, it may be useful to consider setting up a
 `virtual environment <https://docs.python.org/3/library/venv.html>`__
@@ -49,14 +49,14 @@ you can install the package directly from the project's GitHub page using:
 
         .. code-block:: shell
 
-            $ pip install git+https://github.com/nathan-hess/python-utilities.git@main
+            pip install git+https://github.com/nathan-hess/python-utilities.git@main
 
     .. tab-item:: Windows
         :sync: windows
 
         .. code-block:: powershell
 
-            C:\>pip install git+https://github.com/nathan-hess/python-utilities.git@main
+            pip install git+https://github.com/nathan-hess/python-utilities.git@main
 
 
 Source Code
@@ -81,17 +81,14 @@ First, clone the source repository to a location of your choice:
 
         .. code-block:: shell
 
-            $ git clone https://github.com/nathan-hess/python-utilities.git
+            git clone https://github.com/nathan-hess/python-utilities.git
 
     .. tab-item:: Windows
         :sync: windows
 
         .. code-block:: powershell
 
-            C:\>git clone https://github.com/nathan-hess/python-utilities.git
-
-        Note that it is not recommended that you download the source code to
-        your ``C:\`` directory; this is merely shown as a general example.
+            git clone https://github.com/nathan-hess/python-utilities.git
 
 Then, add the root directory of the repository to your ``PYTHONPATH`` environment
 variable:
@@ -103,14 +100,14 @@ variable:
 
         .. code-block:: shell
 
-            $ export PYTHONPATH="$PYTHONPATH:$(pwd)/python-utilities"
+            export PYTHONPATH="$PYTHONPATH:$(pwd)/python-utilities"
 
     .. tab-item:: Windows
         :sync: windows
 
         .. code-block:: powershell
 
-            C:\>set PYTHONPATH=%PYTHONPATH%;%CD%\python-utilities
+            set PYTHONPATH=%PYTHONPATH%;%CD%\python-utilities
 
 Finally, make sure to install required dependencies through pip:
 
@@ -121,11 +118,11 @@ Finally, make sure to install required dependencies through pip:
 
         .. code-block:: shell
 
-            $ pip install -r python-utilities/requirements.txt
+            pip install -r python-utilities/requirements.txt
 
     .. tab-item:: Windows
         :sync: windows
 
         .. code-block:: powershell
 
-            C:\>pip install -r python-utilities\requirements.txt
+            pip install -r python-utilities\requirements.txt
