@@ -42,7 +42,7 @@ Setup
 
         .. code-block:: shell
 
-            $ pip install pyxx
+            pip install pyxx
 
         For general information and CLI options, run:
 
