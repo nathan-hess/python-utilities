@@ -6,6 +6,7 @@ __version__ = '1.1.0.dev'
 
 # PACKAGE MODULES ------------------------------------------------------------
 from . import arrays
+from . import debugging
 from . import files
 from . import numbers
 from . import strings
