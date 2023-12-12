@@ -33,7 +33,8 @@ class TimeIt:
         ...     time.sleep(1)
         Execution time: 1000.10 ms
 
-    Time a code block and store the duration in a variable:
+    Time a code block and access the duration in Python code following the
+    code block:
 
     .. code-block:: python
 
