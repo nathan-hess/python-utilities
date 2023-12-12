@@ -48,7 +48,7 @@ class TimeIt:
     """
 
     def __init__(self, print_duration: bool = True, units: str = 's',
-                 message: str = 'Command duration: {time} {units}') -> None:
+                 message: str = 'Code duration: {time} {units}') -> None:
         """Creates a new context manager for measuring the duration of a code block
 
         Parameters
@@ -62,7 +62,7 @@ class TimeIt:
         message : str, optional
             Only applicable if ``print_duration`` is ``True``.  The message
             template to display the duration (default is
-            ``'Command duration: {time} {units}'``).  The ``{time}`` and
+            ``'Code duration: {time} {units}'``).  The ``{time}`` and
             ``{units}`` placeholders will be replaced by the duration and
             units, respectively
         """
