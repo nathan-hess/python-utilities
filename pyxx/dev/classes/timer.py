@@ -26,7 +26,7 @@ class TimeIt:
 
     .. code-block:: python
 
-        >>> from pyxx.debugging import TimeIt
+        >>> from pyxx.dev import TimeIt
         >>> import time
         >>> with TimeIt(units='ms', message='Execution time: {time:.2f} {units}'):
         ...     # Code block of which to measure the duration
@@ -37,7 +37,7 @@ class TimeIt:
 
     .. code-block:: python
 
-        >>> from pyxx.debugging import TimeIt
+        >>> from pyxx.dev import TimeIt
         >>> import time
         >>> timer = TimeIt(print_duration=False)
         >>> with timer:

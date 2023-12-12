@@ -1,9 +1,9 @@
-pyxx.debugging
-==============
+pyxx.dev
+========
 
-.. automodule:: pyxx.debugging
+.. automodule:: pyxx.dev
 
-.. currentmodule:: pyxx.debugging
+.. currentmodule:: pyxx.dev
 
 
 Code Profiling
