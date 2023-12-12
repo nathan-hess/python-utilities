@@ -103,6 +103,6 @@ class TimeIt:
         units : str
             The units in which to return the duration (default is ``'s'``)
         """
-        return self.__unit_converter.convert(
+        return float(self.__unit_converter.convert(
             quantity=self.__dt_s, from_unit='s', to_unit=units
-        )
+        ))
