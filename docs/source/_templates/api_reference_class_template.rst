@@ -3,11 +3,13 @@
    args
    BinaryFile
    ConstantUnitMathConventions
+   dev
    exps
    ndarray
    np
    num
    TextFile
+   TimeIt
    TypedList
    TypedListWithID
    UnitConverter

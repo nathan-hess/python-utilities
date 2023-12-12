@@ -55,6 +55,7 @@ def max_array_diff(array1, array2):
 
 # Import and run tests
 from .arrays import *
+from .dev import *
 from .files import *
 from .numbers import *
 from .strings import *
