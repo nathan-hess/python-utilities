@@ -8,6 +8,7 @@
    np
    num
    TextFile
+   TimeIt
    TypedList
    TypedListWithID
    UnitConverter
