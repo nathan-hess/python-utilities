@@ -5,6 +5,7 @@ gigajoule
 gigajoules
 gigapascal
 gigapascals
+interruptible
 iterable
 iteratively
 Iteratively

@@ -2,4 +2,5 @@
 Python code.
 """
 
+from .loops import InterruptibleLoop
 from .timer import TimeIt

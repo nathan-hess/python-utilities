@@ -16,4 +16,5 @@ profiling code.
     :toctree: ./api
     :template: ../_templates/api_reference_class_template.rst
 
+    InterruptibleLoop
     TimeIt
