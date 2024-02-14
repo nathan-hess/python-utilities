@@ -5,6 +5,7 @@
    ConstantUnitMathConventions
    dev
    exps
+   InterruptibleLoop
    ndarray
    np
    num
