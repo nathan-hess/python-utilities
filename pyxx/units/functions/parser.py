@@ -7,7 +7,8 @@ be converted to the format: ``{'kg': 1.0, 's': -2.0, 'm': 1.0}``.
 import copy
 import string
 
-import sympy
+# Mypy exclusion added for SymPy since it is not typed
+import sympy  # type: ignore
 
 from pyxx.strings.functions.brackets import (
     contains_all_matched_brackets,

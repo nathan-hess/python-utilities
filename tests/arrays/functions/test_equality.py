@@ -1,5 +1,4 @@
 import unittest
-import warnings
 
 import numpy as np
 
@@ -201,9 +200,6 @@ class Test_NumPyListEqual(unittest.TestCase):
     def test_mixed_type_numeric(self):
         # Verifies that equality can be checked for mixed types of arrays
 
-        # Disable display of NumPy warnings when creating "ragged" array
-        warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
-
         with self.subTest(dim=1):
             self.assertTrue(is_array_equal(
                 [3.14, 1/2, 0, 5, -6.28, 2e10, 1e-13],
@@ -230,9 +226,6 @@ class Test_NumPyListEqual(unittest.TestCase):
     def test_mixed_type_numeric_str(self):
         # Verifies that equality can be checked for mixed types of arrays
         # with both numbers and strings
-
-        # Disable display of NumPy warnings when creating "ragged" array
-        warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
         with self.subTest(comment='no_numpy_array'):
             self.assertTrue(is_array_equal(
