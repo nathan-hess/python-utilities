@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 from numbers import Number
-from typing import List, Tuple, Union
+from typing import Iterable, Union
 
 import numpy as np
 
@@ -12,8 +12,7 @@ from .size import is_len_equal
 
 # Type alias: type for each `item` argument in `is_array_equal()`
 __element_types = Union[Number, np.ndarray, str]
-Array_or_Number_or_String = Union[List[__element_types],
-                                  Tuple[__element_types],
+Array_or_Number_or_String = Union[Iterable[__element_types],
                                   __element_types]
 
 
